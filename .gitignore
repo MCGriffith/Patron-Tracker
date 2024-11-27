@@ -3,3 +3,5 @@ Additional Stuff/
 bin/
 obj/
 *.vsidx
+/Addtional Stuff/Reader_en_install.exe
+/Addtional Stuff/accessruntime_4288-1001_x64_en-us.exe
