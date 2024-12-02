@@ -167,7 +167,7 @@ Public Class FrmPatronReport
             html.AppendLine("th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }")
             html.AppendLine("</style></head><body>")
             html.AppendLine("<h1>Patron Class/Event List</h1>")
-            html.AppendLine($"<div class='date'>Created: {DateTime.Now.ToShortDateString()}</div>")
+            html.AppendLine($"<div class='date'>Printed: {DateTime.Now.ToShortDateString()}</div>")
             html.AppendLine($"<div>Patron: {cboName.Text}</div><br>")
             html.AppendLine("<table>")
             html.AppendLine("<tr><th>Event/Class Name</th><th>Event Date</th><th>Registered Date</th></tr>")

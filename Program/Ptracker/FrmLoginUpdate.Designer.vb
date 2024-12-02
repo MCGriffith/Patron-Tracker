@@ -26,21 +26,23 @@ Partial Public Class FrmLoginUpdate
         Me.btnSSave = New System.Windows.Forms.Button()
         Me.btnSCancel = New System.Windows.Forms.Button()
         Me.txtSPIN = New System.Windows.Forms.TextBox()
-        Me.cboSEmail = New System.Windows.Forms.ComboBox()
+        Me.cboName = New System.Windows.Forms.ComboBox()
         Me.lblSMatch = New System.Windows.Forms.Label()
         Me.lblSPIN = New System.Windows.Forms.Label()
-        Me.lblSEmail = New System.Windows.Forms.Label()
+        Me.lblName = New System.Windows.Forms.Label()
         Me.lblSPassword = New System.Windows.Forms.Label()
         Me.lblSConfirm = New System.Windows.Forms.Label()
         Me.txtSPassword = New System.Windows.Forms.TextBox()
         Me.txtSConfirm = New System.Windows.Forms.TextBox()
         Me.lblSPMatch = New System.Windows.Forms.Label()
+        Me.lblRole = New System.Windows.Forms.Label()
+        Me.lblRoleName = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'btnSSave
         '
         Me.btnSSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnSSave.Location = New System.Drawing.Point(425, 252)
+        Me.btnSSave.Location = New System.Drawing.Point(419, 279)
         Me.btnSSave.Margin = New System.Windows.Forms.Padding(4)
         Me.btnSSave.Name = "btnSSave"
         Me.btnSSave.Size = New System.Drawing.Size(191, 47)
@@ -51,7 +53,7 @@ Partial Public Class FrmLoginUpdate
         'btnSCancel
         '
         Me.btnSCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnSCancel.Location = New System.Drawing.Point(174, 252)
+        Me.btnSCancel.Location = New System.Drawing.Point(168, 279)
         Me.btnSCancel.Margin = New System.Windows.Forms.Padding(4)
         Me.btnSCancel.Name = "btnSCancel"
         Me.btnSCancel.Size = New System.Drawing.Size(191, 47)
@@ -62,26 +64,26 @@ Partial Public Class FrmLoginUpdate
         'txtSPIN
         '
         Me.txtSPIN.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.txtSPIN.Location = New System.Drawing.Point(174, 75)
+        Me.txtSPIN.Location = New System.Drawing.Point(168, 102)
         Me.txtSPIN.Margin = New System.Windows.Forms.Padding(4)
         Me.txtSPIN.Name = "txtSPIN"
         Me.txtSPIN.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.txtSPIN.Size = New System.Drawing.Size(138, 26)
         Me.txtSPIN.TabIndex = 3
         '
-        'cboSEmail
+        'cboName
         '
-        Me.cboSEmail.FormattingEnabled = True
-        Me.cboSEmail.Location = New System.Drawing.Point(174, 34)
-        Me.cboSEmail.Margin = New System.Windows.Forms.Padding(4)
-        Me.cboSEmail.Name = "cboSEmail"
-        Me.cboSEmail.Size = New System.Drawing.Size(442, 26)
-        Me.cboSEmail.TabIndex = 2
+        Me.cboName.FormattingEnabled = True
+        Me.cboName.Location = New System.Drawing.Point(168, 61)
+        Me.cboName.Margin = New System.Windows.Forms.Padding(4)
+        Me.cboName.Name = "cboName"
+        Me.cboName.Size = New System.Drawing.Size(442, 26)
+        Me.cboName.TabIndex = 2
         '
         'lblSMatch
         '
         Me.lblSMatch.AutoSize = True
-        Me.lblSMatch.Location = New System.Drawing.Point(365, 83)
+        Me.lblSMatch.Location = New System.Drawing.Point(359, 110)
         Me.lblSMatch.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblSMatch.Name = "lblSMatch"
         Me.lblSMatch.Size = New System.Drawing.Size(68, 18)
@@ -91,27 +93,27 @@ Partial Public Class FrmLoginUpdate
         'lblSPIN
         '
         Me.lblSPIN.AutoSize = True
-        Me.lblSPIN.Location = New System.Drawing.Point(129, 83)
+        Me.lblSPIN.Location = New System.Drawing.Point(123, 110)
         Me.lblSPIN.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblSPIN.Name = "lblSPIN"
         Me.lblSPIN.Size = New System.Drawing.Size(37, 18)
         Me.lblSPIN.TabIndex = 26
         Me.lblSPIN.Text = "PIN:"
         '
-        'lblSEmail
+        'lblName
         '
-        Me.lblSEmail.AutoSize = True
-        Me.lblSEmail.Location = New System.Drawing.Point(114, 42)
-        Me.lblSEmail.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
-        Me.lblSEmail.Name = "lblSEmail"
-        Me.lblSEmail.Size = New System.Drawing.Size(52, 18)
-        Me.lblSEmail.TabIndex = 1
-        Me.lblSEmail.Text = "Email:"
+        Me.lblName.AutoSize = True
+        Me.lblName.Location = New System.Drawing.Point(108, 69)
+        Me.lblName.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.lblName.Name = "lblName"
+        Me.lblName.Size = New System.Drawing.Size(54, 18)
+        Me.lblName.TabIndex = 1
+        Me.lblName.Text = "Name:"
         '
         'lblSPassword
         '
         Me.lblSPassword.AutoSize = True
-        Me.lblSPassword.Location = New System.Drawing.Point(49, 144)
+        Me.lblSPassword.Location = New System.Drawing.Point(43, 171)
         Me.lblSPassword.Name = "lblSPassword"
         Me.lblSPassword.Size = New System.Drawing.Size(117, 18)
         Me.lblSPassword.TabIndex = 32
@@ -120,7 +122,7 @@ Partial Public Class FrmLoginUpdate
         'lblSConfirm
         '
         Me.lblSConfirm.AutoSize = True
-        Me.lblSConfirm.Location = New System.Drawing.Point(25, 186)
+        Me.lblSConfirm.Location = New System.Drawing.Point(19, 213)
         Me.lblSConfirm.Name = "lblSConfirm"
         Me.lblSConfirm.Size = New System.Drawing.Size(141, 18)
         Me.lblSConfirm.TabIndex = 33
@@ -129,7 +131,7 @@ Partial Public Class FrmLoginUpdate
         'txtSPassword
         '
         Me.txtSPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.txtSPassword.Location = New System.Drawing.Point(174, 141)
+        Me.txtSPassword.Location = New System.Drawing.Point(168, 168)
         Me.txtSPassword.Margin = New System.Windows.Forms.Padding(4)
         Me.txtSPassword.Name = "txtSPassword"
         Me.txtSPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
@@ -139,7 +141,7 @@ Partial Public Class FrmLoginUpdate
         'txtSConfirm
         '
         Me.txtSConfirm.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.txtSConfirm.Location = New System.Drawing.Point(174, 183)
+        Me.txtSConfirm.Location = New System.Drawing.Point(168, 210)
         Me.txtSConfirm.Margin = New System.Windows.Forms.Padding(4)
         Me.txtSConfirm.Name = "txtSConfirm"
         Me.txtSConfirm.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
@@ -149,17 +151,37 @@ Partial Public Class FrmLoginUpdate
         'lblSPMatch
         '
         Me.lblSPMatch.AutoSize = True
-        Me.lblSPMatch.Location = New System.Drawing.Point(483, 167)
+        Me.lblSPMatch.Location = New System.Drawing.Point(477, 194)
         Me.lblSPMatch.Name = "lblSPMatch"
         Me.lblSPMatch.Size = New System.Drawing.Size(64, 18)
         Me.lblSPMatch.TabIndex = 36
         Me.lblSPMatch.Text = "              "
         '
+        'lblRole
+        '
+        Me.lblRole.AutoSize = True
+        Me.lblRole.Location = New System.Drawing.Point(172, 20)
+        Me.lblRole.Name = "lblRole"
+        Me.lblRole.Size = New System.Drawing.Size(71, 18)
+        Me.lblRole.TabIndex = 37
+        Me.lblRole.Text = "               l"
+        '
+        'lblRoleName
+        '
+        Me.lblRoleName.AutoSize = True
+        Me.lblRoleName.Location = New System.Drawing.Point(116, 20)
+        Me.lblRoleName.Name = "lblRoleName"
+        Me.lblRoleName.Size = New System.Drawing.Size(44, 18)
+        Me.lblRoleName.TabIndex = 38
+        Me.lblRoleName.Text = "Role:"
+        '
         'FrmLoginUpdate
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(680, 336)
+        Me.ClientSize = New System.Drawing.Size(680, 387)
+        Me.Controls.Add(Me.lblRoleName)
+        Me.Controls.Add(Me.lblRole)
         Me.Controls.Add(Me.lblSPMatch)
         Me.Controls.Add(Me.txtSConfirm)
         Me.Controls.Add(Me.txtSPassword)
@@ -168,10 +190,10 @@ Partial Public Class FrmLoginUpdate
         Me.Controls.Add(Me.btnSSave)
         Me.Controls.Add(Me.btnSCancel)
         Me.Controls.Add(Me.txtSPIN)
-        Me.Controls.Add(Me.cboSEmail)
+        Me.Controls.Add(Me.cboName)
         Me.Controls.Add(Me.lblSMatch)
         Me.Controls.Add(Me.lblSPIN)
-        Me.Controls.Add(Me.lblSEmail)
+        Me.Controls.Add(Me.lblName)
         Me.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4)
@@ -186,13 +208,15 @@ Partial Public Class FrmLoginUpdate
     Friend WithEvents btnSSave As Button
     Friend WithEvents btnSCancel As Button
     Friend WithEvents txtSPIN As TextBox
-    Friend WithEvents cboSEmail As ComboBox
+    Friend WithEvents cboName As ComboBox
     Friend WithEvents lblSMatch As Label
     Friend WithEvents lblSPIN As Label
-    Friend WithEvents lblSEmail As Label
+    Friend WithEvents lblName As Label
     Friend WithEvents lblSPassword As Label
     Friend WithEvents lblSConfirm As Label
     Friend WithEvents txtSPassword As TextBox
     Friend WithEvents txtSConfirm As TextBox
     Friend WithEvents lblSPMatch As Label
+    Friend WithEvents lblRole As Label
+    Friend WithEvents lblRoleName As Label
 End Class

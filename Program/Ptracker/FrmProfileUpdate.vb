@@ -10,6 +10,10 @@ Public Class FrmProfileUpdate
     Private pinChanged As Boolean = False
     Private dataChanged As Boolean = False
     Private lblRetype As Label
+    Private currentRole As String
+    Private currentUserName As String
+    Private fullName As String
+
 
     Public Sub New()
         InitializeComponent()
@@ -23,14 +27,15 @@ Public Class FrmProfileUpdate
 
     Private Sub FrmUpdateProfile_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
+        lblRole.Text = GlobalVariables.CurrentUserRole
         InitializeControls()
         LoadComboBoxes()
     End Sub
 
     Private Sub InitializeControls()
         ' Enable initial controls
-        lblUEmail.Enabled = True
-        cboUEmail.Enabled = True
+        lblName.Enabled = True
+        cboName.Enabled = True
         lblUPIN.Enabled = True
         txtUPIN.Enabled = True
         lblUMatch.Enabled = True
@@ -52,33 +57,60 @@ Public Class FrmProfileUpdate
     End Sub
 
     Private Sub LoadComboBoxes()
+        currentRole = GlobalVariables.CurrentUserRole
+        currentUserName = GlobalVariables.CurrentUserName
+
         Using conn As New OleDbConnection(connectionString)
             conn.Open()
 
-            ' Load email addresses
-            Dim emailCmd As New OleDbCommand("SELECT Email FROM tblLogin", conn)
-            Dim emailReader As OleDbDataReader = emailCmd.ExecuteReader()
-            While emailReader.Read()
-                cboUEmail.Items.Add(emailReader("Email").ToString())
-            End While
+            Select Case currentRole
+                Case "Patron"
+                    ' Patron can only see their own name
+                    cboName.Items.Clear()
+                    cboName.Items.Add(currentUserName)
+                    cboName.SelectedIndex = 0
+                    cboName.Enabled = False
+                    txtUPIN.Enabled = True
+                    lblUMatch.Enabled = True
 
-            ' Load states
+                Case "Staff", "Director", "Admin"
+                    ' Staff and above can see all names
+                    Dim cmd As New OleDbCommand("SELECT FullName FROM tblContacts ORDER BY FullName", conn)
+                    Using da As New OleDbDataAdapter(cmd)
+                        Dim dt As New DataTable
+                        da.Fill(dt)
+                        Dim emptyRow As DataRow = dt.NewRow()
+                        emptyRow("FullName") = ""
+                        dt.Rows.InsertAt(emptyRow, 0)
+                        cboName.DataSource = dt
+                        cboName.DisplayMember = "FullName"
+                        cboName.ValueMember = "FullName"
+                    End Using
+                    txtUPIN.Enabled = False
+                    lblUMatch.Text = "Not Required"
+                    lblUMatch.BackColor = Color.Green
+                    lblUMatch.ForeColor = Color.White
+
+            End Select
+
+            ' Load states and types (existing code)
             Dim stateCmd As New OleDbCommand("SELECT States FROM tblStates", conn)
-            Dim stateReader As OleDbDataReader = stateCmd.ExecuteReader()
-            While stateReader.Read()
-                cboUState.Items.Add(stateReader("States").ToString())
-            End While
+            Using stateReader As OleDbDataReader = stateCmd.ExecuteReader()
+                While stateReader.Read()
+                    cboUState.Items.Add(stateReader("States").ToString())
+                End While
+            End Using
 
-            ' Load types
             Dim typeCmd As New OleDbCommand("SELECT Types FROM tblTypes", conn)
-            Dim typeReader As OleDbDataReader = typeCmd.ExecuteReader()
-            While typeReader.Read()
-                cboUType.Items.Add(typeReader("Types").ToString())
-            End While
+            Using typeReader As OleDbDataReader = typeCmd.ExecuteReader()
+                While typeReader.Read()
+                    cboUType.Items.Add(typeReader("Types").ToString())
+                End While
+            End Using
         End Using
     End Sub
 
-    Private Sub cboUEmail_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboUEmail.SelectedIndexChanged
+    Private Sub cboName_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboName.SelectedIndexChanged
         emailChanged = True
         CheckCredentials()
     End Sub
@@ -89,15 +121,42 @@ Public Class FrmProfileUpdate
     End Sub
 
     Private Sub CheckCredentials()
+        Dim fullName As String = cboName.Text
+
+        If currentRole = "Staff" OrElse currentRole = "Director" OrElse currentRole = "Admin" Then
+            txtUPIN.Enabled = False
+            lblUMatch.Text = "Not Required"
+            lblUMatch.BackColor = Color.Green
+            lblUMatch.ForeColor = Color.White
+
+            If Not String.IsNullOrEmpty(fullName) Then
+                Using conn As New OleDbConnection(connectionString)
+                    conn.Open()
+                    Dim cmd As New OleDbCommand("SELECT l.LoginID FROM tblLogin l INNER JOIN tblContacts c ON l.LoginID = c.LoginID WHERE c.FullName = @FullName", conn)
+                    cmd.Parameters.AddWithValue("@FullName", fullName)
+
+                    Dim result As Object = cmd.ExecuteScalar()
+                    If result IsNot Nothing Then
+                        LoginID = Convert.ToInt32(result)
+                        EnableDataFields()
+                        LoadUserData(fullName)
+                    Else
+                        DisableDataFields()
+                    End If
+                End Using
+            End If
+            Return
+        End If
+
+        ' Original PIN verification for Patron role
         If emailChanged And pinChanged Then
-            Dim email As String = cboUEmail.Text
             Dim pin As String = txtUPIN.Text
 
             If pin.Length >= 4 And pin.Length <= 6 And IsNumeric(pin) Then
                 Using conn As New OleDbConnection(connectionString)
                     conn.Open()
-                    Dim cmd As New OleDbCommand("SELECT LoginID FROM tblLogin WHERE Email = ? AND PIN = ?", conn)
-                    cmd.Parameters.AddWithValue("@Email", email)
+                    Dim cmd As New OleDbCommand("SELECT l.LoginID FROM tblLogin l INNER JOIN tblContacts c ON l.LoginID = c.LoginID WHERE c.FullName = @FullName AND l.PIN = @PIN", conn)
+                    cmd.Parameters.AddWithValue("@FullName", fullName)
                     cmd.Parameters.AddWithValue("@PIN", pin)
 
                     Dim result As Object = cmd.ExecuteScalar()
@@ -107,7 +166,7 @@ Public Class FrmProfileUpdate
                         lblUMatch.Text = "Match"
                         lblUMatch.ForeColor = Color.White
                         EnableDataFields()
-                        LoadUserData(email)
+                        LoadUserData(fullName)
                     Else
                         LoginID = 0
                         lblUMatch.BackColor = Color.Red
@@ -125,7 +184,6 @@ Public Class FrmProfileUpdate
             End If
         End If
     End Sub
-
 
     Private Sub EnableDataFields()
         Dim controlsToEnable() As Control = {
@@ -155,14 +213,9 @@ Public Class FrmProfileUpdate
         Using conn As New OleDbConnection(connectionString)
             conn.Open()
 
-            ' Get LoginID
-            Dim loginCmd As New OleDbCommand("SELECT LoginID FROM tblLogin WHERE Email = ?", conn)
-            loginCmd.Parameters.AddWithValue("@Email", email)
-            Dim loginID As Integer = Convert.ToInt32(loginCmd.ExecuteScalar())
-
             ' Get Contact information
             Dim contactCmd As New OleDbCommand("SELECT * FROM tblContacts WHERE LoginID = ?", conn)
-            contactCmd.Parameters.AddWithValue("@LoginID", loginID)
+            contactCmd.Parameters.AddWithValue("@LoginID", LoginID)
             Dim contactReader As OleDbDataReader = contactCmd.ExecuteReader()
 
             If contactReader.Read() Then
@@ -174,7 +227,7 @@ Public Class FrmProfileUpdate
 
             ' Get Address information
             Dim addressCmd As New OleDbCommand("SELECT * FROM tblAddress WHERE ContactID = (SELECT ContactID FROM tblContacts WHERE LoginID = ?)", conn)
-            addressCmd.Parameters.AddWithValue("@LoginID", loginID)
+            addressCmd.Parameters.AddWithValue("@LoginID", LoginID)
             Dim addressReader As OleDbDataReader = addressCmd.ExecuteReader()
 
             If addressReader.Read() Then
@@ -187,7 +240,7 @@ Public Class FrmProfileUpdate
 
             ' Get Phone information
             Dim phoneCmd As New OleDbCommand("SELECT * FROM tblPhone WHERE ContactID = (SELECT ContactID FROM tblContacts WHERE LoginID = ?)", conn)
-            phoneCmd.Parameters.AddWithValue("@LoginID", loginID)
+            phoneCmd.Parameters.AddWithValue("@LoginID", LoginID)
             Dim phoneReader As OleDbDataReader = phoneCmd.ExecuteReader()
 
             If phoneReader.Read() Then

@@ -4,6 +4,8 @@ Imports System.Text.RegularExpressions
 Partial Public Class FrmLoginUpdate
     Inherits Form
     Dim connectionString As String = DatabaseConfig.ConnectionString
+    Private currentRole As String
+    Private currentUserName As String
     Private LoginID As Integer = 0
 
     Public Sub New()
@@ -12,15 +14,16 @@ Partial Public Class FrmLoginUpdate
 
     Private Sub FrmLoginUpdate_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
+        lblRole.Text = GlobalVariables.CurrentUserRole
         InitializeControls()
         LoadComboBoxes()
     End Sub
 
     Private Sub InitializeControls()
         ' Enable initial controls
-        lblSEmail.Enabled = True
+        cboName.Enabled = True
+        lblName.Enabled = True
         lblSPIN.Enabled = True
-        cboSEmail.Enabled = True
         txtSPIN.Enabled = True
         lblSMatch.Enabled = True
         lblSMatch.BackColor = Color.Red
@@ -38,19 +41,38 @@ Partial Public Class FrmLoginUpdate
     End Sub
 
     Private Sub LoadComboBoxes()
+        currentRole = GlobalVariables.CurrentUserRole
+        currentUserName = GlobalVariables.CurrentUserName
 
         Using conn As New OleDbConnection(connectionString)
             conn.Open()
-            Dim emailCmd As New OleDbCommand("SELECT Email FROM tblLogin", conn)
-            Using emailReader As OleDbDataReader = emailCmd.ExecuteReader()
-                While emailReader.Read()
-                    cboSEmail.Items.Add(emailReader("Email").ToString())
-                End While
-            End Using
+
+            Select Case currentRole
+                Case "Patron"
+                    ' Patron can only see their own name
+                    cboName.Items.Clear()
+                    cboName.Items.Add(currentUserName)
+                    cboName.SelectedIndex = 0
+                    cboName.Enabled = False
+
+                Case "Staff", "Director", "Admin"
+                    ' Staff and above can see all names
+                    Dim cmd As New OleDbCommand("SELECT FullName FROM tblContacts ORDER BY FullName", conn)
+                    Using da As New OleDbDataAdapter(cmd)
+                        Dim dt As New DataTable
+                        da.Fill(dt)
+                        Dim emptyRow As DataRow = dt.NewRow()
+                        emptyRow("FullName") = ""
+                        dt.Rows.InsertAt(emptyRow, 0)
+                        cboName.DataSource = dt
+                        cboName.DisplayMember = "FullName"
+                        cboName.ValueMember = "FullName"
+                    End Using
+            End Select
         End Using
     End Sub
 
-    Private Sub cboSEmail_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboSEmail.SelectedIndexChanged
+    Private Sub cboSEmail_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboName.SelectedIndexChanged
         CheckCredentials()
     End Sub
 
@@ -59,21 +81,45 @@ Partial Public Class FrmLoginUpdate
     End Sub
 
     Private Sub CheckCredentials()
-        Dim email As String = cboSEmail.Text
-        Dim pin As String = txtSPIN.Text
+        Dim fullName As String = cboName.Text
 
-        If String.IsNullOrEmpty(email) OrElse String.IsNullOrEmpty(pin) Then
+        If currentRole = "Staff" OrElse currentRole = "Director" OrElse currentRole = "Admin" Then
+            txtSPIN.Enabled = False
+            lblSMatch.Text = "Not Required"
+            lblSMatch.BackColor = Color.Green
+            lblSMatch.ForeColor = Color.White
+
+            If Not String.IsNullOrEmpty(fullName) Then
+                Using conn As New OleDbConnection(connectionString)
+                    conn.Open()
+                    Dim cmd As New OleDbCommand("SELECT l.LoginID FROM tblLogin l INNER JOIN tblContacts c ON l.LoginID = c.LoginID WHERE c.FullName = ?", conn)
+                    cmd.Parameters.AddWithValue("?", fullName)
+
+                    Dim result As Object = cmd.ExecuteScalar()
+                    If result IsNot Nothing Then
+                        LoginID = Convert.ToInt32(result)
+                        SetMatch()
+                    Else
+                        SetNoMatch()
+                    End If
+                End Using
+            End If
+            Return
+        End If
+
+        ' Original PIN verification code for Patron role remains the same
+        Dim pin As String = txtSPIN.Text
+        If String.IsNullOrEmpty(fullName) OrElse String.IsNullOrEmpty(pin) Then
             SetNoMatch()
             Return
         End If
 
         If pin.Length >= 4 AndAlso pin.Length <= 6 AndAlso IsNumeric(pin) Then
-
             Using conn As New OleDbConnection(connectionString)
                 conn.Open()
-                Dim cmd As New OleDbCommand("SELECT LoginID FROM tblLogin WHERE Email = ? AND PIN = ?", conn)
-                cmd.Parameters.AddWithValue("@Email", email)
-                cmd.Parameters.AddWithValue("@PIN", pin)
+                Dim cmd As New OleDbCommand("SELECT l.LoginID FROM tblLogin l INNER JOIN tblContacts c ON l.LoginID = c.LoginID WHERE c.FullName = ? AND l.PIN = ?", conn)
+                cmd.Parameters.AddWithValue("?", fullName)
+                cmd.Parameters.AddWithValue("?", pin)
 
                 Dim result As Object = cmd.ExecuteScalar()
                 If result IsNot Nothing Then

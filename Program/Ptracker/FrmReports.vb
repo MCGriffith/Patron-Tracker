@@ -28,6 +28,7 @@ Public Class FrmReports
         lblType.Enabled = False
         lblStart.Enabled = False
         lblStop.Enabled = False
+        cboDates.Enabled = False
 
 
         ' Enable select and close buttons
@@ -42,6 +43,9 @@ Public Class FrmReports
 
         ' Populate cboEventType
         PopulateEventTypeComboBox()
+
+        'Populate cboDates
+        PopulateDateComboBox()
     End Sub
 
     Private Sub PopulateReportComboBox()
@@ -91,6 +95,53 @@ Public Class FrmReports
         End Using
     End Sub
 
+    Private Sub PopulateDateComboBox()
+
+        Using conn As New OleDbConnection(connectionString)
+            conn.Open()
+            Dim cmd As New OleDbCommand("SELECT DateName FROM tblDates", conn)
+            Dim reader As OleDbDataReader = cmd.ExecuteReader()
+            cboDates.Items.Clear()
+            While reader.Read()
+                cboDates.Items.Add(reader("DateName").ToString())
+            End While
+        End Using
+    End Sub
+
+    Private Sub cboDates_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboDates.SelectedIndexChanged
+        Select Case cboDates.SelectedItem.ToString()
+            Case "Current Month"
+                lblStart.Enabled = False
+                lblStop.Enabled = False
+                dtpStartDate.Visible = False
+                dtpEndDate.Visible = False
+                SetCurrentMonthDates()
+            Case "Previous Month"
+                lblStart.Enabled = False
+                lblStop.Enabled = False
+                dtpStartDate.Visible = False
+                dtpEndDate.Visible = False
+                SetPreviousMonthDates()
+            Case "Custom Dates"
+                lblStart.Enabled = True
+                lblStop.Enabled = True
+                dtpStartDate.Visible = True
+                dtpEndDate.Visible = True
+        End Select
+    End Sub
+
+    Private Sub SetCurrentMonthDates()
+        Dim currentDate As Date = DateTime.Today
+        dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month, 1)
+        dtpEndDate.Value = DateSerial(currentDate.Year, currentDate.Month + 1, 0)
+    End Sub
+
+    Private Sub SetPreviousMonthDates()
+        Dim currentDate As Date = DateTime.Today
+        dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month - 1, 1)
+        dtpEndDate.Value = DateSerial(currentDate.Year, currentDate.Month, 0)
+    End Sub
+
     Private Sub btnSelect_Click(sender As Object, e As EventArgs) Handles btnSelect.Click
         lblReport.Enabled = True
         cboReport.Enabled = True
@@ -108,22 +159,22 @@ Public Class FrmReports
                 cboEvent.Enabled = True
                 lblType.Enabled = True
                 cboEventType.Enabled = True
+                cboDates.Enabled = False
+                lblStart.Enabled = False
+                lblStop.Enabled = False
                 dtpStartDate.Visible = False
                 dtpEndDate.Visible = False
             Case "Attendance"
                 lblReport.Enabled = True
-                lblStart.Enabled = True
-                lblStop.Enabled = True
-                dtpStartDate.Visible = True
-                dtpEndDate.Visible = True
+                cboDates.Enabled = True
                 cboEvent.Enabled = False
                 cboEventType.Enabled = False
-                SetDefaultDateRange()
             Case "Mailing Labels"
                 lblEvent.Enabled = False
                 lblType.Enabled = False
                 cboEvent.Enabled = False
                 cboEventType.Enabled = False
+                cboDates.Enabled = False
                 lblStart.Enabled = False
                 lblStop.Enabled = False
                 dtpStartDate.Visible = False
@@ -133,6 +184,7 @@ Public Class FrmReports
                 lblType.Enabled = False
                 cboEvent.Enabled = False
                 cboEventType.Enabled = False
+                cboDates.Enabled = False
                 lblStart.Enabled = False
                 lblStop.Enabled = False
                 dtpStartDate.Visible = False
@@ -142,11 +194,11 @@ Public Class FrmReports
         btnGenerate.Enabled = True
     End Sub
 
-    Private Sub SetDefaultDateRange()
-        Dim currentDate As Date = DateTime.Today
-        dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month, 1)
-        dtpEndDate.Value = DateSerial(currentDate.Year, currentDate.Month + 1, 0)
-    End Sub
+    '  Private Sub SetDefaultDateRange()
+    '  Dim currentDate As Date = DateTime.Today
+    '      dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month, 1)
+    '      dtpEndDate.Value = DateSerial(currentDate.Year, currentDate.Month + 1, 0)
+    '  End Sub
 
     Private Sub btnGenerate_Click(sender As Object, e As EventArgs) Handles btnGenerate.Click
         If cboReport.SelectedItem Is Nothing Then
@@ -171,38 +223,6 @@ Public Class FrmReports
                 GenerateEventReport(selectedEvent)
 
             Case "Attendance"
-                ' Validate that start date is the first day of a month
-                If dtpStartDate.Value.Day <> 1 Then
-                    MessageBox.Show("Start date must be the first day of the month.", "Invalid Date Range", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    Return
-                End If
-
-                ' Validate that end date is the last day of the same month
-                Dim lastDayOfMonth As Date = DateSerial(dtpEndDate.Value.Year, dtpEndDate.Value.Month + 1, 0)
-                If dtpEndDate.Value <> lastDayOfMonth Then
-                    MessageBox.Show("End date must be the last day of the month.", "Invalid Date Range", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    Return
-                End If
-
-                ' Validate that the dates are in the same month
-                If dtpStartDate.Value.Month <> dtpEndDate.Value.Month OrElse
-               dtpStartDate.Value.Year <> dtpEndDate.Value.Year Then
-                    MessageBox.Show("Start and end dates must be in the same month.", "Invalid Date Range", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    Return
-                End If
-
-                ' Validate that the selected month is either current month or previous month
-                Dim currentDate As Date = DateTime.Today
-                Dim selectedMonth As Date = dtpStartDate.Value
-                Dim monthDifference As Integer = ((currentDate.Year - selectedMonth.Year) * 12) +
-                                            (currentDate.Month - selectedMonth.Month)
-
-                If monthDifference < 0 OrElse monthDifference > 1 Then
-                    MessageBox.Show("You can only generate reports for the current or previous month.",
-                              "Invalid Date Range", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    Return
-                End If
-
                 GenerateAttendanceReport(dtpStartDate.Value, dtpEndDate.Value)
 
             Case "Mailing Labels"
@@ -336,7 +356,8 @@ Public Class FrmReports
 
                 ' Add title
                 html.AppendLine($"<h2>{eventName}</h2>")
-                html.AppendLine($"<h2>{If(eventDate IsNot Nothing AndAlso eventDate IsNot DBNull.Value, CDate(eventDate).ToShortDateString(), "Date not available")}</h2>")
+                html.AppendLine($"<h2>Event Date: {If(eventDate IsNot Nothing AndAlso eventDate IsNot DBNull.Value, CDate(eventDate).ToShortDateString(), "Date not available")}</h2>")
+
 
                 ' Create table
                 html.AppendLine("<table>")
@@ -555,8 +576,6 @@ Public Class FrmReports
         End Try
     End Sub
 
-
-
     Private Sub FrmReports_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
         ' Clean up temp file
         If File.Exists(tempFilePath) Then
@@ -571,5 +590,4 @@ Public Class FrmReports
         End If
         Me.Close()
     End Sub
-
 End Class

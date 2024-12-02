@@ -23,7 +23,6 @@ Partial Class FrmReports
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmReports))
-        Me.dtpStartDate = New System.Windows.Forms.DateTimePicker()
         Me.dtpEndDate = New System.Windows.Forms.DateTimePicker()
         Me.btnGenerate = New System.Windows.Forms.Button()
         Me.WebBrowser1 = New System.Windows.Forms.WebBrowser()
@@ -36,27 +35,20 @@ Partial Class FrmReports
         Me.cboEventType = New System.Windows.Forms.ComboBox()
         Me.lblReport = New System.Windows.Forms.Label()
         Me.lblEvent = New System.Windows.Forms.Label()
+        Me.lblStop = New System.Windows.Forms.Label()
+        Me.dtpStartDate = New System.Windows.Forms.DateTimePicker()
         Me.lblType = New System.Windows.Forms.Label()
         Me.lblStart = New System.Windows.Forms.Label()
-        Me.lblStop = New System.Windows.Forms.Label()
+        Me.cboDates = New System.Windows.Forms.ComboBox()
         Me.SuspendLayout()
-        '
-        'dtpStartDate
-        '
-        Me.dtpStartDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpStartDate.Location = New System.Drawing.Point(769, 119)
-        Me.dtpStartDate.Margin = New System.Windows.Forms.Padding(4)
-        Me.dtpStartDate.Name = "dtpStartDate"
-        Me.dtpStartDate.Size = New System.Drawing.Size(158, 26)
-        Me.dtpStartDate.TabIndex = 5
         '
         'dtpEndDate
         '
         Me.dtpEndDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
-        Me.dtpEndDate.Location = New System.Drawing.Point(1030, 119)
+        Me.dtpEndDate.Location = New System.Drawing.Point(1049, 119)
         Me.dtpEndDate.Margin = New System.Windows.Forms.Padding(4)
         Me.dtpEndDate.Name = "dtpEndDate"
-        Me.dtpEndDate.Size = New System.Drawing.Size(138, 26)
+        Me.dtpEndDate.Size = New System.Drawing.Size(119, 26)
         Me.dtpEndDate.TabIndex = 6
         '
         'btnGenerate
@@ -154,10 +146,28 @@ Partial Class FrmReports
         Me.lblEvent.TabIndex = 12
         Me.lblEvent.Text = "Event:"
         '
+        'lblStop
+        '
+        Me.lblStop.AutoSize = True
+        Me.lblStop.Location = New System.Drawing.Point(997, 127)
+        Me.lblStop.Name = "lblStop"
+        Me.lblStop.Size = New System.Drawing.Size(45, 18)
+        Me.lblStop.TabIndex = 15
+        Me.lblStop.Text = "Stop:"
+        '
+        'dtpStartDate
+        '
+        Me.dtpStartDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
+        Me.dtpStartDate.Location = New System.Drawing.Point(860, 119)
+        Me.dtpStartDate.Margin = New System.Windows.Forms.Padding(4)
+        Me.dtpStartDate.Name = "dtpStartDate"
+        Me.dtpStartDate.Size = New System.Drawing.Size(123, 26)
+        Me.dtpStartDate.TabIndex = 5
+        '
         'lblType
         '
         Me.lblType.AutoSize = True
-        Me.lblType.Location = New System.Drawing.Point(353, 127)
+        Me.lblType.Location = New System.Drawing.Point(365, 127)
         Me.lblType.Name = "lblType"
         Me.lblType.Size = New System.Drawing.Size(45, 18)
         Me.lblType.TabIndex = 13
@@ -166,26 +176,26 @@ Partial Class FrmReports
         'lblStart
         '
         Me.lblStart.AutoSize = True
-        Me.lblStart.Location = New System.Drawing.Point(707, 127)
+        Me.lblStart.Location = New System.Drawing.Point(808, 127)
         Me.lblStart.Name = "lblStart"
         Me.lblStart.Size = New System.Drawing.Size(45, 18)
         Me.lblStart.TabIndex = 14
         Me.lblStart.Text = "Start:"
         '
-        'lblStop
+        'cboDates
         '
-        Me.lblStop.AutoSize = True
-        Me.lblStop.Location = New System.Drawing.Point(978, 127)
-        Me.lblStop.Name = "lblStop"
-        Me.lblStop.Size = New System.Drawing.Size(45, 18)
-        Me.lblStop.TabIndex = 15
-        Me.lblStop.Text = "Stop:"
+        Me.cboDates.FormattingEnabled = True
+        Me.cboDates.Location = New System.Drawing.Point(609, 119)
+        Me.cboDates.Name = "cboDates"
+        Me.cboDates.Size = New System.Drawing.Size(183, 26)
+        Me.cboDates.TabIndex = 16
         '
         'FrmReports
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1220, 606)
+        Me.Controls.Add(Me.cboDates)
         Me.Controls.Add(Me.lblStop)
         Me.Controls.Add(Me.lblStart)
         Me.Controls.Add(Me.lblType)
@@ -200,8 +210,8 @@ Partial Class FrmReports
         Me.Controls.Add(Me.cboReport)
         Me.Controls.Add(Me.WebBrowser1)
         Me.Controls.Add(Me.btnGenerate)
-        Me.Controls.Add(Me.dtpEndDate)
         Me.Controls.Add(Me.dtpStartDate)
+        Me.Controls.Add(Me.dtpEndDate)
         Me.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4)
@@ -212,8 +222,6 @@ Partial Class FrmReports
         Me.PerformLayout()
 
     End Sub
-
-    Friend WithEvents dtpStartDate As DateTimePicker
     Friend WithEvents dtpEndDate As DateTimePicker
     Friend WithEvents btnGenerate As Button
     Friend WithEvents WebBrowser1 As WebBrowser
@@ -226,7 +234,9 @@ Partial Class FrmReports
     Friend WithEvents cboEventType As ComboBox
     Friend WithEvents lblReport As Label
     Friend WithEvents lblEvent As Label
+    Friend WithEvents lblStop As Label
+    Friend WithEvents dtpStartDate As DateTimePicker
     Friend WithEvents lblType As Label
     Friend WithEvents lblStart As Label
-    Friend WithEvents lblStop As Label
+    Friend WithEvents cboDates As ComboBox
 End Class

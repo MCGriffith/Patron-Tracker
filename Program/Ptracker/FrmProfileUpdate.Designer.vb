@@ -44,16 +44,18 @@ Partial Class FrmProfileUpdate
         Me.lblUMiddle = New System.Windows.Forms.Label()
         Me.lblUFirst = New System.Windows.Forms.Label()
         Me.txtUPIN = New System.Windows.Forms.TextBox()
-        Me.cboUEmail = New System.Windows.Forms.ComboBox()
+        Me.cboName = New System.Windows.Forms.ComboBox()
         Me.lblUMatch = New System.Windows.Forms.Label()
         Me.lblUPIN = New System.Windows.Forms.Label()
-        Me.lblUEmail = New System.Windows.Forms.Label()
+        Me.lblName = New System.Windows.Forms.Label()
+        Me.lblRoleName = New System.Windows.Forms.Label()
+        Me.lblRole = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'btnUSave
         '
         Me.btnUSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnUSave.Location = New System.Drawing.Point(381, 375)
+        Me.btnUSave.Location = New System.Drawing.Point(381, 400)
         Me.btnUSave.Name = "btnUSave"
         Me.btnUSave.Size = New System.Drawing.Size(261, 56)
         Me.btnUSave.TabIndex = 15
@@ -63,7 +65,7 @@ Partial Class FrmProfileUpdate
         'btnUCancel
         '
         Me.btnUCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnUCancel.Location = New System.Drawing.Point(57, 375)
+        Me.btnUCancel.Location = New System.Drawing.Point(57, 400)
         Me.btnUCancel.Name = "btnUCancel"
         Me.btnUCancel.Size = New System.Drawing.Size(261, 56)
         Me.btnUCancel.TabIndex = 14
@@ -73,14 +75,14 @@ Partial Class FrmProfileUpdate
         'cboUType
         '
         Me.cboUType.FormattingEnabled = True
-        Me.cboUType.Location = New System.Drawing.Point(467, 300)
+        Me.cboUType.Location = New System.Drawing.Point(467, 325)
         Me.cboUType.Name = "cboUType"
         Me.cboUType.Size = New System.Drawing.Size(92, 26)
         Me.cboUType.TabIndex = 13
         '
         'txtUPhone
         '
-        Me.txtUPhone.Location = New System.Drawing.Point(117, 300)
+        Me.txtUPhone.Location = New System.Drawing.Point(117, 325)
         Me.txtUPhone.Name = "txtUPhone"
         Me.txtUPhone.Size = New System.Drawing.Size(219, 26)
         Me.txtUPhone.TabIndex = 12
@@ -88,7 +90,7 @@ Partial Class FrmProfileUpdate
         'lblUType
         '
         Me.lblUType.AutoSize = True
-        Me.lblUType.Location = New System.Drawing.Point(367, 308)
+        Me.lblUType.Location = New System.Drawing.Point(367, 333)
         Me.lblUType.Name = "lblUType"
         Me.lblUType.Size = New System.Drawing.Size(94, 18)
         Me.lblUType.TabIndex = 46
@@ -97,7 +99,7 @@ Partial Class FrmProfileUpdate
         'lblUPhone
         '
         Me.lblUPhone.AutoSize = True
-        Me.lblUPhone.Location = New System.Drawing.Point(54, 308)
+        Me.lblUPhone.Location = New System.Drawing.Point(54, 333)
         Me.lblUPhone.Name = "lblUPhone"
         Me.lblUPhone.Size = New System.Drawing.Size(57, 18)
         Me.lblUPhone.TabIndex = 44
@@ -106,21 +108,21 @@ Partial Class FrmProfileUpdate
         'cboUState
         '
         Me.cboUState.FormattingEnabled = True
-        Me.cboUState.Location = New System.Drawing.Point(410, 248)
+        Me.cboUState.Location = New System.Drawing.Point(410, 273)
         Me.cboUState.Name = "cboUState"
         Me.cboUState.Size = New System.Drawing.Size(65, 26)
         Me.cboUState.TabIndex = 10
         '
         'txtUZip
         '
-        Me.txtUZip.Location = New System.Drawing.Point(542, 248)
+        Me.txtUZip.Location = New System.Drawing.Point(542, 273)
         Me.txtUZip.Name = "txtUZip"
         Me.txtUZip.Size = New System.Drawing.Size(100, 26)
         Me.txtUZip.TabIndex = 11
         '
         'txtUCity
         '
-        Me.txtUCity.Location = New System.Drawing.Point(117, 248)
+        Me.txtUCity.Location = New System.Drawing.Point(117, 273)
         Me.txtUCity.Name = "txtUCity"
         Me.txtUCity.Size = New System.Drawing.Size(219, 26)
         Me.txtUCity.TabIndex = 9
@@ -128,7 +130,7 @@ Partial Class FrmProfileUpdate
         'lblUZip
         '
         Me.lblUZip.AutoSize = True
-        Me.lblUZip.Location = New System.Drawing.Point(495, 256)
+        Me.lblUZip.Location = New System.Drawing.Point(495, 281)
         Me.lblUZip.Name = "lblUZip"
         Me.lblUZip.Size = New System.Drawing.Size(34, 18)
         Me.lblUZip.TabIndex = 42
@@ -137,7 +139,7 @@ Partial Class FrmProfileUpdate
         'lblUState
         '
         Me.lblUState.AutoSize = True
-        Me.lblUState.Location = New System.Drawing.Point(355, 256)
+        Me.lblUState.Location = New System.Drawing.Point(355, 281)
         Me.lblUState.Name = "lblUState"
         Me.lblUState.Size = New System.Drawing.Size(49, 18)
         Me.lblUState.TabIndex = 40
@@ -146,7 +148,7 @@ Partial Class FrmProfileUpdate
         'lblUCity
         '
         Me.lblUCity.AutoSize = True
-        Me.lblUCity.Location = New System.Drawing.Point(72, 256)
+        Me.lblUCity.Location = New System.Drawing.Point(72, 281)
         Me.lblUCity.Name = "lblUCity"
         Me.lblUCity.Size = New System.Drawing.Size(39, 18)
         Me.lblUCity.TabIndex = 38
@@ -154,7 +156,7 @@ Partial Class FrmProfileUpdate
         '
         'txtUAddress
         '
-        Me.txtUAddress.Location = New System.Drawing.Point(117, 205)
+        Me.txtUAddress.Location = New System.Drawing.Point(117, 230)
         Me.txtUAddress.Name = "txtUAddress"
         Me.txtUAddress.Size = New System.Drawing.Size(525, 26)
         Me.txtUAddress.TabIndex = 6
@@ -162,7 +164,7 @@ Partial Class FrmProfileUpdate
         'lblUAddress
         '
         Me.lblUAddress.AutoSize = True
-        Me.lblUAddress.Location = New System.Drawing.Point(40, 213)
+        Me.lblUAddress.Location = New System.Drawing.Point(40, 238)
         Me.lblUAddress.Name = "lblUAddress"
         Me.lblUAddress.Size = New System.Drawing.Size(71, 18)
         Me.lblUAddress.TabIndex = 36
@@ -170,21 +172,21 @@ Partial Class FrmProfileUpdate
         '
         'txtULast
         '
-        Me.txtULast.Location = New System.Drawing.Point(479, 165)
+        Me.txtULast.Location = New System.Drawing.Point(479, 190)
         Me.txtULast.Name = "txtULast"
         Me.txtULast.Size = New System.Drawing.Size(163, 26)
         Me.txtULast.TabIndex = 5
         '
         'txtUMiddle
         '
-        Me.txtUMiddle.Location = New System.Drawing.Point(329, 165)
+        Me.txtUMiddle.Location = New System.Drawing.Point(329, 190)
         Me.txtUMiddle.Name = "txtUMiddle"
         Me.txtUMiddle.Size = New System.Drawing.Size(56, 26)
         Me.txtUMiddle.TabIndex = 4
         '
         'txtUFirst
         '
-        Me.txtUFirst.Location = New System.Drawing.Point(117, 165)
+        Me.txtUFirst.Location = New System.Drawing.Point(117, 190)
         Me.txtUFirst.Name = "txtUFirst"
         Me.txtUFirst.Size = New System.Drawing.Size(139, 26)
         Me.txtUFirst.TabIndex = 3
@@ -192,7 +194,7 @@ Partial Class FrmProfileUpdate
         'lblULast
         '
         Me.lblULast.AutoSize = True
-        Me.lblULast.Location = New System.Drawing.Point(419, 173)
+        Me.lblULast.Location = New System.Drawing.Point(419, 198)
         Me.lblULast.Name = "lblULast"
         Me.lblULast.Size = New System.Drawing.Size(42, 18)
         Me.lblULast.TabIndex = 32
@@ -201,7 +203,7 @@ Partial Class FrmProfileUpdate
         'lblUMiddle
         '
         Me.lblUMiddle.AutoSize = True
-        Me.lblUMiddle.Location = New System.Drawing.Point(291, 173)
+        Me.lblUMiddle.Location = New System.Drawing.Point(291, 198)
         Me.lblUMiddle.Name = "lblUMiddle"
         Me.lblUMiddle.Size = New System.Drawing.Size(32, 18)
         Me.lblUMiddle.TabIndex = 31
@@ -210,7 +212,7 @@ Partial Class FrmProfileUpdate
         'lblUFirst
         '
         Me.lblUFirst.AutoSize = True
-        Me.lblUFirst.Location = New System.Drawing.Point(68, 173)
+        Me.lblUFirst.Location = New System.Drawing.Point(68, 198)
         Me.lblUFirst.Name = "lblUFirst"
         Me.lblUFirst.Size = New System.Drawing.Size(43, 18)
         Me.lblUFirst.TabIndex = 30
@@ -218,24 +220,24 @@ Partial Class FrmProfileUpdate
         '
         'txtUPIN
         '
-        Me.txtUPIN.Location = New System.Drawing.Point(117, 79)
+        Me.txtUPIN.Location = New System.Drawing.Point(117, 104)
         Me.txtUPIN.Name = "txtUPIN"
         Me.txtUPIN.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.txtUPIN.Size = New System.Drawing.Size(114, 26)
         Me.txtUPIN.TabIndex = 2
         '
-        'cboUEmail
+        'cboName
         '
-        Me.cboUEmail.FormattingEnabled = True
-        Me.cboUEmail.Location = New System.Drawing.Point(117, 38)
-        Me.cboUEmail.Name = "cboUEmail"
-        Me.cboUEmail.Size = New System.Drawing.Size(525, 26)
-        Me.cboUEmail.TabIndex = 1
+        Me.cboName.FormattingEnabled = True
+        Me.cboName.Location = New System.Drawing.Point(117, 63)
+        Me.cboName.Name = "cboName"
+        Me.cboName.Size = New System.Drawing.Size(525, 26)
+        Me.cboName.TabIndex = 1
         '
         'lblUMatch
         '
         Me.lblUMatch.AutoSize = True
-        Me.lblUMatch.Location = New System.Drawing.Point(262, 87)
+        Me.lblUMatch.Location = New System.Drawing.Point(257, 102)
         Me.lblUMatch.Name = "lblUMatch"
         Me.lblUMatch.Size = New System.Drawing.Size(28, 18)
         Me.lblUMatch.TabIndex = 27
@@ -244,26 +246,46 @@ Partial Class FrmProfileUpdate
         'lblUPIN
         '
         Me.lblUPIN.AutoSize = True
-        Me.lblUPIN.Location = New System.Drawing.Point(74, 87)
+        Me.lblUPIN.Location = New System.Drawing.Point(74, 112)
         Me.lblUPIN.Name = "lblUPIN"
         Me.lblUPIN.Size = New System.Drawing.Size(37, 18)
         Me.lblUPIN.TabIndex = 26
         Me.lblUPIN.Text = "PIN:"
         '
-        'lblUEmail
+        'lblName
         '
-        Me.lblUEmail.AutoSize = True
-        Me.lblUEmail.Location = New System.Drawing.Point(59, 46)
-        Me.lblUEmail.Name = "lblUEmail"
-        Me.lblUEmail.Size = New System.Drawing.Size(52, 18)
-        Me.lblUEmail.TabIndex = 0
-        Me.lblUEmail.Text = "Email:"
+        Me.lblName.AutoSize = True
+        Me.lblName.Location = New System.Drawing.Point(59, 71)
+        Me.lblName.Name = "lblName"
+        Me.lblName.Size = New System.Drawing.Size(54, 18)
+        Me.lblName.TabIndex = 0
+        Me.lblName.Text = "Name:"
+        '
+        'lblRoleName
+        '
+        Me.lblRoleName.AutoSize = True
+        Me.lblRoleName.Location = New System.Drawing.Point(67, 34)
+        Me.lblRoleName.Name = "lblRoleName"
+        Me.lblRoleName.Size = New System.Drawing.Size(44, 18)
+        Me.lblRoleName.TabIndex = 47
+        Me.lblRoleName.Text = "Role:"
+        '
+        'lblRole
+        '
+        Me.lblRole.AutoSize = True
+        Me.lblRole.Location = New System.Drawing.Point(127, 35)
+        Me.lblRole.Name = "lblRole"
+        Me.lblRole.Size = New System.Drawing.Size(80, 18)
+        Me.lblRole.TabIndex = 48
+        Me.lblRole.Text = "                  "
         '
         'FrmProfileUpdate
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(710, 472)
+        Me.ClientSize = New System.Drawing.Size(710, 491)
+        Me.Controls.Add(Me.lblRole)
+        Me.Controls.Add(Me.lblRoleName)
         Me.Controls.Add(Me.btnUSave)
         Me.Controls.Add(Me.btnUCancel)
         Me.Controls.Add(Me.cboUType)
@@ -285,10 +307,10 @@ Partial Class FrmProfileUpdate
         Me.Controls.Add(Me.lblUMiddle)
         Me.Controls.Add(Me.lblUFirst)
         Me.Controls.Add(Me.txtUPIN)
-        Me.Controls.Add(Me.cboUEmail)
+        Me.Controls.Add(Me.cboName)
         Me.Controls.Add(Me.lblUMatch)
         Me.Controls.Add(Me.lblUPIN)
-        Me.Controls.Add(Me.lblUEmail)
+        Me.Controls.Add(Me.lblName)
         Me.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Margin = New System.Windows.Forms.Padding(4)
@@ -321,8 +343,10 @@ Partial Class FrmProfileUpdate
     Friend WithEvents lblUMiddle As Label
     Friend WithEvents lblUFirst As Label
     Friend WithEvents txtUPIN As TextBox
-    Friend WithEvents cboUEmail As ComboBox
+    Friend WithEvents cboName As ComboBox
     Friend WithEvents lblUMatch As Label
     Friend WithEvents lblUPIN As Label
-    Friend WithEvents lblUEmail As Label
+    Friend WithEvents lblName As Label
+    Friend WithEvents lblRoleName As Label
+    Friend WithEvents lblRole As Label
 End Class
