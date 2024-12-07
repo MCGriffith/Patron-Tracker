@@ -30,6 +30,8 @@ Partial Class SplashScreen
         Me.lblRegName = New System.Windows.Forms.Label()
         Me.lblRegNum = New System.Windows.Forms.Label()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.lblRoleName = New System.Windows.Forms.Label()
+        Me.ProgressBar1 = New System.Windows.Forms.ProgressBar()
         Me.SuspendLayout()
         '
         'lblProduct
@@ -72,7 +74,7 @@ Partial Class SplashScreen
         Me.lblRegName.AutoSize = True
         Me.lblRegName.BackColor = System.Drawing.Color.Transparent
         Me.lblRegName.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblRegName.Location = New System.Drawing.Point(339, 360)
+        Me.lblRegName.Location = New System.Drawing.Point(348, 351)
         Me.lblRegName.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblRegName.Name = "lblRegName"
         Me.lblRegName.Size = New System.Drawing.Size(312, 24)
@@ -84,7 +86,7 @@ Partial Class SplashScreen
         Me.lblRegNum.AutoSize = True
         Me.lblRegNum.BackColor = System.Drawing.Color.Transparent
         Me.lblRegNum.Font = New System.Drawing.Font("Arial", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblRegNum.Location = New System.Drawing.Point(668, 360)
+        Me.lblRegNum.Location = New System.Drawing.Point(677, 351)
         Me.lblRegNum.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblRegNum.Name = "lblRegNum"
         Me.lblRegNum.Size = New System.Drawing.Size(58, 24)
@@ -96,12 +98,30 @@ Partial Class SplashScreen
         Me.Timer1.Enabled = True
         Me.Timer1.Interval = 1000
         '
+        'lblRoleName
+        '
+        Me.lblRoleName.AutoSize = True
+        Me.lblRoleName.Location = New System.Drawing.Point(342, 443)
+        Me.lblRoleName.Name = "lblRoleName"
+        Me.lblRoleName.Size = New System.Drawing.Size(56, 18)
+        Me.lblRoleName.TabIndex = 11
+        Me.lblRoleName.Text = "Label1"
+        '
+        'ProgressBar1
+        '
+        Me.ProgressBar1.Location = New System.Drawing.Point(352, 396)
+        Me.ProgressBar1.Name = "ProgressBar1"
+        Me.ProgressBar1.Size = New System.Drawing.Size(387, 33)
+        Me.ProgressBar1.TabIndex = 12
+        '
         'SplashScreen
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackgroundImage = CType(resources.GetObject("$this.BackgroundImage"), System.Drawing.Image)
         Me.ClientSize = New System.Drawing.Size(1092, 539)
+        Me.Controls.Add(Me.ProgressBar1)
+        Me.Controls.Add(Me.lblRoleName)
         Me.Controls.Add(Me.lblRegNum)
         Me.Controls.Add(Me.lblRegName)
         Me.Controls.Add(Me.lblCopyright)
@@ -109,7 +129,7 @@ Partial Class SplashScreen
         Me.Controls.Add(Me.lblProduct)
         Me.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "SplashScreen"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Splash Screen"
@@ -124,4 +144,6 @@ Partial Class SplashScreen
     Friend WithEvents lblRegName As Label
     Friend WithEvents lblRegNum As Label
     Friend WithEvents Timer1 As Timer
+    Friend WithEvents lblRoleName As Label
+    Friend WithEvents ProgressBar1 As ProgressBar
 End Class
