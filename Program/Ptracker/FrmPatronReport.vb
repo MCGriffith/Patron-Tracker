@@ -208,20 +208,7 @@ Public Class FrmPatronReport
     End Sub
 
     Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
-        Try
-            Dim saveDialog As New SaveFileDialog()
-            saveDialog.Filter = "PDF Files (*.pdf)|*.pdf"
-            saveDialog.DefaultExt = "pdf"
-            saveDialog.Title = "Save Report as PDF"
-            saveDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-
-            If saveDialog.ShowDialog() = DialogResult.OK Then
-                PDFHelper.CreatePDFFromWebBrowser(WebBrowser2, saveDialog.FileName)
-                MessageBox.Show("Report saved as PDF successfully!", "Save Complete", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            End If
-        Catch ex As Exception
-            MessageBox.Show("Error creating PDF: " & ex.Message)
-        End Try
+        WebBrowser2.ShowPrintDialog()
     End Sub
 
     Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click

@@ -1,3 +1,21 @@
+Development Notes and Upgrades:
+
+Fixes:  12/7/2024
+
+Splash screen
+- Add code for Progress Bar 1 and the label of Progressing
+
+Login, Profile and Fix Attendance
+- Add LogTime code
+
+Build Attendance Analytics
+
+Patron Reports and Reports screens
+- Fix Print Button to pull the Print Dialog box to select Print Method
+
+
+Upgrades:
+
 Created 11/27/2024
 
 Ideas for future updates/upgrades:
@@ -6,42 +24,42 @@ Here are several valuable features that could enhance Patron Tracker:
 
 Attendance Analytics
 
-Generate reports showing peak usage times
-Track most popular days/hours
-Create monthly/yearly comparison charts
-Export statistics for planning purposes
+Generate reports showing peak usage times *
+Track most popular days/hours *
+Create monthly/yearly comparison charts *
+Export statistics for planning purposes *
 
 
 Event Management Enhancements
 
-Automated email reminders for registered events
-Waitlist functionality for full classes
-Class/event feedback collection
-Calendar view of upcoming events
+Automated email reminders for registered events *
+Waitlist functionality for full classes *
+Class/event feedback collection  *
+Calendar view of upcoming events  *
 
 
 Patron Experience
 
 Digital check-in kiosk mode
-Print name badges for events
+Print name badges for events *Done.
 QR code check-in option
-Return visitor quick check-in
+Return visitor quick check-in * kind of have this one - simple login
 
 
 Administrative Features
 
-Volunteer schedule tracking
+Volunteer schedule tracking  *
 Equipment/resource reservation
-Room capacity monitoring
-Custom report builder
+Room capacity monitoring  *
+Custom report builder  *
 
 
 Communication Tools
 
-Bulk email notifications
+Bulk email notifications  *
 Newsletter signup integration
-SMS notifications for events
-Emergency broadcast capability
+SMS notifications for events  *
+Emergency broadcast capability  *
 
 These additions would make Patron Tracker an even more comprehensive management tool for the FamilySearch Center. Which feature interests you most?
 
