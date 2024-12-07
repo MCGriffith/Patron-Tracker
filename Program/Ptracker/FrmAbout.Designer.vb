@@ -36,7 +36,7 @@ Partial Class FrmAbout
         Me.lblProduct.AutoSize = True
         Me.lblProduct.BackColor = System.Drawing.Color.Transparent
         Me.lblProduct.Font = New System.Drawing.Font("Arial", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblProduct.Location = New System.Drawing.Point(95, 64)
+        Me.lblProduct.Location = New System.Drawing.Point(268, 60)
         Me.lblProduct.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblProduct.Name = "lblProduct"
         Me.lblProduct.Size = New System.Drawing.Size(169, 27)
@@ -48,7 +48,7 @@ Partial Class FrmAbout
         '
         Me.lblVersion.AutoSize = True
         Me.lblVersion.BackColor = System.Drawing.Color.Transparent
-        Me.lblVersion.Location = New System.Drawing.Point(136, 110)
+        Me.lblVersion.Location = New System.Drawing.Point(309, 106)
         Me.lblVersion.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblVersion.Name = "lblVersion"
         Me.lblVersion.Size = New System.Drawing.Size(87, 18)
@@ -59,7 +59,7 @@ Partial Class FrmAbout
         '
         Me.lblCopyright.AutoSize = True
         Me.lblCopyright.BackColor = System.Drawing.Color.Transparent
-        Me.lblCopyright.Location = New System.Drawing.Point(97, 144)
+        Me.lblCopyright.Location = New System.Drawing.Point(270, 140)
         Me.lblCopyright.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblCopyright.Name = "lblCopyright"
         Me.lblCopyright.Size = New System.Drawing.Size(183, 18)
@@ -69,7 +69,7 @@ Partial Class FrmAbout
         'btnClose
         '
         Me.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnClose.Location = New System.Drawing.Point(100, 211)
+        Me.btnClose.Location = New System.Drawing.Point(273, 207)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(164, 34)
         Me.btnClose.TabIndex = 7
@@ -80,7 +80,7 @@ Partial Class FrmAbout
         '
         Me.lblRegName.AutoSize = True
         Me.lblRegName.BackColor = System.Drawing.Color.Transparent
-        Me.lblRegName.Location = New System.Drawing.Point(49, 179)
+        Me.lblRegName.Location = New System.Drawing.Point(222, 175)
         Me.lblRegName.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblRegName.Name = "lblRegName"
         Me.lblRegName.Size = New System.Drawing.Size(233, 18)
@@ -91,7 +91,7 @@ Partial Class FrmAbout
         '
         Me.lblRegNum.AutoSize = True
         Me.lblRegNum.BackColor = System.Drawing.Color.Transparent
-        Me.lblRegNum.Location = New System.Drawing.Point(290, 179)
+        Me.lblRegNum.Location = New System.Drawing.Point(463, 175)
         Me.lblRegNum.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblRegNum.Name = "lblRegNum"
         Me.lblRegNum.Size = New System.Drawing.Size(44, 18)
@@ -103,7 +103,7 @@ Partial Class FrmAbout
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackgroundImage = CType(resources.GetObject("$this.BackgroundImage"), System.Drawing.Image)
-        Me.ClientSize = New System.Drawing.Size(364, 281)
+        Me.ClientSize = New System.Drawing.Size(732, 288)
         Me.Controls.Add(Me.lblRegNum)
         Me.Controls.Add(Me.lblRegName)
         Me.Controls.Add(Me.btnClose)
