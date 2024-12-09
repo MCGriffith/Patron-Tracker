@@ -1,12 +1,14 @@
 ﻿Imports System.IO
 Imports System.Data.OleDb
 Imports System.Windows.Forms.DataVisualization.Charting
-Imports iTextSharp.text
-Imports iTextSharp.text.pdf
+Imports System.Drawing.Printing
 
 
 Public Class FrmAttendanceAnalytics
     Inherits Form
+
+    Private printDocument As New PrintDocument()
+
     Private Sub FrmAttendanceAnalytics_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
 
@@ -16,16 +18,30 @@ Public Class FrmAttendanceAnalytics
         cboDateRange.Items.AddRange({"Daily", "Weekly", "Monthly", "Custom"})
 
         cboExport.Items.Clear()
-        cboExport.Items.AddRange({"CSV", "Excel", "PDF"})
+        cboExport.Items.AddRange({"CSV", "Excel"})  ' Removed PDF
 
         ' Setup Chart
         chartAttendance.ChartAreas.Clear()
         chartAttendance.ChartAreas.Add(New ChartArea("MainArea"))
         chartAttendance.Legends.Clear()
         chartAttendance.Legends.Add(New Legend("MainLegend"))
+        chartAttendance.ChartAreas("MainArea").AxisY.IsReversed = False
+        chartAttendance.ChartAreas("MainArea").AxisY.Minimum = 0
 
         ' Set initial selection
         cboDateRange.SelectedIndex = 0
+
+        ' Configure chart axes
+        With chartAttendance.ChartAreas("MainArea")
+            .AxisX.Minimum = 0
+            .AxisX.Maximum = 23
+            .AxisX.Interval = 1
+            .AxisX.MajorGrid.Enabled = True
+
+            .AxisY.Minimum = 0
+            .AxisY.MajorGrid.Enabled = True
+            .AxisY.IsStartedFromZero = True
+        End With
     End Sub
 
     Private Function BuildFilterQuery() As String
@@ -46,22 +62,33 @@ Public Class FrmAttendanceAnalytics
         Return ""
     End Function
 
+    Private ReadOnly SeriesColors As New Dictionary(Of String, Color) From {
+        {"People", Color.Blue},
+        {"FirstVisit", Color.Green},
+        {"PrintFOR", Color.Red},
+        {"Indexing", Color.Purple},
+        {"OnlineRsrch", Color.Orange},
+        {"SubWebsite", Color.Brown},
+        {"AttendClass", Color.Magenta},
+        {"Other", Color.Gray}
+    }
+
     Private Sub UpdateChart()
+        ' Modified query to handle multiple filters correctly
         Dim query As String = "SELECT LogDate, Format([LogTime],'HH') as HourOfDay, " &
-                      "Sum(IIf([People],-1,0)) as PeopleCount, " &
-                      "Sum(IIf([FirstVisit],-1,0)) as FirstVisitCount, " &
-                      "Sum(IIf([PrintFOR],-1,0)) as PrintFORCount, " &
-                      "Sum(IIf([Indexing],-1,0)) as IndexingCount, " &
-                      "Sum(IIf([OnlineRsrch],-1,0)) as OnlineRsrchCount, " &
-                      "Sum(IIf([SubWebsite],-1,0)) as SubWebsiteCount, " &
-                      "Sum(IIf([AttendClass],-1,0)) as AttendClassCount, " &
-                      "Sum(IIf([Other],-1,0)) as OtherCount " &
-                      "FROM tblAttendance " &
-                      "WHERE LogDate BETWEEN #" & dtpStartDate.Value.ToString("MM/dd/yyyy") & "# " &
-                      "AND #" & dtpEndDate.Value.ToString("MM/dd/yyyy") & "#" &
-                      BuildFilterQuery() &
-                      " GROUP BY LogDate, Format([LogTime],'HH') " &
-                      "ORDER BY LogDate, Format([LogTime],'HH')"
+                  "Sum(IIf([People]=True,1,0)) as PeopleCount, " &
+                  "Sum(IIf([FirstVisit]=True,1,0)) as FirstVisitCount, " &
+                  "Sum(IIf([PrintFOR]=True,1,0)) as PrintFORCount, " &
+                  "Sum(IIf([Indexing]=True,1,0)) as IndexingCount, " &
+                  "Sum(IIf([OnlineRsrch]=True,1,0)) as OnlineRsrchCount, " &
+                  "Sum(IIf([SubWebsite]=True,1,0)) as SubWebsiteCount, " &
+                  "Sum(IIf([AttendClass]=True,1,0)) as AttendClassCount, " &
+                  "Sum(IIf([Other]=True,1,0)) as OtherCount " &
+                  "FROM tblAttendance " &
+                  "WHERE LogDate BETWEEN #" & dtpStartDate.Value.ToString("MM/dd/yyyy") & "# " &
+                  "AND #" & dtpEndDate.Value.ToString("MM/dd/yyyy") & "#" &
+                  " GROUP BY LogDate, Format([LogTime],'HH') " &
+                  "ORDER BY Format([LogTime],'HH')"
 
         Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
             Using cmd As New OleDbCommand(query, conn)
@@ -76,28 +103,57 @@ Public Class FrmAttendanceAnalytics
     Private Sub UpdateChartSeries(dt As DataTable)
         chartAttendance.Series.Clear()
 
-        ' Create series for each attendance type
-        Dim seriesNames() As String = {"People", "FirstVisit", "PrintFOR", "Indexing",
-                                  "OnlineRsrch", "SubWebsite", "AttendClass", "Other"}
+        With chartAttendance.ChartAreas("MainArea")
+            .AxisX.Interval = 1
+            .AxisX.LabelStyle.Format = "00"
+            .AxisY.Minimum = 0
+        End With
 
-        For Each seriesName In seriesNames
+        ' Only get series names that match checked filters
+        Dim seriesNames() As String = {"People", "FirstVisit", "PrintFOR", "Indexing",
+                              "OnlineRsrch", "SubWebsite", "AttendClass", "Other"}
+
+        Dim activeSeriesNames = seriesNames.Where(Function(s) ShouldShowSeries(s)).ToArray()
+
+        ' Create dictionary for all hours
+        Dim hourData As New Dictionary(Of Integer, Dictionary(Of String, Integer))
+        For hour As Integer = 0 To 23
+            hourData(hour) = New Dictionary(Of String, Integer)
+            For Each seriesName In activeSeriesNames    ' Only process active series
+                hourData(hour)(seriesName & "Count") = 0
+            Next
+        Next
+
+        ' Fill in actual data for active series only
+        For Each row As DataRow In dt.Rows
+            Dim hour As Integer
+            If Integer.TryParse(row("HourOfDay").ToString(), hour) Then
+                For Each seriesName In activeSeriesNames    ' Only process active series
+                    hourData(hour)(seriesName & "Count") = Convert.ToInt32(row(seriesName & "Count"))
+                Next
+            End If
+        Next
+
+        ' Create series only for active items
+        For Each seriesName In activeSeriesNames
             Dim series As New Series(seriesName)
             series.ChartType = SeriesChartType.Column
+            series.IsVisibleInLegend = True
+            series.Color = SeriesColors(seriesName)  ' Set consistent color
             chartAttendance.Series.Add(series)
 
-            ' Add data points
-            For Each row As DataRow In dt.Rows
-                series.Points.AddXY(row("HourOfDay").ToString() & ":00",
-                              row(seriesName & "Count"))
+            For hour As Integer = 0 To 23
+                series.Points.AddXY(hour.ToString("00"), hourData(hour)(seriesName & "Count"))
             Next
         Next
     End Sub
+
 
     Private Function ShouldShowSeries(seriesName As String) As Boolean
         ' If no filters are checked, show all series
         If Not AnyFiltersChecked() Then Return True
 
-        ' Check corresponding checkbox
+        ' Match series name to corresponding checkbox
         Select Case seriesName
             Case "People" : Return cbxPeople.Checked
             Case "FirstVisit" : Return cbxFirstVisit.Checked
@@ -170,22 +226,24 @@ Public Class FrmAttendanceAnalytics
     End Sub
 
     Private Sub CheckBox_CheckedChanged(sender As Object, e As EventArgs) Handles _
-            cbxPeople.CheckedChanged, cbxFirstVisit.CheckedChanged,
-            cbxPrintFOR.CheckedChanged, cbxIndexing.CheckedChanged,
-            cbxOnlineRsrch.CheckedChanged, cbxSubWebsite.CheckedChanged,
-            cbxAttendClass.CheckedChanged, cbxOther.CheckedChanged
+        cbxPeople.CheckedChanged, cbxFirstVisit.CheckedChanged,
+        cbxPrintFOR.CheckedChanged, cbxIndexing.CheckedChanged,
+        cbxOnlineRsrch.CheckedChanged, cbxSubWebsite.CheckedChanged,
+        cbxAttendClass.CheckedChanged, cbxOther.CheckedChanged
         UpdateChart()
     End Sub
 
     Private Sub ExportData(fileName As String, format As String)
         Try
-            ' Get data from database
-            Dim query As String = "SELECT LogDate, LogTime, FirstVisit, PrintFOR, Indexing, " &
-                                 "OnlineRsrch, SubWebsite, AttendClass, Other " &
-                                 "FROM tblAttendance " &
-                                 "WHERE LogDate BETWEEN @StartDate AND @EndDate" &
-                                 BuildFilterQuery() &
-                                 " ORDER BY LogDate, LogTime"
+            ' Modified query to format date and time
+            Dim query As String = "SELECT Format(LogDate, 'mm/dd/yyyy') as LogDate, " &
+                             "Format(LogTime, 'HH:nn') as LogTime, " &
+                             "FirstVisit, PrintFOR, Indexing, " &
+                             "OnlineRsrch, SubWebsite, AttendClass, Other " &
+                             "FROM tblAttendance " &
+                             "WHERE LogDate BETWEEN @StartDate AND @EndDate" &
+                             BuildFilterQuery() &
+                             " ORDER BY LogDate, LogTime"
 
             Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
                 Using cmd As New OleDbCommand(query, conn)
@@ -201,8 +259,6 @@ Public Class FrmAttendanceAnalytics
                             ExportToExcel(dt, fileName)
                         Case "CSV"
                             ExportToCSV(dt, fileName)
-                        Case "PDF"
-                            ExportToPDF(dt, fileName)
                     End Select
                 End Using
             End Using
@@ -213,6 +269,8 @@ Public Class FrmAttendanceAnalytics
             MessageBox.Show("Error exporting data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+
+
 
     Private Sub ExportToExcel(dt As DataTable, fileName As String)
         Dim excel As Object = CreateObject("Excel.Application")
@@ -266,33 +324,6 @@ Public Class FrmAttendanceAnalytics
         End Using
     End Sub
 
-    Private Sub ExportToPDF(dt As DataTable, fileName As String)
-        Using fs As New FileStream(fileName, FileMode.Create)
-            Using doc As New iTextSharp.text.Document()
-                Dim writer = PdfWriter.GetInstance(doc, fs)
-                doc.Open()
-
-                ' Create table with specific number of columns
-                Dim table As New PdfPTable(dt.Columns.Count)
-
-                ' Add headers
-                For Each column As DataColumn In dt.Columns
-                    table.AddCell(New PdfPCell(New Phrase(column.ColumnName)))
-                Next
-
-                ' Add data
-                For Each row As DataRow In dt.Rows
-                    For Each item In row.ItemArray
-                        table.AddCell(New PdfPCell(New Phrase(item.ToString())))
-                    Next
-                Next
-
-                doc.Add(table)
-                doc.Close()
-            End Using
-        End Using
-    End Sub
-
     Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
         If cboExport.SelectedIndex = -1 Then
             MessageBox.Show("Please select an export format.")
@@ -307,25 +338,32 @@ Public Class FrmAttendanceAnalytics
             Case "CSV"
                 sfd.Filter = "CSV Files|*.csv"
                 sfd.DefaultExt = "csv"
-            Case "PDF"
-                sfd.Filter = "PDF Files|*.pdf"
-                sfd.DefaultExt = "pdf"
         End Select
 
+        sfd.OverwritePrompt = True  ' This ensures one prompt only
+
         If sfd.ShowDialog() = DialogResult.OK Then
+            ' Delete existing file if it exists
+            If File.Exists(sfd.FileName) Then
+                File.Delete(sfd.FileName)
+            End If
             ExportData(sfd.FileName, cboExport.SelectedItem.ToString())
         End If
     End Sub
 
     Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
-        Dim printDialog As New PrintDialog()
-        If printDialog.ShowDialog() = DialogResult.OK Then
-            Try
-                chartAttendance.Printing.PrintPreview()
-            Catch ex As Exception
-                MessageBox.Show("Error printing: " & ex.Message)
-            End Try
-        End If
+        Try
+            ' Create print dialog
+            Dim printDialog As New PrintDialog()
+            printDialog.Document = chartAttendance.Printing.PrintDocument
+
+            ' Show print dialog
+            If printDialog.ShowDialog() = DialogResult.OK Then
+                chartAttendance.Printing.Print(False)  ' Added False parameter
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error printing: " & ex.Message)
+        End Try
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
