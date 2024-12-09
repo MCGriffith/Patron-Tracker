@@ -177,41 +177,6 @@ Public Class FrmAttendanceAnalytics
         UpdateChart()
     End Sub
 
-    Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
-        If cboExport.SelectedIndex = -1 Then
-            MessageBox.Show("Please select an export format.")
-            Return
-        End If
-
-        Dim sfd As New SaveFileDialog()
-        Select Case cboExport.SelectedItem.ToString()
-            Case "Excel"
-                sfd.Filter = "Excel Files|*.xlsx"
-                sfd.DefaultExt = "xlsx"
-            Case "CSV"
-                sfd.Filter = "CSV Files|*.csv"
-                sfd.DefaultExt = "csv"
-            Case "PDF"
-                sfd.Filter = "PDF Files|*.pdf"
-                sfd.DefaultExt = "pdf"
-        End Select
-
-        If sfd.ShowDialog() = DialogResult.OK Then
-            ExportData(sfd.FileName, cboExport.SelectedItem.ToString())
-        End If
-    End Sub
-
-    Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
-        Dim printDialog As New PrintDialog()
-        If printDialog.ShowDialog() = DialogResult.OK Then
-            Try
-                chartAttendance.Printing.PrintPreview()
-            Catch ex As Exception
-                MessageBox.Show("Error printing: " & ex.Message)
-            End Try
-        End If
-    End Sub
-
     Private Sub ExportData(fileName As String, format As String)
         Try
             ' Get data from database
@@ -326,6 +291,41 @@ Public Class FrmAttendanceAnalytics
                 doc.Close()
             End Using
         End Using
+    End Sub
+
+    Private Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
+        If cboExport.SelectedIndex = -1 Then
+            MessageBox.Show("Please select an export format.")
+            Return
+        End If
+
+        Dim sfd As New SaveFileDialog()
+        Select Case cboExport.SelectedItem.ToString()
+            Case "Excel"
+                sfd.Filter = "Excel Files|*.xlsx"
+                sfd.DefaultExt = "xlsx"
+            Case "CSV"
+                sfd.Filter = "CSV Files|*.csv"
+                sfd.DefaultExt = "csv"
+            Case "PDF"
+                sfd.Filter = "PDF Files|*.pdf"
+                sfd.DefaultExt = "pdf"
+        End Select
+
+        If sfd.ShowDialog() = DialogResult.OK Then
+            ExportData(sfd.FileName, cboExport.SelectedItem.ToString())
+        End If
+    End Sub
+
+    Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
+        Dim printDialog As New PrintDialog()
+        If printDialog.ShowDialog() = DialogResult.OK Then
+            Try
+                chartAttendance.Printing.PrintPreview()
+            Catch ex As Exception
+                MessageBox.Show("Error printing: " & ex.Message)
+            End Try
+        End If
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
