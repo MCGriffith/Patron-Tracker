@@ -101,17 +101,17 @@ Partial Class SplashScreen
         'lblRoleName
         '
         Me.lblRoleName.AutoSize = True
-        Me.lblRoleName.Location = New System.Drawing.Point(342, 443)
+        Me.lblRoleName.Location = New System.Drawing.Point(395, 444)
         Me.lblRoleName.Name = "lblRoleName"
-        Me.lblRoleName.Size = New System.Drawing.Size(56, 18)
+        Me.lblRoleName.Size = New System.Drawing.Size(168, 18)
         Me.lblRoleName.TabIndex = 11
-        Me.lblRoleName.Text = "Label1"
+        Me.lblRoleName.Text = "                                        "
         '
         'ProgressBar1
         '
-        Me.ProgressBar1.Location = New System.Drawing.Point(352, 396)
+        Me.ProgressBar1.Location = New System.Drawing.Point(388, 396)
         Me.ProgressBar1.Name = "ProgressBar1"
-        Me.ProgressBar1.Size = New System.Drawing.Size(387, 33)
+        Me.ProgressBar1.Size = New System.Drawing.Size(309, 33)
         Me.ProgressBar1.TabIndex = 12
         '
         'SplashScreen
