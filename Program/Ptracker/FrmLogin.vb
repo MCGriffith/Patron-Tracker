@@ -141,9 +141,10 @@ Public Class FrmLogin
         Using conn As New OleDbConnection(connectionString)
             Try
                 conn.Open()
-                Dim command As New OleDbCommand("INSERT INTO tblAttendance (LogDate, FirstVisit, PrintFOR, Indexing, OnlineRsrch, SubWebsite, AttendClass, Other, LoginID, People) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", conn)
+                Dim command As New OleDbCommand("INSERT INTO tblAttendance (LogDate, LogTime, FirstVisit, PrintFOR, Indexing, OnlineRsrch, SubWebsite, AttendClass, Other, LoginID, People) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", conn)
 
                 command.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.Date
+                command.Parameters.Add("?", OleDbType.Date).Value = DateTime.Now.ToString("HH:mm:ss") ' 24-hour time
                 command.Parameters.Add("?", OleDbType.Boolean).Value = cbxYes.Checked
                 command.Parameters.Add("?", OleDbType.Boolean).Value = cbxPrint.Checked
                 command.Parameters.Add("?", OleDbType.Boolean).Value = cbxIndexing.Checked
@@ -152,7 +153,7 @@ Public Class FrmLogin
                 command.Parameters.Add("?", OleDbType.Boolean).Value = cbxClass.Checked
                 command.Parameters.Add("?", OleDbType.Boolean).Value = cbxOther.Checked
                 command.Parameters.Add("?", OleDbType.Integer).Value = LoginID
-                command.Parameters.Add("?", OleDbType.Boolean).Value = True  ' Always set People to True
+                command.Parameters.Add("?", OleDbType.Boolean).Value = True ' Always set People to True
 
                 command.ExecuteNonQuery()
             Catch ex As Exception

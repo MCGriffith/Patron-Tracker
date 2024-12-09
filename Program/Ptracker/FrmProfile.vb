@@ -561,9 +561,10 @@ Public Class FrmProfile
     End Sub
 
     Private Sub InsertAttendance(connection As OleDbConnection, transaction As OleDbTransaction)
-        Dim cmd As New OleDbCommand("INSERT INTO tblAttendance ([LogDate], [FirstVisit], [PrintFOR], [Indexing], [OnlineRsrch], [SubWebsite], [AttendClass], [Other], [LoginID], [People]) VALUES (@LogDate, @FirstVisit, @PrintFOR, @Indexing, @OnlineRsrch, @SubWebsite, @AttendClass, @Other, @LoginID, @People)", connection, transaction)
+        Dim cmd As New OleDbCommand("INSERT INTO tblAttendance ([LogDate], [LogTime], [FirstVisit], [PrintFOR], [Indexing], [OnlineRsrch], [SubWebsite], [AttendClass], [Other], [LoginID], [People]) VALUES (@LogDate, @LogTime, @FirstVisit, @PrintFOR, @Indexing, @OnlineRsrch, @SubWebsite, @AttendClass, @Other, @LoginID, @People)", connection, transaction)
 
         cmd.Parameters.AddWithValue("@LogDate", DateTime.Now.Date)
+        cmd.Parameters.AddWithValue("@LogTime", DateTime.Now.ToString("HH:mm:ss"))
         cmd.Parameters.AddWithValue("@FirstVisit", cbxPYes.Checked)
         cmd.Parameters.AddWithValue("@PrintFOR", cbxPPrint.Checked)
         cmd.Parameters.AddWithValue("@Indexing", cbxPIndexing.Checked)
@@ -572,7 +573,7 @@ Public Class FrmProfile
         cmd.Parameters.AddWithValue("@AttendClass", cbxPClass.Checked)
         cmd.Parameters.AddWithValue("@Other", cbxPOther.Checked)
         cmd.Parameters.AddWithValue("@LoginID", LoginID)
-        cmd.Parameters.AddWithValue("@People", True)  ' Always set People to True
+        cmd.Parameters.AddWithValue("@People", True) ' Always set People to True
 
         cmd.ExecuteNonQuery()
     End Sub

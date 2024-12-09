@@ -99,12 +99,12 @@ Public Class FrmAttendanceFix
             conn.Open()
             Using trans As OleDbTransaction = conn.BeginTransaction()
                 Try
-                    ' Save to tblAttendance
-                    Dim cmdAttendance As New OleDbCommand("INSERT INTO tblAttendance (LogDate, FirstVisit, PrintFOR, " &
-                    "Indexing, OnlineRsrch, SubWebsite, AttendClass, Other, LoginID) VALUES " &
-                    "(?, ?, ?, ?, ?, ?, ?, ?, ?)", conn, trans)
+                    Dim cmdAttendance As New OleDbCommand("INSERT INTO tblAttendance (LogDate, LogTime, FirstVisit, PrintFOR, " &
+                "Indexing, OnlineRsrch, SubWebsite, AttendClass, Other, LoginID, People) VALUES " &
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", conn, trans)
 
                     cmdAttendance.Parameters.Add("LogDate", OleDbType.Date).Value = dtpADate.Value.Date
+                    cmdAttendance.Parameters.Add("LogTime", OleDbType.Date).Value = DateTime.Now.ToString("HH:mm:ss")
                     cmdAttendance.Parameters.Add("FirstVisit", OleDbType.Boolean).Value = cbxAYes.Checked
                     cmdAttendance.Parameters.Add("PrintFOR", OleDbType.Boolean).Value = cbxAPrint.Checked
                     cmdAttendance.Parameters.Add("Indexing", OleDbType.Boolean).Value = cbxAIndexing.Checked
@@ -113,8 +113,9 @@ Public Class FrmAttendanceFix
                     cmdAttendance.Parameters.Add("AttendClass", OleDbType.Boolean).Value = cbxAClass.Checked
                     cmdAttendance.Parameters.Add("Other", OleDbType.Boolean).Value = cbxAOther.Checked
                     cmdAttendance.Parameters.Add("LoginID", OleDbType.Integer).Value = LoginID
-                    cmdAttendance.ExecuteNonQuery()
+                    cmdAttendance.Parameters.Add("People", OleDbType.Boolean).Value = True ' Always set People to True
 
+                    cmdAttendance.ExecuteNonQuery()
                     trans.Commit()
                     MessageBox.Show("Data saved successfully!")
 

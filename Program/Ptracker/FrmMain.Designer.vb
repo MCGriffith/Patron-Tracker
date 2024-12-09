@@ -33,6 +33,7 @@ Partial Class FrmMain
         Me.mnuView = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuHelp = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuHelpAbout = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuHelpDoc = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPatron = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPatronLoginUpdate = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPatronPatron = New System.Windows.Forms.ToolStripMenuItem()
@@ -58,7 +59,7 @@ Partial Class FrmMain
         Me.mnuAdminSettings = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuAdminPatronReport = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.mnuHelpDoc = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuAttendanceAnalytics = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -126,6 +127,12 @@ Partial Class FrmMain
         Me.mnuHelpAbout.Name = "mnuHelpAbout"
         Me.mnuHelpAbout.Size = New System.Drawing.Size(181, 22)
         Me.mnuHelpAbout.Text = "About"
+        '
+        'mnuHelpDoc
+        '
+        Me.mnuHelpDoc.Name = "mnuHelpDoc"
+        Me.mnuHelpDoc.Size = New System.Drawing.Size(181, 22)
+        Me.mnuHelpDoc.Text = "Documentation"
         '
         'mnuPatron
         '
@@ -224,7 +231,7 @@ Partial Class FrmMain
         '
         'mnuAdmin
         '
-        Me.mnuAdmin.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdminAddEvents, Me.mnuAdminLoginUpdate, Me.mnuAdminPatron, Me.mnuAdminReports, Me.mnuAdminAbout, Me.mnuAdminAttendFix, Me.mnuAdminSettings, Me.mnuAdminPatronReport})
+        Me.mnuAdmin.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdminAddEvents, Me.mnuAdminLoginUpdate, Me.mnuAdminPatron, Me.mnuAdminReports, Me.mnuAdminAbout, Me.mnuAdminAttendFix, Me.mnuAdminSettings, Me.mnuAdminPatronReport, Me.mnuAttendanceAnalytics})
         Me.mnuAdmin.Name = "mnuAdmin"
         Me.mnuAdmin.Size = New System.Drawing.Size(65, 22)
         Me.mnuAdmin.Text = "Admin"
@@ -233,56 +240,56 @@ Partial Class FrmMain
         '
         Me.mnuAdminAddEvents.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.mnuAdminAddEvents.Name = "mnuAdminAddEvents"
-        Me.mnuAdminAddEvents.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminAddEvents.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminAddEvents.Text = "A/C/D Events"
         '
         'mnuAdminLoginUpdate
         '
         Me.mnuAdminLoginUpdate.Name = "mnuAdminLoginUpdate"
-        Me.mnuAdminLoginUpdate.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminLoginUpdate.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminLoginUpdate.Text = "Update Login"
         '
         'mnuAdminPatron
         '
         Me.mnuAdminPatron.Name = "mnuAdminPatron"
-        Me.mnuAdminPatron.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminPatron.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminPatron.Text = "Update Profile"
         '
         'mnuAdminReports
         '
         Me.mnuAdminReports.Name = "mnuAdminReports"
-        Me.mnuAdminReports.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminReports.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminReports.Text = "Reports"
         '
         'mnuAdminAbout
         '
         Me.mnuAdminAbout.Name = "mnuAdminAbout"
-        Me.mnuAdminAbout.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminAbout.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminAbout.Text = "Fix About"
         '
         'mnuAdminAttendFix
         '
         Me.mnuAdminAttendFix.Name = "mnuAdminAttendFix"
-        Me.mnuAdminAttendFix.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminAttendFix.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminAttendFix.Text = "Fix Attendance"
         '
         'mnuAdminSettings
         '
         Me.mnuAdminSettings.Name = "mnuAdminSettings"
-        Me.mnuAdminSettings.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminSettings.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminSettings.Text = "Settings"
         '
         'mnuAdminPatronReport
         '
         Me.mnuAdminPatronReport.Name = "mnuAdminPatronReport"
-        Me.mnuAdminPatronReport.Size = New System.Drawing.Size(179, 22)
+        Me.mnuAdminPatronReport.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminPatronReport.Text = "Patron Report"
         '
-        'mnuHelpDoc
+        'mnuAttendanceAnalytics
         '
-        Me.mnuHelpDoc.Name = "mnuHelpDoc"
-        Me.mnuHelpDoc.Size = New System.Drawing.Size(181, 22)
-        Me.mnuHelpDoc.Text = "Documentation"
+        Me.mnuAttendanceAnalytics.Name = "mnuAttendanceAnalytics"
+        Me.mnuAttendanceAnalytics.Size = New System.Drawing.Size(220, 22)
+        Me.mnuAttendanceAnalytics.Text = "Attendance Analytics"
         '
         'FrmMain
         '
@@ -340,4 +347,5 @@ Partial Class FrmMain
     Friend WithEvents mnuAdminPatronReport As ToolStripMenuItem
     Friend WithEvents mnuFileSwitchUser As ToolStripMenuItem
     Friend WithEvents mnuHelpDoc As ToolStripMenuItem
+    Friend WithEvents mnuAttendanceAnalytics As ToolStripMenuItem
 End Class

@@ -187,6 +187,10 @@ Public Class FrmMain
     Private Sub mnuAdminPatronReport_Click(sender As Object, e As EventArgs) Handles mnuAdminPatronReport.Click
         OpenSingleInstanceForm(Of FrmPatronReport)()
     End Sub
+    Private Sub mnuAttendanceAnalytics_Click(sender As Object, e As EventArgs) Handles mnuAttendanceAnalytics.Click
+        OpenSingleInstanceForm(Of FrmAttendanceAnalytics)()
+    End Sub
+
 
     Private Sub mnuFileClose_Click(sender As Object, e As EventArgs) Handles mnuFileClose.Click
         ' Create a list to hold forms that need to be closed
