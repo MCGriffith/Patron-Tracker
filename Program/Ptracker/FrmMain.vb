@@ -161,6 +161,7 @@ Public Class FrmMain
         OpenSingleInstanceForm(Of FrmAttendanceAnalytics)()
     End Sub
 
+
     'Admin Menus
     Private Sub mnuAdminAddEvents_Click(sender As Object, e As EventArgs) Handles mnuAdminAddEvents.Click
         OpenSingleInstanceForm(Of FrmAddEvent)()
