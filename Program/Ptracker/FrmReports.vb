@@ -7,12 +7,13 @@ Public Class FrmReports
     Dim connectionString As String = DatabaseConfig.ConnectionString
     Private tempFilePath As String = Path.Combine(Path.GetTempPath(), "TempReport")
 
-    Public Sub New()
-        InitializeComponent()
-    End Sub
+    '   Public Sub New()
+    '       InitializeComponent()
+    '   End Sub
 
     Private Sub FrmReports_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        'Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
+        Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
+
         ' Disable controls
         btnGenerate.Enabled = False
         btnPrint.Enabled = False
@@ -96,7 +97,6 @@ Public Class FrmReports
     End Sub
 
     Private Sub PopulateDateComboBox()
-
         Using conn As New OleDbConnection(connectionString)
             conn.Open()
             Dim cmd As New OleDbCommand("SELECT DateName FROM tblDates", conn)
@@ -547,6 +547,15 @@ Public Class FrmReports
             MessageBox.Show("An error occurred: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+
+    Private Function GetReportContent() As String
+        ' Convert your report data to string/HTML
+        ' Example:
+        Dim content As String = "<html><body>"
+        ' Add your report data here
+        content &= "</body></html>"
+        Return content
+    End Function
 
     Private Sub btnPrint_Click(sender As Object, e As EventArgs) Handles btnPrint.Click
         WebBrowser1.ShowPrintDialog()

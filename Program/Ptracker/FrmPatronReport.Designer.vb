@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class FrmPatronReport
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class FrmPatronReport
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.btnSelectName = New System.Windows.Forms.Button()
         Me.btnClose = New System.Windows.Forms.Button()
@@ -39,6 +39,7 @@ Partial Class FrmPatronReport
         '
         'btnSelectName
         '
+        Me.btnSelectName.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnSelectName.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnSelectName.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnSelectName.Location = New System.Drawing.Point(40, 76)
@@ -47,10 +48,11 @@ Partial Class FrmPatronReport
         Me.btnSelectName.Size = New System.Drawing.Size(221, 61)
         Me.btnSelectName.TabIndex = 0
         Me.btnSelectName.Text = "Select Name"
-        Me.btnSelectName.UseVisualStyleBackColor = True
+        Me.btnSelectName.UseVisualStyleBackColor = False
         '
         'btnClose
         '
+        Me.btnClose.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnClose.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnClose.Location = New System.Drawing.Point(40, 567)
@@ -59,10 +61,11 @@ Partial Class FrmPatronReport
         Me.btnClose.Size = New System.Drawing.Size(221, 61)
         Me.btnClose.TabIndex = 11
         Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = True
+        Me.btnClose.UseVisualStyleBackColor = False
         '
         'btnGenerateReport
         '
+        Me.btnGenerateReport.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnGenerateReport.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnGenerateReport.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnGenerateReport.Location = New System.Drawing.Point(40, 175)
@@ -71,7 +74,7 @@ Partial Class FrmPatronReport
         Me.btnGenerateReport.Size = New System.Drawing.Size(221, 61)
         Me.btnGenerateReport.TabIndex = 3
         Me.btnGenerateReport.Text = "Generate Report"
-        Me.btnGenerateReport.UseVisualStyleBackColor = True
+        Me.btnGenerateReport.UseVisualStyleBackColor = False
         '
         'lblName
         '
@@ -118,27 +121,29 @@ Partial Class FrmPatronReport
         '
         'btnPrint
         '
+        Me.btnPrint.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnPrint.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnPrint.Location = New System.Drawing.Point(40, 284)
+        Me.btnPrint.Location = New System.Drawing.Point(40, 278)
         Me.btnPrint.Margin = New System.Windows.Forms.Padding(4)
         Me.btnPrint.Name = "btnPrint"
         Me.btnPrint.Size = New System.Drawing.Size(221, 61)
         Me.btnPrint.TabIndex = 9
         Me.btnPrint.Text = "Print"
-        Me.btnPrint.UseVisualStyleBackColor = True
+        Me.btnPrint.UseVisualStyleBackColor = False
         '
         'btnSave
         '
+        Me.btnSave.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnSave.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSave.Location = New System.Drawing.Point(40, 378)
+        Me.btnSave.Location = New System.Drawing.Point(40, 382)
         Me.btnSave.Margin = New System.Windows.Forms.Padding(4)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(221, 61)
         Me.btnSave.TabIndex = 10
         Me.btnSave.Text = "Save"
-        Me.btnSave.UseVisualStyleBackColor = True
+        Me.btnSave.UseVisualStyleBackColor = False
         '
         'lblRole
         '

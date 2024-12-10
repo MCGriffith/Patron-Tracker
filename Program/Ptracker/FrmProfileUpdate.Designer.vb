@@ -54,23 +54,25 @@ Partial Class FrmProfileUpdate
         '
         'btnUSave
         '
+        Me.btnUSave.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnUSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnUSave.Location = New System.Drawing.Point(381, 400)
         Me.btnUSave.Name = "btnUSave"
         Me.btnUSave.Size = New System.Drawing.Size(261, 56)
         Me.btnUSave.TabIndex = 15
         Me.btnUSave.Text = "Save"
-        Me.btnUSave.UseVisualStyleBackColor = True
+        Me.btnUSave.UseVisualStyleBackColor = False
         '
         'btnUCancel
         '
+        Me.btnUCancel.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnUCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnUCancel.Location = New System.Drawing.Point(57, 400)
         Me.btnUCancel.Name = "btnUCancel"
         Me.btnUCancel.Size = New System.Drawing.Size(261, 56)
         Me.btnUCancel.TabIndex = 14
         Me.btnUCancel.Text = "Close"
-        Me.btnUCancel.UseVisualStyleBackColor = True
+        Me.btnUCancel.UseVisualStyleBackColor = False
         '
         'cboUType
         '

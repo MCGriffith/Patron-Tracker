@@ -41,6 +41,7 @@ Partial Public Class FrmLoginUpdate
         '
         'btnSSave
         '
+        Me.btnSSave.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnSSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnSSave.Location = New System.Drawing.Point(419, 279)
         Me.btnSSave.Margin = New System.Windows.Forms.Padding(4)
@@ -48,10 +49,11 @@ Partial Public Class FrmLoginUpdate
         Me.btnSSave.Size = New System.Drawing.Size(191, 47)
         Me.btnSSave.TabIndex = 7
         Me.btnSSave.Text = "Save"
-        Me.btnSSave.UseVisualStyleBackColor = True
+        Me.btnSSave.UseVisualStyleBackColor = False
         '
         'btnSClose
         '
+        Me.btnSClose.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnSClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnSClose.Location = New System.Drawing.Point(168, 279)
         Me.btnSClose.Margin = New System.Windows.Forms.Padding(4)
@@ -59,7 +61,7 @@ Partial Public Class FrmLoginUpdate
         Me.btnSClose.Size = New System.Drawing.Size(191, 47)
         Me.btnSClose.TabIndex = 6
         Me.btnSClose.Text = "Close"
-        Me.btnSClose.UseVisualStyleBackColor = True
+        Me.btnSClose.UseVisualStyleBackColor = False
         '
         'txtSPIN
         '

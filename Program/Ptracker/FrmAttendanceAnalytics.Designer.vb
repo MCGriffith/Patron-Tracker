@@ -22,9 +22,9 @@ Partial Class FrmAttendanceAnalytics
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.cboDateRange = New System.Windows.Forms.ComboBox()
         Me.dtpStartDate = New System.Windows.Forms.DateTimePicker()
         Me.dtpEndDate = New System.Windows.Forms.DateTimePicker()
@@ -81,6 +81,7 @@ Partial Class FrmAttendanceAnalytics
         '
         'grpFilters
         '
+        Me.grpFilters.BackColor = System.Drawing.SystemColors.Control
         Me.grpFilters.Controls.Add(Me.cbxOther)
         Me.grpFilters.Controls.Add(Me.cbxAttendClass)
         Me.grpFilters.Controls.Add(Me.cbxSubWebsite)
@@ -190,46 +191,50 @@ Partial Class FrmAttendanceAnalytics
         '
         'btnPrint
         '
+        Me.btnPrint.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnPrint.Location = New System.Drawing.Point(700, 489)
         Me.btnPrint.Name = "btnPrint"
         Me.btnPrint.Size = New System.Drawing.Size(108, 40)
         Me.btnPrint.TabIndex = 6
         Me.btnPrint.Text = "Print"
-        Me.btnPrint.UseVisualStyleBackColor = True
+        Me.btnPrint.UseVisualStyleBackColor = False
         '
         'btnSave
         '
+        Me.btnSave.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnSave.Location = New System.Drawing.Point(879, 489)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(108, 40)
         Me.btnSave.TabIndex = 7
         Me.btnSave.Text = "Save"
-        Me.btnSave.UseVisualStyleBackColor = True
+        Me.btnSave.UseVisualStyleBackColor = False
         '
         'btnClose
         '
+        Me.btnClose.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnClose.Location = New System.Drawing.Point(1038, 489)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(108, 40)
         Me.btnClose.TabIndex = 8
         Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = True
+        Me.btnClose.UseVisualStyleBackColor = False
         '
         'chartAttendance
         '
-        ChartArea1.Name = "ChartArea1"
-        Me.chartAttendance.ChartAreas.Add(ChartArea1)
-        Legend1.Name = "Legend1"
-        Me.chartAttendance.Legends.Add(Legend1)
+        Me.chartAttendance.BorderlineColor = System.Drawing.Color.Black
+        ChartArea2.Name = "ChartArea1"
+        Me.chartAttendance.ChartAreas.Add(ChartArea2)
+        Legend2.Name = "Legend1"
+        Me.chartAttendance.Legends.Add(Legend2)
         Me.chartAttendance.Location = New System.Drawing.Point(444, 40)
         Me.chartAttendance.Name = "chartAttendance"
-        Series1.ChartArea = "ChartArea1"
-        Series1.Legend = "Legend1"
-        Series1.Name = "Series1"
-        Me.chartAttendance.Series.Add(Series1)
+        Series2.ChartArea = "ChartArea1"
+        Series2.Legend = "Legend1"
+        Series2.Name = "Series1"
+        Me.chartAttendance.Series.Add(Series2)
         Me.chartAttendance.Size = New System.Drawing.Size(760, 415)
         Me.chartAttendance.TabIndex = 9
         Me.chartAttendance.Text = "Chart1"

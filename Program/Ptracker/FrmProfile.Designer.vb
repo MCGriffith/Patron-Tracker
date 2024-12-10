@@ -478,13 +478,14 @@ Partial Class FrmProfile
         '
         'btnPSave
         '
+        Me.btnPSave.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnPSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnPSave.Location = New System.Drawing.Point(381, 789)
         Me.btnPSave.Name = "btnPSave"
         Me.btnPSave.Size = New System.Drawing.Size(214, 39)
         Me.btnPSave.TabIndex = 32
         Me.btnPSave.Text = "Save Profile"
-        Me.btnPSave.UseVisualStyleBackColor = True
+        Me.btnPSave.UseVisualStyleBackColor = False
         '
         'cboPStake
         '
@@ -626,13 +627,14 @@ Partial Class FrmProfile
         '
         'btnPClose
         '
+        Me.btnPClose.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnPClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnPClose.Location = New System.Drawing.Point(97, 789)
         Me.btnPClose.Name = "btnPClose"
         Me.btnPClose.Size = New System.Drawing.Size(214, 39)
         Me.btnPClose.TabIndex = 31
         Me.btnPClose.Text = "Close"
-        Me.btnPClose.UseVisualStyleBackColor = True
+        Me.btnPClose.UseVisualStyleBackColor = False
         '
         'FrmProfile
         '

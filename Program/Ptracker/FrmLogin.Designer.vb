@@ -83,23 +83,25 @@ Partial Class FrmLogin
         '
         'btnCreate
         '
+        Me.btnCreate.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnCreate.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnCreate.Location = New System.Drawing.Point(72, 364)
         Me.btnCreate.Name = "btnCreate"
         Me.btnCreate.Size = New System.Drawing.Size(185, 31)
         Me.btnCreate.TabIndex = 12
         Me.btnCreate.Text = "Create Profile"
-        Me.btnCreate.UseVisualStyleBackColor = True
+        Me.btnCreate.UseVisualStyleBackColor = False
         '
         'btnLogon
         '
+        Me.btnLogon.BackColor = System.Drawing.SystemColors.ControlLightLight
         Me.btnLogon.FlatStyle = System.Windows.Forms.FlatStyle.Popup
         Me.btnLogon.Location = New System.Drawing.Point(389, 364)
         Me.btnLogon.Name = "btnLogon"
         Me.btnLogon.Size = New System.Drawing.Size(185, 31)
         Me.btnLogon.TabIndex = 13
         Me.btnLogon.Text = "Login"
-        Me.btnLogon.UseVisualStyleBackColor = True
+        Me.btnLogon.UseVisualStyleBackColor = False
         '
         'cbxPrint
         '
