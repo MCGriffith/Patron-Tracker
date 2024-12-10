@@ -29,7 +29,7 @@ Partial Public Class FrmLoginUpdate
         lblSMatch.BackColor = Color.Red
         lblSMatch.Text = "No Match"
         lblSMatch.ForeColor = Color.White
-        btnSCancel.Enabled = True
+        btnSClose.Enabled = True
 
         ' Disable other controls
         lblSPassword.Enabled = False
@@ -201,7 +201,7 @@ Partial Public Class FrmLoginUpdate
         End If
     End Sub
 
-    Private Sub btnSCancel_Click(sender As Object, e As EventArgs) Handles btnSCancel.Click
+    Private Sub btnSClose_Click(sender As Object, e As EventArgs) Handles btnSClose.Click
         Me.Close()
     End Sub
 End Class

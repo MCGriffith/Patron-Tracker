@@ -101,7 +101,6 @@ Public Class FrmPatronReport
         End Select
     End Sub
 
-
     Private Sub txtPIN_TextChanged(sender As Object, e As EventArgs) Handles txtPIN.TextChanged
         ' Only verify PIN for Patron role
         If GlobalVariables.CurrentUserRole = "Patron" Then

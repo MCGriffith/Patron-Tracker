@@ -3,7 +3,6 @@ Imports System.Data.OleDb
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports System.Drawing.Printing
 
-
 Public Class FrmAttendanceAnalytics
     Inherits Form
 
@@ -61,6 +60,7 @@ Public Class FrmAttendanceAnalytics
         End If
         Return ""
     End Function
+
 
     Private ReadOnly SeriesColors As New Dictionary(Of String, Color) From {
         {"People", Color.Blue},
@@ -269,8 +269,6 @@ Public Class FrmAttendanceAnalytics
             MessageBox.Show("Error exporting data: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
-
-
 
     Private Sub ExportToExcel(dt As DataTable, fileName As String)
         Dim excel As Object = CreateObject("Excel.Application")

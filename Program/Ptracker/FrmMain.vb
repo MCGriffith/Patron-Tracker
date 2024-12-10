@@ -157,6 +157,9 @@ Public Class FrmMain
     Private Sub mnuDirectorPatronReport_Click(sender As Object, e As EventArgs) Handles mnuDirectorPatronReport.Click
         OpenSingleInstanceForm(Of FrmPatronReport)()
     End Sub
+    Private Sub mnuDirectorAttendanceAnalytics_Click(sender As Object, e As EventArgs) Handles mnuDirectorAttendanceAnalytics.Click
+        OpenSingleInstanceForm(Of FrmAttendanceAnalytics)()
+    End Sub
 
     'Admin Menus
     Private Sub mnuAdminAddEvents_Click(sender As Object, e As EventArgs) Handles mnuAdminAddEvents.Click
@@ -187,7 +190,7 @@ Public Class FrmMain
     Private Sub mnuAdminPatronReport_Click(sender As Object, e As EventArgs) Handles mnuAdminPatronReport.Click
         OpenSingleInstanceForm(Of FrmPatronReport)()
     End Sub
-    Private Sub mnuAttendanceAnalytics_Click(sender As Object, e As EventArgs) Handles mnuAttendanceAnalytics.Click
+    Private Sub mnuAdminAttendanceAnalytics_Click(sender As Object, e As EventArgs) Handles mnuAdminAttendanceAnalytics.Click
         OpenSingleInstanceForm(Of FrmAttendanceAnalytics)()
     End Sub
 

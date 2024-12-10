@@ -168,11 +168,10 @@ Public Class FrmAddEvent
         PopulateEventNames()
     End Sub
 
-    Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
-        Me.Close()
-    End Sub
-
     Private Sub dtpRegStart_ValueChanged(sender As Object, e As EventArgs) Handles dtpRegStart.ValueChanged
 
+    End Sub
+    Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
+        Me.Close()
     End Sub
 End Class

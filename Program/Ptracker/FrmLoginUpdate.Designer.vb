@@ -24,7 +24,7 @@ Partial Public Class FrmLoginUpdate
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(FrmLoginUpdate))
         Me.btnSSave = New System.Windows.Forms.Button()
-        Me.btnSCancel = New System.Windows.Forms.Button()
+        Me.btnSClose = New System.Windows.Forms.Button()
         Me.txtSPIN = New System.Windows.Forms.TextBox()
         Me.cboName = New System.Windows.Forms.ComboBox()
         Me.lblSMatch = New System.Windows.Forms.Label()
@@ -50,16 +50,16 @@ Partial Public Class FrmLoginUpdate
         Me.btnSSave.Text = "Save"
         Me.btnSSave.UseVisualStyleBackColor = True
         '
-        'btnSCancel
+        'btnSClose
         '
-        Me.btnSCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup
-        Me.btnSCancel.Location = New System.Drawing.Point(168, 279)
-        Me.btnSCancel.Margin = New System.Windows.Forms.Padding(4)
-        Me.btnSCancel.Name = "btnSCancel"
-        Me.btnSCancel.Size = New System.Drawing.Size(191, 47)
-        Me.btnSCancel.TabIndex = 6
-        Me.btnSCancel.Text = "Close"
-        Me.btnSCancel.UseVisualStyleBackColor = True
+        Me.btnSClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnSClose.Location = New System.Drawing.Point(168, 279)
+        Me.btnSClose.Margin = New System.Windows.Forms.Padding(4)
+        Me.btnSClose.Name = "btnSClose"
+        Me.btnSClose.Size = New System.Drawing.Size(191, 47)
+        Me.btnSClose.TabIndex = 6
+        Me.btnSClose.Text = "Close"
+        Me.btnSClose.UseVisualStyleBackColor = True
         '
         'txtSPIN
         '
@@ -162,9 +162,9 @@ Partial Public Class FrmLoginUpdate
         Me.lblRole.AutoSize = True
         Me.lblRole.Location = New System.Drawing.Point(172, 20)
         Me.lblRole.Name = "lblRole"
-        Me.lblRole.Size = New System.Drawing.Size(71, 18)
+        Me.lblRole.Size = New System.Drawing.Size(68, 18)
         Me.lblRole.TabIndex = 37
-        Me.lblRole.Text = "               l"
+        Me.lblRole.Text = "               "
         '
         'lblRoleName
         '
@@ -188,7 +188,7 @@ Partial Public Class FrmLoginUpdate
         Me.Controls.Add(Me.lblSConfirm)
         Me.Controls.Add(Me.lblSPassword)
         Me.Controls.Add(Me.btnSSave)
-        Me.Controls.Add(Me.btnSCancel)
+        Me.Controls.Add(Me.btnSClose)
         Me.Controls.Add(Me.txtSPIN)
         Me.Controls.Add(Me.cboName)
         Me.Controls.Add(Me.lblSMatch)
@@ -206,7 +206,7 @@ Partial Public Class FrmLoginUpdate
     End Sub
 
     Friend WithEvents btnSSave As Button
-    Friend WithEvents btnSCancel As Button
+    Friend WithEvents btnSClose As Button
     Friend WithEvents txtSPIN As TextBox
     Friend WithEvents cboName As ComboBox
     Friend WithEvents lblSMatch As Label

@@ -12,7 +12,7 @@ Public Class FrmReports
     End Sub
 
     Private Sub FrmReports_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
+        'Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
         ' Disable controls
         btnGenerate.Enabled = False
         btnPrint.Enabled = False
@@ -193,12 +193,6 @@ Public Class FrmReports
 
         btnGenerate.Enabled = True
     End Sub
-
-    '  Private Sub SetDefaultDateRange()
-    '  Dim currentDate As Date = DateTime.Today
-    '      dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month, 1)
-    '      dtpEndDate.Value = DateSerial(currentDate.Year, currentDate.Month + 1, 0)
-    '  End Sub
 
     Private Sub btnGenerate_Click(sender As Object, e As EventArgs) Handles btnGenerate.Click
         If cboReport.SelectedItem Is Nothing Then
@@ -457,8 +451,6 @@ Public Class FrmReports
             MessageBox.Show("An error occurred: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
-
-
 
     Private Sub GenerateMailingLabelsReport()
         Dim html As New StringBuilder()

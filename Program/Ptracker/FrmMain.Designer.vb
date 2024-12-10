@@ -49,6 +49,7 @@ Partial Class FrmMain
         Me.mnuDirectorReport = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuDirectorAttendFix = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuDirectorPatronReport = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuDirectorAttendanceAnalytics = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuAdmin = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuAdminAddEvents = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuAdminLoginUpdate = New System.Windows.Forms.ToolStripMenuItem()
@@ -58,8 +59,8 @@ Partial Class FrmMain
         Me.mnuAdminAttendFix = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuAdminSettings = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuAdminPatronReport = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuAdminAttendanceAnalytics = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.mnuAttendanceAnalytics = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -186,7 +187,7 @@ Partial Class FrmMain
         '
         'mnuDirector
         '
-        Me.mnuDirector.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuDirectorAddEvents, Me.mnuDirectorLoginUpdate, Me.mnuDirectorPatron, Me.mnuDirectorReport, Me.mnuDirectorAttendFix, Me.mnuDirectorPatronReport})
+        Me.mnuDirector.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuDirectorAddEvents, Me.mnuDirectorLoginUpdate, Me.mnuDirectorPatron, Me.mnuDirectorReport, Me.mnuDirectorAttendFix, Me.mnuDirectorPatronReport, Me.mnuDirectorAttendanceAnalytics})
         Me.mnuDirector.Name = "mnuDirector"
         Me.mnuDirector.Size = New System.Drawing.Size(76, 22)
         Me.mnuDirector.Text = "Director"
@@ -195,43 +196,49 @@ Partial Class FrmMain
         '
         Me.mnuDirectorAddEvents.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.mnuDirectorAddEvents.Name = "mnuDirectorAddEvents"
-        Me.mnuDirectorAddEvents.Size = New System.Drawing.Size(179, 22)
+        Me.mnuDirectorAddEvents.Size = New System.Drawing.Size(220, 22)
         Me.mnuDirectorAddEvents.Text = "A/C/D Events"
         '
         'mnuDirectorLoginUpdate
         '
         Me.mnuDirectorLoginUpdate.Name = "mnuDirectorLoginUpdate"
-        Me.mnuDirectorLoginUpdate.Size = New System.Drawing.Size(179, 22)
+        Me.mnuDirectorLoginUpdate.Size = New System.Drawing.Size(220, 22)
         Me.mnuDirectorLoginUpdate.Text = "Update Login"
         '
         'mnuDirectorPatron
         '
         Me.mnuDirectorPatron.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.mnuDirectorPatron.Name = "mnuDirectorPatron"
-        Me.mnuDirectorPatron.Size = New System.Drawing.Size(179, 22)
+        Me.mnuDirectorPatron.Size = New System.Drawing.Size(220, 22)
         Me.mnuDirectorPatron.Text = "Update Profile"
         '
         'mnuDirectorReport
         '
         Me.mnuDirectorReport.Name = "mnuDirectorReport"
-        Me.mnuDirectorReport.Size = New System.Drawing.Size(179, 22)
+        Me.mnuDirectorReport.Size = New System.Drawing.Size(220, 22)
         Me.mnuDirectorReport.Text = "Reports"
         '
         'mnuDirectorAttendFix
         '
         Me.mnuDirectorAttendFix.Name = "mnuDirectorAttendFix"
-        Me.mnuDirectorAttendFix.Size = New System.Drawing.Size(179, 22)
+        Me.mnuDirectorAttendFix.Size = New System.Drawing.Size(220, 22)
         Me.mnuDirectorAttendFix.Text = "Fix Attendance"
         '
         'mnuDirectorPatronReport
         '
         Me.mnuDirectorPatronReport.Name = "mnuDirectorPatronReport"
-        Me.mnuDirectorPatronReport.Size = New System.Drawing.Size(179, 22)
+        Me.mnuDirectorPatronReport.Size = New System.Drawing.Size(220, 22)
         Me.mnuDirectorPatronReport.Text = "Patron Report"
+        '
+        'mnuDirectorAttendanceAnalytics
+        '
+        Me.mnuDirectorAttendanceAnalytics.Name = "mnuDirectorAttendanceAnalytics"
+        Me.mnuDirectorAttendanceAnalytics.Size = New System.Drawing.Size(220, 22)
+        Me.mnuDirectorAttendanceAnalytics.Text = "Attendance Analytics"
         '
         'mnuAdmin
         '
-        Me.mnuAdmin.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdminAddEvents, Me.mnuAdminLoginUpdate, Me.mnuAdminPatron, Me.mnuAdminReports, Me.mnuAdminAbout, Me.mnuAdminAttendFix, Me.mnuAdminSettings, Me.mnuAdminPatronReport, Me.mnuAttendanceAnalytics})
+        Me.mnuAdmin.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuAdminAddEvents, Me.mnuAdminLoginUpdate, Me.mnuAdminPatron, Me.mnuAdminReports, Me.mnuAdminAbout, Me.mnuAdminAttendFix, Me.mnuAdminSettings, Me.mnuAdminPatronReport, Me.mnuAdminAttendanceAnalytics})
         Me.mnuAdmin.Name = "mnuAdmin"
         Me.mnuAdmin.Size = New System.Drawing.Size(65, 22)
         Me.mnuAdmin.Text = "Admin"
@@ -285,11 +292,11 @@ Partial Class FrmMain
         Me.mnuAdminPatronReport.Size = New System.Drawing.Size(220, 22)
         Me.mnuAdminPatronReport.Text = "Patron Report"
         '
-        'mnuAttendanceAnalytics
+        'mnuAdminAttendanceAnalytics
         '
-        Me.mnuAttendanceAnalytics.Name = "mnuAttendanceAnalytics"
-        Me.mnuAttendanceAnalytics.Size = New System.Drawing.Size(220, 22)
-        Me.mnuAttendanceAnalytics.Text = "Attendance Analytics"
+        Me.mnuAdminAttendanceAnalytics.Name = "mnuAdminAttendanceAnalytics"
+        Me.mnuAdminAttendanceAnalytics.Size = New System.Drawing.Size(220, 22)
+        Me.mnuAdminAttendanceAnalytics.Text = "Attendance Analytics"
         '
         'FrmMain
         '
@@ -347,5 +354,6 @@ Partial Class FrmMain
     Friend WithEvents mnuAdminPatronReport As ToolStripMenuItem
     Friend WithEvents mnuFileSwitchUser As ToolStripMenuItem
     Friend WithEvents mnuHelpDoc As ToolStripMenuItem
-    Friend WithEvents mnuAttendanceAnalytics As ToolStripMenuItem
+    Friend WithEvents mnuAdminAttendanceAnalytics As ToolStripMenuItem
+    Friend WithEvents mnuDirectorAttendanceAnalytics As ToolStripMenuItem
 End Class

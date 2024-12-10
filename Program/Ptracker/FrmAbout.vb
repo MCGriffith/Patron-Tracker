@@ -3,8 +3,6 @@
 Public Class FrmAbout
     Dim connectionString As String = DatabaseConfig.ConnectionString
 
-    'Testing the Git commit process.
-
     Private Sub FrmAbout_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         LoadAboutInfo()
     End Sub
