@@ -45,8 +45,7 @@ Partial Class FrmAttendanceFix
         '
         'btnASave
         '
-        Me.btnASave.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnASave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnASave.BackColor = System.Drawing.SystemColors.Control
         Me.btnASave.Location = New System.Drawing.Point(403, 310)
         Me.btnASave.Name = "btnASave"
         Me.btnASave.Size = New System.Drawing.Size(261, 56)
@@ -56,8 +55,7 @@ Partial Class FrmAttendanceFix
         '
         'btnACancel
         '
-        Me.btnACancel.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnACancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnACancel.BackColor = System.Drawing.SystemColors.Control
         Me.btnACancel.Location = New System.Drawing.Point(79, 310)
         Me.btnACancel.Name = "btnACancel"
         Me.btnACancel.Size = New System.Drawing.Size(261, 56)

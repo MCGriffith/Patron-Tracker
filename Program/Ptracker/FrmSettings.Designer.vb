@@ -59,21 +59,23 @@ Partial Class FrmSettings
         '
         'btnBrowse
         '
+        Me.btnBrowse.BackColor = System.Drawing.SystemColors.Control
         Me.btnBrowse.Location = New System.Drawing.Point(20, 67)
         Me.btnBrowse.Name = "btnBrowse"
         Me.btnBrowse.Size = New System.Drawing.Size(192, 44)
         Me.btnBrowse.TabIndex = 1
         Me.btnBrowse.Text = "Browse. . ."
-        Me.btnBrowse.UseVisualStyleBackColor = True
+        Me.btnBrowse.UseVisualStyleBackColor = False
         '
         'btnSave
         '
+        Me.btnSave.BackColor = System.Drawing.SystemColors.Control
         Me.btnSave.Location = New System.Drawing.Point(20, 237)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(192, 44)
         Me.btnSave.TabIndex = 8
         Me.btnSave.Text = "Save"
-        Me.btnSave.UseVisualStyleBackColor = True
+        Me.btnSave.UseVisualStyleBackColor = False
         '
         'grpBackup
         '
@@ -92,12 +94,13 @@ Partial Class FrmSettings
         '
         'btnBrowseLocation
         '
+        Me.btnBrowseLocation.BackColor = System.Drawing.SystemColors.Control
         Me.btnBrowseLocation.Location = New System.Drawing.Point(32, 82)
         Me.btnBrowseLocation.Name = "btnBrowseLocation"
         Me.btnBrowseLocation.Size = New System.Drawing.Size(192, 45)
         Me.btnBrowseLocation.TabIndex = 4
         Me.btnBrowseLocation.Text = "Backup Location"
-        Me.btnBrowseLocation.UseVisualStyleBackColor = True
+        Me.btnBrowseLocation.UseVisualStyleBackColor = False
         '
         'lblSelectedPath
         '
@@ -110,12 +113,13 @@ Partial Class FrmSettings
         '
         'btnRestore
         '
+        Me.btnRestore.BackColor = System.Drawing.SystemColors.Control
         Me.btnRestore.Location = New System.Drawing.Point(262, 151)
         Me.btnRestore.Name = "btnRestore"
         Me.btnRestore.Size = New System.Drawing.Size(192, 44)
         Me.btnRestore.TabIndex = 6
         Me.btnRestore.Text = "Restore"
-        Me.btnRestore.UseVisualStyleBackColor = True
+        Me.btnRestore.UseVisualStyleBackColor = False
         '
         'lblLastBackup
         '
@@ -128,12 +132,13 @@ Partial Class FrmSettings
         '
         'btnBackup
         '
+        Me.btnBackup.BackColor = System.Drawing.SystemColors.Control
         Me.btnBackup.Location = New System.Drawing.Point(32, 151)
         Me.btnBackup.Name = "btnBackup"
         Me.btnBackup.Size = New System.Drawing.Size(192, 44)
         Me.btnBackup.TabIndex = 5
         Me.btnBackup.Text = "Backup"
-        Me.btnBackup.UseVisualStyleBackColor = True
+        Me.btnBackup.UseVisualStyleBackColor = False
         '
         'cboBackupLocation
         '
@@ -145,21 +150,23 @@ Partial Class FrmSettings
         '
         'btnViewLogs
         '
+        Me.btnViewLogs.BackColor = System.Drawing.SystemColors.Control
         Me.btnViewLogs.Location = New System.Drawing.Point(20, 168)
         Me.btnViewLogs.Name = "btnViewLogs"
         Me.btnViewLogs.Size = New System.Drawing.Size(192, 44)
         Me.btnViewLogs.TabIndex = 7
         Me.btnViewLogs.Text = "View Log"
-        Me.btnViewLogs.UseVisualStyleBackColor = True
+        Me.btnViewLogs.UseVisualStyleBackColor = False
         '
         'btnClose
         '
+        Me.btnClose.BackColor = System.Drawing.SystemColors.Control
         Me.btnClose.Location = New System.Drawing.Point(20, 305)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(192, 44)
         Me.btnClose.TabIndex = 9
         Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = True
+        Me.btnClose.UseVisualStyleBackColor = False
         '
         'FrmSettings
         '

@@ -39,8 +39,7 @@ Partial Class FrmPatronReport
         '
         'btnSelectName
         '
-        Me.btnSelectName.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnSelectName.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnSelectName.BackColor = System.Drawing.SystemColors.Control
         Me.btnSelectName.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnSelectName.Location = New System.Drawing.Point(40, 76)
         Me.btnSelectName.Margin = New System.Windows.Forms.Padding(4)
@@ -52,8 +51,7 @@ Partial Class FrmPatronReport
         '
         'btnClose
         '
-        Me.btnClose.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnClose.BackColor = System.Drawing.SystemColors.Control
         Me.btnClose.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnClose.Location = New System.Drawing.Point(40, 567)
         Me.btnClose.Margin = New System.Windows.Forms.Padding(4)
@@ -65,8 +63,7 @@ Partial Class FrmPatronReport
         '
         'btnGenerateReport
         '
-        Me.btnGenerateReport.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnGenerateReport.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnGenerateReport.BackColor = System.Drawing.SystemColors.Control
         Me.btnGenerateReport.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnGenerateReport.Location = New System.Drawing.Point(40, 175)
         Me.btnGenerateReport.Margin = New System.Windows.Forms.Padding(4)
@@ -121,8 +118,7 @@ Partial Class FrmPatronReport
         '
         'btnPrint
         '
-        Me.btnPrint.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnPrint.BackColor = System.Drawing.SystemColors.Control
         Me.btnPrint.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnPrint.Location = New System.Drawing.Point(40, 278)
         Me.btnPrint.Margin = New System.Windows.Forms.Padding(4)
@@ -134,8 +130,7 @@ Partial Class FrmPatronReport
         '
         'btnSave
         '
-        Me.btnSave.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnSave.BackColor = System.Drawing.SystemColors.Control
         Me.btnSave.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnSave.Location = New System.Drawing.Point(40, 382)
         Me.btnSave.Margin = New System.Windows.Forms.Padding(4)

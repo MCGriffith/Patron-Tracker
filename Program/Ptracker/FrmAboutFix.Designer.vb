@@ -96,8 +96,7 @@ Partial Class FrmAboutFix
         '
         'btnCancel
         '
-        Me.btnCancel.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnCancel.BackColor = System.Drawing.SystemColors.Control
         Me.btnCancel.Location = New System.Drawing.Point(26, 306)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(195, 49)
@@ -107,8 +106,7 @@ Partial Class FrmAboutFix
         '
         'btnSave
         '
-        Me.btnSave.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnSave.BackColor = System.Drawing.SystemColors.Control
         Me.btnSave.Location = New System.Drawing.Point(245, 306)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(203, 49)

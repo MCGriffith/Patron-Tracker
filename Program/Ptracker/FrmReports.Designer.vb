@@ -53,12 +53,13 @@ Partial Class FrmReports
         '
         'btnGenerate
         '
+        Me.btnGenerate.BackColor = System.Drawing.SystemColors.Control
         Me.btnGenerate.Location = New System.Drawing.Point(47, 128)
         Me.btnGenerate.Name = "btnGenerate"
         Me.btnGenerate.Size = New System.Drawing.Size(240, 54)
         Me.btnGenerate.TabIndex = 7
         Me.btnGenerate.Text = "Generate Report"
-        Me.btnGenerate.UseVisualStyleBackColor = True
+        Me.btnGenerate.UseVisualStyleBackColor = False
         '
         'WebBrowser1
         '
@@ -78,39 +79,43 @@ Partial Class FrmReports
         '
         'btnSelect
         '
+        Me.btnSelect.BackColor = System.Drawing.SystemColors.Control
         Me.btnSelect.Location = New System.Drawing.Point(47, 46)
         Me.btnSelect.Name = "btnSelect"
         Me.btnSelect.Size = New System.Drawing.Size(240, 54)
         Me.btnSelect.TabIndex = 1
         Me.btnSelect.Text = "Select Report/Event"
-        Me.btnSelect.UseVisualStyleBackColor = True
+        Me.btnSelect.UseVisualStyleBackColor = False
         '
         'btnClose
         '
+        Me.btnClose.BackColor = System.Drawing.SystemColors.Control
         Me.btnClose.Location = New System.Drawing.Point(47, 521)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(240, 54)
         Me.btnClose.TabIndex = 10
         Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = True
+        Me.btnClose.UseVisualStyleBackColor = False
         '
         'btnSave
         '
+        Me.btnSave.BackColor = System.Drawing.SystemColors.Control
         Me.btnSave.Location = New System.Drawing.Point(47, 303)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(240, 54)
         Me.btnSave.TabIndex = 9
         Me.btnSave.Text = "Save Report"
-        Me.btnSave.UseVisualStyleBackColor = True
+        Me.btnSave.UseVisualStyleBackColor = False
         '
         'btnPrint
         '
+        Me.btnPrint.BackColor = System.Drawing.SystemColors.Control
         Me.btnPrint.Location = New System.Drawing.Point(47, 212)
         Me.btnPrint.Name = "btnPrint"
         Me.btnPrint.Size = New System.Drawing.Size(240, 54)
         Me.btnPrint.TabIndex = 8
         Me.btnPrint.Text = "Print Report"
-        Me.btnPrint.UseVisualStyleBackColor = True
+        Me.btnPrint.UseVisualStyleBackColor = False
         '
         'cboEvent
         '

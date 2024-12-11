@@ -83,8 +83,7 @@ Partial Class FrmLogin
         '
         'btnCreate
         '
-        Me.btnCreate.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnCreate.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnCreate.BackColor = System.Drawing.SystemColors.Control
         Me.btnCreate.Location = New System.Drawing.Point(72, 364)
         Me.btnCreate.Name = "btnCreate"
         Me.btnCreate.Size = New System.Drawing.Size(185, 31)
@@ -94,8 +93,7 @@ Partial Class FrmLogin
         '
         'btnLogon
         '
-        Me.btnLogon.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnLogon.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnLogon.BackColor = System.Drawing.SystemColors.Control
         Me.btnLogon.Location = New System.Drawing.Point(389, 364)
         Me.btnLogon.Name = "btnLogon"
         Me.btnLogon.Size = New System.Drawing.Size(185, 31)

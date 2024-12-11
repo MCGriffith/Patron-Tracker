@@ -111,30 +111,33 @@ Partial Class FrmAddEvent
         '
         'btnSaveEvent
         '
+        Me.btnSaveEvent.BackColor = System.Drawing.SystemColors.Control
         Me.btnSaveEvent.Location = New System.Drawing.Point(530, 236)
         Me.btnSaveEvent.Name = "btnSaveEvent"
         Me.btnSaveEvent.Size = New System.Drawing.Size(138, 37)
         Me.btnSaveEvent.TabIndex = 10
         Me.btnSaveEvent.Text = "Save Event"
-        Me.btnSaveEvent.UseVisualStyleBackColor = True
+        Me.btnSaveEvent.UseVisualStyleBackColor = False
         '
         'btnRemoveEvent
         '
+        Me.btnRemoveEvent.BackColor = System.Drawing.SystemColors.Control
         Me.btnRemoveEvent.Location = New System.Drawing.Point(375, 236)
         Me.btnRemoveEvent.Name = "btnRemoveEvent"
         Me.btnRemoveEvent.Size = New System.Drawing.Size(138, 37)
         Me.btnRemoveEvent.TabIndex = 9
         Me.btnRemoveEvent.Text = "Remove Event "
-        Me.btnRemoveEvent.UseVisualStyleBackColor = True
+        Me.btnRemoveEvent.UseVisualStyleBackColor = False
         '
         'btnClose
         '
+        Me.btnClose.BackColor = System.Drawing.SystemColors.Control
         Me.btnClose.Location = New System.Drawing.Point(196, 236)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(138, 37)
         Me.btnClose.TabIndex = 8
         Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = True
+        Me.btnClose.UseVisualStyleBackColor = False
         '
         'FrmAddEvent
         '

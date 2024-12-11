@@ -41,8 +41,7 @@ Partial Public Class FrmLoginUpdate
         '
         'btnSSave
         '
-        Me.btnSSave.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnSSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnSSave.BackColor = System.Drawing.SystemColors.Control
         Me.btnSSave.Location = New System.Drawing.Point(419, 279)
         Me.btnSSave.Margin = New System.Windows.Forms.Padding(4)
         Me.btnSSave.Name = "btnSSave"
@@ -53,8 +52,7 @@ Partial Public Class FrmLoginUpdate
         '
         'btnSClose
         '
-        Me.btnSClose.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnSClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnSClose.BackColor = System.Drawing.SystemColors.Control
         Me.btnSClose.Location = New System.Drawing.Point(168, 279)
         Me.btnSClose.Margin = New System.Windows.Forms.Padding(4)
         Me.btnSClose.Name = "btnSClose"

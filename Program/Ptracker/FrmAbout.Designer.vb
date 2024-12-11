@@ -68,13 +68,13 @@ Partial Class FrmAbout
         '
         'btnClose
         '
-        Me.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnClose.BackColor = System.Drawing.SystemColors.Control
         Me.btnClose.Location = New System.Drawing.Point(273, 207)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(164, 34)
         Me.btnClose.TabIndex = 7
         Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = True
+        Me.btnClose.UseVisualStyleBackColor = False
         '
         'lblRegName
         '

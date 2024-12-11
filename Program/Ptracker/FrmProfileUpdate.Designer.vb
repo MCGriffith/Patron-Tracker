@@ -54,8 +54,7 @@ Partial Class FrmProfileUpdate
         '
         'btnUSave
         '
-        Me.btnUSave.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnUSave.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnUSave.BackColor = System.Drawing.SystemColors.Control
         Me.btnUSave.Location = New System.Drawing.Point(381, 400)
         Me.btnUSave.Name = "btnUSave"
         Me.btnUSave.Size = New System.Drawing.Size(261, 56)
@@ -65,8 +64,7 @@ Partial Class FrmProfileUpdate
         '
         'btnUCancel
         '
-        Me.btnUCancel.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.btnUCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup
+        Me.btnUCancel.BackColor = System.Drawing.SystemColors.Control
         Me.btnUCancel.Location = New System.Drawing.Point(57, 400)
         Me.btnUCancel.Name = "btnUCancel"
         Me.btnUCancel.Size = New System.Drawing.Size(261, 56)
