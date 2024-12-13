@@ -471,20 +471,21 @@ Public Class FrmProfile
                 LoginID = InsertLogin(conn, transaction)
                 ContactID = InsertContact(conn, transaction)
                 Dim AddressID As Integer = InsertAddress(conn, transaction)
-                InsertPhone(conn, transaction, AddressID)
+                Dim PhoneID As Integer = InsertPhone(conn, transaction, AddressID)
                 InsertLDS(conn, transaction)
                 InsertAttendance(conn, transaction)
                 RegisterForEvents(conn, transaction)
+                InsertVolunteer(conn, transaction, LoginID, ContactID, AddressID, PhoneID)
 
                 transaction.Commit()
                 MessageBox.Show("Profile created successfully!")
 
-                ' Enable the Patron menu in the main form
+                ' Enable the Patron menu in the main form  
                 If TypeOf Me.MdiParent Is FrmMain Then
                     CType(Application.OpenForms("FrmMain"), FrmMain).UpdateMenuVisibility()
                 End If
 
-                ' Close the form
+                ' Close the form  
                 Me.Close()
             Catch ex As Exception
                 transaction.Rollback()
@@ -492,6 +493,7 @@ Public Class FrmProfile
             End Try
         End Using
     End Sub
+
 
     Private Function InsertLogin(connection As OleDbConnection, transaction As OleDbTransaction) As Integer
         Dim cmd As New OleDbCommand("INSERT INTO tblLogin ([Email], [Password], [Role], [PIN]) VALUES (@Email, @Password, @Role, @PIN)", connection, transaction)
@@ -538,7 +540,7 @@ Public Class FrmProfile
         Return Convert.ToInt32(cmd.ExecuteScalar())
     End Function
 
-    Private Sub InsertPhone(connection As OleDbConnection, transaction As OleDbTransaction, AddressID As Integer)
+    Private Function InsertPhone(connection As OleDbConnection, transaction As OleDbTransaction, AddressID As Integer) As Integer
         Dim cmd As New OleDbCommand("INSERT INTO tblPhone ([PhoneNumber], [PhoneType], [ContactID], [AddressID]) VALUES (@PhoneNumber, @PhoneType, @ContactID, @AddressID)", connection, transaction)
 
         cmd.Parameters.AddWithValue("@PhoneNumber", txtPPhone.Text)
@@ -547,7 +549,10 @@ Public Class FrmProfile
         cmd.Parameters.AddWithValue("@AddressID", AddressID)
 
         cmd.ExecuteNonQuery()
-    End Sub
+
+        cmd.CommandText = "SELECT @@IDENTITY"
+        Return Convert.ToInt32(cmd.ExecuteScalar())
+    End Function
     Private Sub InsertLDS(connection As OleDbConnection, transaction As OleDbTransaction)
         Dim cmd As New OleDbCommand("INSERT INTO tblLDS ([LDSID], [LDSYes], [LDSNo], [StakeName], [WardName]) VALUES (@LDSID, @LDSYes, @LDSNo, @StakeName, @WardName)", connection, transaction)
 
@@ -595,6 +600,30 @@ Public Class FrmProfile
         Next
     End Sub
 
+    Private Sub InsertVolunteer(connection As OleDbConnection, transaction As OleDbTransaction, LoginID As Integer, ContactID As Integer, AddressID As Integer, PhoneID As Integer)
+        Dim cmd As New OleDbCommand("INSERT INTO tblVolunteer ([LoginID], [ContactID], [AddressID], [PhoneID], [FullName], [FirstName], [MiddleName], [LastName], [Email], [Phone], [PhoneType], [Address], [City], [State], [Zip], [Role], [Inactive]) VALUES (@LoginID, @ContactID, @AddressID, @PhoneID, @FullName, @FirstName, @MiddleName, @LastName, @Email, @Phone, @PhoneType, @Address, @City, @State, @Zip, @Role, @Inactive)", connection, transaction)
+
+        cmd.Parameters.AddWithValue("@LoginID", LoginID)
+        cmd.Parameters.AddWithValue("@ContactID", ContactID)
+        cmd.Parameters.AddWithValue("@AddressID", AddressID)
+        cmd.Parameters.AddWithValue("@PhoneID", PhoneID)
+        cmd.Parameters.AddWithValue("@FullName", CreateFullName())
+        cmd.Parameters.AddWithValue("@FirstName", txtPFirst.Text)
+        cmd.Parameters.AddWithValue("@MiddleName", txtPMiddle.Text)
+        cmd.Parameters.AddWithValue("@LastName", txtPLast.Text)
+        cmd.Parameters.AddWithValue("@Email", txtPEmail.Text)
+        cmd.Parameters.AddWithValue("@Phone", txtPPhone.Text.Replace("(", "").Replace(")", "").Replace("-", ""))
+        cmd.Parameters.AddWithValue("@PhoneType", cboPType.Text)
+        cmd.Parameters.AddWithValue("@Address", txtPAddress.Text)
+        cmd.Parameters.AddWithValue("@City", txtPCity.Text)
+        cmd.Parameters.AddWithValue("@State", cboPState.Text)
+        cmd.Parameters.AddWithValue("@Zip", txtPZip.Text)
+        cmd.Parameters.AddWithValue("@Role", GetSelectedRole())
+        cmd.Parameters.AddWithValue("@Inactive", False)
+
+        cmd.ExecuteNonQuery()
+    End Sub
+
     Private Function CreateFullName() As String
         Dim firstName As String = txtPFirst.Text.Trim()
         Dim middleName As String = txtPMiddle.Text.Trim()
@@ -609,9 +638,5 @@ Public Class FrmProfile
 
     Private Sub btnPClose_Click(sender As Object, e As EventArgs) Handles btnPClose.Click
         Me.Close()
-    End Sub
-
-    Private Sub lblPMatch_Click(sender As Object, e As EventArgs) Handles lblPMatch.Click
-
     End Sub
 End Class
