@@ -1,4 +1,6 @@
-﻿Imports System.Data.OleDb
+﻿When registering for a class Or event, the user should be able to select the event Or class from the cboPRegister combo box, then click the cbxPYes checkbox to register.  Then the user should be able to select another event And click the checkbox to register.  What seems to be happening Is that 1 Or more events are selected And checked, And all of the events are registered.  I am providing you the current code, can we fix this issue?   
+
+Imports System.Data.OleDb
 Imports System.Text.RegularExpressions
 
 Public Class FrmProfile
