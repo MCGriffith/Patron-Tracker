@@ -67,6 +67,12 @@ Public Class FrmScheduling
             Next
 
             MessageBox.Show("Shift templates saved successfully!")
+
+            ' Clear and reload both combo boxes
+            cboShiftDay.Items.Clear()
+            cboShiftToReplace.Items.Clear()
+            LoadShifts()
+            LoadShiftsForSubstitution()
         End Using
     End Sub
 
@@ -273,10 +279,10 @@ Public Class FrmScheduling
                 Using reader As OleDbDataReader = cmd.ExecuteReader()
                     While reader.Read()
                         dgvSubstitutes.Rows.Add(
-                            reader("OriginalVolunteer"),
-                            reader("SubstituteVolunteer"),
-                            reader("ShiftInfo"),
-                            reader("SubstituteDate")
+                        reader("OriginalVolunteer"),
+                        reader("SubstituteVolunteer"),
+                        reader("ShiftInfo"),
+                        CDate(reader("SubstituteDate")).ToString("MM/dd/yyyy")
                         )
                     End While
                 End Using

@@ -52,21 +52,56 @@ Public Class FrmMain
         Dim loginForm As New FrmLogin()
         loginForm.Owner = Me
         If loginForm.ShowDialog() = DialogResult.OK Then
-            UpdateMenuVisibility()
+            UpdateMenuAccess()
         End If
     End Sub
 
-    Public Sub UpdateMenuVisibility()
-        Dim userRole As String = GlobalVariables.CurrentUserRole
+    Public Sub UpdateMenuAccess()
+        ' File and Help menus - always visible and enabled for all roles
+        mnuFile.Visible = True
+        mnuFile.Enabled = True
+        mnuHelp.Visible = True
+        mnuHelp.Enabled = True
 
-        mnuAdmin.Enabled = (userRole = "Admin")
-        mnuDirector.Enabled = (userRole = "Admin" OrElse userRole = "Director")
-        mnuStaff.Enabled = (userRole = "Admin" OrElse userRole = "Director" OrElse userRole = "Staff")
-        mnuPatron.Enabled = True
+        ' Edit and View menus - always visible but disabled
+        mnuEdit.Visible = True
+        mnuEdit.Enabled = False
+        mnuView.Visible = True
+        mnuView.Enabled = False
+
+        ' Reset all role-based menus to visible but disabled
+        mnuPatron.Visible = True
+        mnuStaff.Visible = True
+        mnuDirector.Visible = True
+        mnuAdmin.Visible = True
+        mnuPatron.Enabled = False
+        mnuStaff.Enabled = False
+        mnuDirector.Enabled = False
+        mnuAdmin.Enabled = False
+
+        ' Enable menus based on role
+        Select Case GlobalVariables.CurrentUserRole
+            Case "Admin"
+                mnuPatron.Enabled = True
+                mnuStaff.Enabled = True
+                mnuDirector.Enabled = True
+                mnuAdmin.Enabled = True
+            Case "Director"
+                mnuPatron.Enabled = True
+                mnuStaff.Enabled = True
+                mnuDirector.Enabled = True
+            Case "Staff"
+                mnuPatron.Enabled = True
+                mnuStaff.Enabled = True
+            Case "Patron"
+                mnuPatron.Enabled = True
+        End Select
+
+        MenuStrip1.Refresh()
     End Sub
 
     Public Sub HandleLogout()
-        UpdateMenuVisibility()
+        UpdateMenuAccess()
         ShowLoginForm()
     End Sub
 
@@ -102,7 +137,7 @@ Public Class FrmMain
         Dim loginForm As New FrmLogin()
         loginForm.Owner = Me
         If loginForm.ShowDialog() = DialogResult.OK Then
-            UpdateMenuVisibility()
+            UpdateMenuAccess()
         End If
     End Sub
 

@@ -505,7 +505,7 @@ Public Class FrmProfile
 
                 ' Enable the Patron menu in the main form  
                 If TypeOf Me.MdiParent Is FrmMain Then
-                    CType(Application.OpenForms("FrmMain"), FrmMain).UpdateMenuVisibility()
+                    CType(Application.OpenForms("FrmMain"), FrmMain).UpdateMenuAccess()
                 End If
 
                 ' Close the form  

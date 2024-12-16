@@ -124,7 +124,7 @@ Public Class FrmLogin
                 RecordAttendance()
                 RegisterForEvents()
                 If TypeOf Me.Owner Is FrmMain Then
-                    CType(Application.OpenForms("FrmMain"), FrmMain).UpdateMenuVisibility()
+                    CType(Application.OpenForms("FrmMain"), FrmMain).UpdateMenuAccess()
                 End If
                 Me.DialogResult = DialogResult.OK
                 Me.Close()

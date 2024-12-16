@@ -343,6 +343,7 @@ Partial Class FrmScheduling
         '
         'dtpCoverageDate
         '
+        Me.dtpCoverageDate.CustomFormat = ""
         Me.dtpCoverageDate.Format = System.Windows.Forms.DateTimePickerFormat.[Short]
         Me.dtpCoverageDate.Location = New System.Drawing.Point(358, 170)
         Me.dtpCoverageDate.Name = "dtpCoverageDate"
@@ -382,6 +383,7 @@ Partial Class FrmScheduling
         Me.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "FrmScheduling"
+        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Scheduling"
         Me.tabScheduling.ResumeLayout(False)
         Me.tabTemplates.ResumeLayout(False)
