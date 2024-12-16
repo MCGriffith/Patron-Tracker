@@ -57,6 +57,7 @@ Partial Class FrmVolunteer
         Me.cbxInactive = New System.Windows.Forms.CheckBox()
         Me.lblAvailable = New System.Windows.Forms.Label()
         Me.txtAvailable = New System.Windows.Forms.TextBox()
+        Me.btnManageSchedules = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'cboName
@@ -195,7 +196,7 @@ Partial Class FrmVolunteer
         'btnSave
         '
         Me.btnSave.BackColor = System.Drawing.SystemColors.Control
-        Me.btnSave.Location = New System.Drawing.Point(800, 250)
+        Me.btnSave.Location = New System.Drawing.Point(800, 339)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(209, 52)
         Me.btnSave.TabIndex = 19
@@ -205,7 +206,7 @@ Partial Class FrmVolunteer
         'btnClose
         '
         Me.btnClose.BackColor = System.Drawing.SystemColors.Control
-        Me.btnClose.Location = New System.Drawing.Point(800, 321)
+        Me.btnClose.Location = New System.Drawing.Point(800, 411)
         Me.btnClose.Name = "btnClose"
         Me.btnClose.Size = New System.Drawing.Size(209, 52)
         Me.btnClose.TabIndex = 20
@@ -358,11 +359,22 @@ Partial Class FrmVolunteer
         Me.txtAvailable.Size = New System.Drawing.Size(152, 26)
         Me.txtAvailable.TabIndex = 35
         '
+        'btnManageSchedules
+        '
+        Me.btnManageSchedules.BackColor = System.Drawing.SystemColors.Control
+        Me.btnManageSchedules.Location = New System.Drawing.Point(800, 258)
+        Me.btnManageSchedules.Name = "btnManageSchedules"
+        Me.btnManageSchedules.Size = New System.Drawing.Size(209, 52)
+        Me.btnManageSchedules.TabIndex = 36
+        Me.btnManageSchedules.Text = "Manage Schedules"
+        Me.btnManageSchedules.UseVisualStyleBackColor = False
+        '
         'FrmVolunteer
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1070, 570)
+        Me.Controls.Add(Me.btnManageSchedules)
         Me.Controls.Add(Me.txtAvailable)
         Me.Controls.Add(Me.lblAvailable)
         Me.Controls.Add(Me.cbxInactive)
@@ -442,4 +454,5 @@ Partial Class FrmVolunteer
     Friend WithEvents cbxInactive As CheckBox
     Friend WithEvents lblAvailable As Label
     Friend WithEvents txtAvailable As TextBox
+    Friend WithEvents btnManageSchedules As Button
 End Class

@@ -14,7 +14,6 @@ Public Class FrmLogin
         btnCreate.Enabled = False
         LoadAvailableEvents()
     End Sub
-
     Private Sub txtEmail_TextChanged(sender As Object, e As EventArgs) Handles txtEmail.TextChanged
         ValidateInputs()
     End Sub
@@ -200,8 +199,11 @@ Public Class FrmLogin
             profileForm.MdiParent = DirectCast(Me.Owner, FrmMain)
         End If
 
+        ' Pass Email and Password
         profileForm.txtPEmail.Text = txtEmail.Text
         profileForm.txtPPassword.Text = txtPassword.Text
+
+        ' Pass Checkbox States
         profileForm.cbxPYes.Checked = cbxYes.Checked
         profileForm.cbxPPrint.Checked = cbxPrint.Checked
         profileForm.cbxPIndexing.Checked = cbxIndexing.Checked
@@ -209,7 +211,12 @@ Public Class FrmLogin
         profileForm.cbxPWebsite.Checked = cbxWebsite.Checked
         profileForm.cbxPClass.Checked = cbxClass.Checked
         profileForm.cbxPOther.Checked = cbxOther.Checked
+
+        ' Pass Selected Event
         profileForm.cboPRegister.Text = cboRegister.Text
+
+        ' Pass the selected events to FrmProfile
+        profileForm.RegisteredEvents = New List(Of EventInfo)(selectedEvents)
 
         ' Show the form without using ShowDialog
         profileForm.Show()
@@ -303,13 +310,6 @@ Public Class FrmLogin
         End Using
         Return Nothing
     End Function
-End Class
-
-Public Class EventInfo
-    Public Property EventID As Integer
-    Public Property EventName As String
-    Public Property EventDate As Date
-    Public Property RegisterDate As Date
 End Class
 
 Public Class CurrentUser

@@ -210,4 +210,9 @@ Public Class FrmVolunteer
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         Me.Close()
     End Sub
+
+    Private Sub btnManageSchedules_Click(sender As Object, e As EventArgs) Handles btnManageSchedules.Click
+        Dim frmSchedule As New FrmScheduling
+        frmSchedule.Show()
+    End Sub
 End Class

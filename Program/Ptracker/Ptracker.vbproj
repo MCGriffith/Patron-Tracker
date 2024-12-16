@@ -117,6 +117,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventInfo.vb" />
     <Compile Include="DocumentationConfig.vb" />
     <Compile Include="FrmAttendanceAnalytics.Designer.vb">
       <DependentUpon>FrmAttendanceAnalytics.vb</DependentUpon>
@@ -128,6 +129,12 @@
       <DependentUpon>FrmPatronReport.vb</DependentUpon>
     </Compile>
     <Compile Include="FrmPatronReport.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmScheduling.Designer.vb">
+      <DependentUpon>FrmScheduling.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FrmScheduling.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmSettings.Designer.vb">
@@ -265,6 +272,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmReports.resx">
       <DependentUpon>FrmReports.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmScheduling.resx">
+      <DependentUpon>FrmScheduling.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSettings.resx">
       <DependentUpon>FrmSettings.vb</DependentUpon>

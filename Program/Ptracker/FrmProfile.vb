@@ -1,27 +1,26 @@
-﻿When registering for a class Or event, the user should be able to select the event Or class from the cboPRegister combo box, then click the cbxPYes checkbox to register.  Then the user should be able to select another event And click the checkbox to register.  What seems to be happening Is that 1 Or more events are selected And checked, And all of the events are registered.  I am providing you the current code, can we fix this issue?   
-
-Imports System.Data.OleDb
+﻿Imports System.Data.OleDb
 Imports System.Text.RegularExpressions
 
 Public Class FrmProfile
     Inherits Form
+
+    Public Property RegisteredEvents As List(Of EventInfo)
+
     Dim connectionString As String = DatabaseConfig.ConnectionString
     Private dataChanged As Boolean
     Private LoginID As Integer
     Private ContactID As Integer
     Private StakeID As Integer = 0
     Private WardID As Integer = 0
-    Private TypeID As Integer = 0
-    Private selectedEvents As New List(Of EventInfo)
+    Private selectedEvents As New List(Of EventInfo) ' This will hold events selected in FrmProfile
 
     Private Const Director As String = "staciebriggs23@gmail.com"
     Private Const Admin As String = "mcgriffith1965@gmail.com"
 
-    Private Structure EventInfo
-        Public EventID As Integer
-        Public EventName As String
-        Public EventDate As Date
-    End Structure
+    Public Sub New()
+        InitializeComponent()
+        RegisteredEvents = New List(Of EventInfo)() ' Initialize the list
+    End Sub
 
     Private Sub FrmProfile_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.MdiParent = CType(Application.OpenForms("FrmMain"), Form)
@@ -229,6 +228,11 @@ Public Class FrmProfile
         rbPAdmin.Enabled = admin
     End Sub
 
+    Public Sub SetRegisteredEvents(events As List(Of EventInfo))
+        RegisteredEvents = events
+        LoadAvailableEvents() ' Refresh the events list
+    End Sub
+
     Private Sub LoadStakes()
         cboPStake.Items.Clear()
         Using connection As New OleDbConnection(connectionString)
@@ -427,9 +431,8 @@ Public Class FrmProfile
                 Try
                     conn.Open()
                     Dim reader As OleDbDataReader = command.ExecuteReader()
-
                     cboPRegister.Items.Clear()
-                    selectedEvents.Clear()
+                    selectedEvents.Clear() ' Clear previous selections
 
                     While reader.Read()
                         Dim eventInfo As New EventInfo With {
@@ -438,14 +441,21 @@ Public Class FrmProfile
                         .EventDate = CDate(reader("EventDate"))
                     }
                         cboPRegister.Items.Add(eventInfo.EventName)
-                        selectedEvents.Add(eventInfo)
+                        selectedEvents.Add(eventInfo) ' Add to selected events
                     End While
 
-                    reader.Close()
+                    ' Add previously registered events from FrmLogin
+                    For Each registeredEvent In RegisteredEvents
+                        If Not cboPRegister.Items.Contains(registeredEvent.EventName) Then
+                            cboPRegister.Items.Add(registeredEvent.EventName)
+                            selectedEvents.Add(registeredEvent) ' Ensure it's also in the selectedEvents list
+                        End If
+                    Next
 
                     cboPRegister.Visible = (cboPRegister.Items.Count > 0)
                     lblPRegister.Visible = (cboPRegister.Items.Count > 0)
                     cbxPEYes.Visible = (cboPRegister.Items.Count > 0)
+
                 Catch ex As Exception
                     MessageBox.Show("Error loading events: " & ex.Message)
                 End Try
@@ -453,14 +463,25 @@ Public Class FrmProfile
         End Using
     End Sub
 
-
-
     Private Sub cbxPEYes_CheckedChanged(sender As Object, e As EventArgs) Handles cbxPEYes.CheckedChanged
         If cbxPEYes.Checked AndAlso cboPRegister.SelectedIndex >= 0 Then
             Dim selectedEvent = selectedEvents(cboPRegister.SelectedIndex)
-            MessageBox.Show($"Registered for event: {selectedEvent.EventName} on {selectedEvent.EventDate.ToShortDateString()}")
+            selectedEvent.IsSelected = True
+
+            MessageBox.Show($"Selected for registration: {selectedEvent.EventName} on {selectedEvent.EventDate.ToShortDateString()}")
+
+            ' Add to RegisteredEvents if not already present
+            If Not RegisteredEvents.Any(Function(evt) evt.EventID = selectedEvent.EventID) Then
+                RegisteredEvents.Add(selectedEvent)
+            End If
+
             cboPRegister.SelectedIndex = -1
             cbxPEYes.Checked = False
+        Else
+            If cbxPEYes.Checked Then
+                MessageBox.Show("Please select an event first.")
+                cbxPEYes.Checked = False
+            End If
         End If
     End Sub
 
@@ -476,7 +497,7 @@ Public Class FrmProfile
                 Dim PhoneID As Integer = InsertPhone(conn, transaction, AddressID)
                 InsertLDS(conn, transaction)
                 InsertAttendance(conn, transaction)
-                RegisterForEvents(conn, transaction)
+                RegisterForEvents(conn, transaction) ' Register only selected events
                 InsertVolunteer(conn, transaction, LoginID, ContactID, AddressID, PhoneID)
 
                 transaction.Commit()
@@ -587,43 +608,50 @@ Public Class FrmProfile
 
 
     Private Sub RegisterForEvents(connection As OleDbConnection, transaction As OleDbTransaction)
-        For Each eventInfo In selectedEvents
-            If eventInfo.EventID > 0 Then
-                Dim cmd As New OleDbCommand("INSERT INTO tblRegister ([EventName], [EventDate], [RegisterDate], [EventID], [LoginID]) VALUES (@EventName, @EventDate, @RegisterDate, @EventID, @LoginID)", connection, transaction)
+        For Each eventToRegister In RegisteredEvents
+            Dim cmd As New OleDbCommand(
+            "INSERT INTO tblRegister " &
+            "(EventName, EventDate, RegisterDate, EventID, LoginID, Inactive) " &
+            "VALUES (?, ?, ?, ?, ?, ?)", connection, transaction)
 
-                cmd.Parameters.AddWithValue("@EventName", eventInfo.EventName)
-                cmd.Parameters.AddWithValue("@EventDate", eventInfo.EventDate)
-                cmd.Parameters.AddWithValue("@RegisterDate", DateTime.Now.Date)
-                cmd.Parameters.AddWithValue("@EventID", eventInfo.EventID)
-                cmd.Parameters.AddWithValue("@LoginID", LoginID)
+            cmd.Parameters.Add("EventName", OleDbType.VarChar).Value = eventToRegister.EventName
+            cmd.Parameters.Add("EventDate", OleDbType.Date).Value = eventToRegister.EventDate
+            cmd.Parameters.Add("RegisterDate", OleDbType.Date).Value = DateTime.Now.Date
+            cmd.Parameters.Add("EventID", OleDbType.Integer).Value = eventToRegister.EventID
+            cmd.Parameters.Add("LoginID", OleDbType.Integer).Value = LoginID
+            cmd.Parameters.Add("Inactive", OleDbType.Boolean).Value = False
 
-                cmd.ExecuteNonQuery()
-            End If
+            cmd.ExecuteNonQuery()
         Next
     End Sub
 
     Private Sub InsertVolunteer(connection As OleDbConnection, transaction As OleDbTransaction, LoginID As Integer, ContactID As Integer, AddressID As Integer, PhoneID As Integer)
-        Dim cmd As New OleDbCommand("INSERT INTO tblVolunteer ([LoginID], [ContactID], [AddressID], [PhoneID], [FullName], [FirstName], [MiddleName], [LastName], [Email], [Phone], [PhoneType], [Address], [City], [State], [Zip], [Role], [Inactive]) VALUES (@LoginID, @ContactID, @AddressID, @PhoneID, @FullName, @FirstName, @MiddleName, @LastName, @Email, @Phone, @PhoneType, @Address, @City, @State, @Zip, @Role, @Inactive)", connection, transaction)
+        ' Only create volunteer records for Staff, Director, and Admin roles
+        Dim currentRole As String = GetSelectedRole()
 
-        cmd.Parameters.AddWithValue("@LoginID", LoginID)
-        cmd.Parameters.AddWithValue("@ContactID", ContactID)
-        cmd.Parameters.AddWithValue("@AddressID", AddressID)
-        cmd.Parameters.AddWithValue("@PhoneID", PhoneID)
-        cmd.Parameters.AddWithValue("@FullName", CreateFullName())
-        cmd.Parameters.AddWithValue("@FirstName", txtPFirst.Text)
-        cmd.Parameters.AddWithValue("@MiddleName", txtPMiddle.Text)
-        cmd.Parameters.AddWithValue("@LastName", txtPLast.Text)
-        cmd.Parameters.AddWithValue("@Email", txtPEmail.Text)
-        cmd.Parameters.AddWithValue("@Phone", txtPPhone.Text.Replace("(", "").Replace(")", "").Replace("-", ""))
-        cmd.Parameters.AddWithValue("@PhoneType", cboPType.Text)
-        cmd.Parameters.AddWithValue("@Address", txtPAddress.Text)
-        cmd.Parameters.AddWithValue("@City", txtPCity.Text)
-        cmd.Parameters.AddWithValue("@State", cboPState.Text)
-        cmd.Parameters.AddWithValue("@Zip", txtPZip.Text)
-        cmd.Parameters.AddWithValue("@Role", GetSelectedRole())
-        cmd.Parameters.AddWithValue("@Inactive", False)
+        If currentRole = "Staff" OrElse currentRole = "Director" OrElse currentRole = "Admin" Then
+            Dim cmd As New OleDbCommand("INSERT INTO tblVolunteer ([LoginID], [ContactID], [AddressID], [PhoneID], [FullName], [FirstName], [MiddleName], [LastName], [Email], [Phone], [PhoneType], [Address], [City], [State], [Zip], [Role], [Inactive]) VALUES (@LoginID, @ContactID, @AddressID, @PhoneID, @FullName, @FirstName, @MiddleName, @LastName, @Email, @Phone, @PhoneType, @Address, @City, @State, @Zip, @Role, @Inactive)", connection, transaction)
 
-        cmd.ExecuteNonQuery()
+            cmd.Parameters.AddWithValue("@LoginID", LoginID)
+            cmd.Parameters.AddWithValue("@ContactID", ContactID)
+            cmd.Parameters.AddWithValue("@AddressID", AddressID)
+            cmd.Parameters.AddWithValue("@PhoneID", PhoneID)
+            cmd.Parameters.AddWithValue("@FullName", CreateFullName())
+            cmd.Parameters.AddWithValue("@FirstName", txtPFirst.Text)
+            cmd.Parameters.AddWithValue("@MiddleName", txtPMiddle.Text)
+            cmd.Parameters.AddWithValue("@LastName", txtPLast.Text)
+            cmd.Parameters.AddWithValue("@Email", txtPEmail.Text)
+            cmd.Parameters.AddWithValue("@Phone", txtPPhone.Text.Replace("(", "").Replace(")", "").Replace("-", ""))
+            cmd.Parameters.AddWithValue("@PhoneType", cboPType.Text)
+            cmd.Parameters.AddWithValue("@Address", txtPAddress.Text)
+            cmd.Parameters.AddWithValue("@City", txtPCity.Text)
+            cmd.Parameters.AddWithValue("@State", cboPState.Text)
+            cmd.Parameters.AddWithValue("@Zip", txtPZip.Text)
+            cmd.Parameters.AddWithValue("@Role", currentRole)
+            cmd.Parameters.AddWithValue("@Inactive", False)
+
+            cmd.ExecuteNonQuery()
+        End If
     End Sub
 
     Private Function CreateFullName() As String
