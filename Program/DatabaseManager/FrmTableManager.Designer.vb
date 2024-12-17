@@ -22,22 +22,22 @@ Partial Class FrmTableManager
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        dvgTables = New DataGridView()
+        dgvTables = New DataGridView()
         btnAddTable = New Button()
         btnDeleteTable = New Button()
         btnSaveChanges = New Button()
         FlowLayoutPanel1 = New Panel()
-        CType(dvgTables, ComponentModel.ISupportInitialize).BeginInit()
+        CType(dgvTables, ComponentModel.ISupportInitialize).BeginInit()
         FlowLayoutPanel1.SuspendLayout()
         SuspendLayout()
         ' 
-        ' dvgTables
+        ' dgvTables
         ' 
-        dvgTables.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        dvgTables.Location = New Point(48, 55)
-        dvgTables.Name = "dvgTables"
-        dvgTables.Size = New Size(926, 263)
-        dvgTables.TabIndex = 0
+        dgvTables.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvTables.Location = New Point(48, 55)
+        dgvTables.Name = "dgvTables"
+        dgvTables.Size = New Size(926, 263)
+        dgvTables.TabIndex = 0
         ' 
         ' btnAddTable
         ' 
@@ -82,18 +82,18 @@ Partial Class FrmTableManager
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1029, 540)
         Controls.Add(FlowLayoutPanel1)
-        Controls.Add(dvgTables)
+        Controls.Add(dgvTables)
         Font = New Font("Arial", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        Margin = New Padding(4, 4, 4, 4)
+        Margin = New Padding(4)
         Name = "FrmTableManager"
         StartPosition = FormStartPosition.CenterScreen
         Text = "`"
-        CType(dvgTables, ComponentModel.ISupportInitialize).EndInit()
+        CType(dgvTables, ComponentModel.ISupportInitialize).EndInit()
         FlowLayoutPanel1.ResumeLayout(False)
         ResumeLayout(False)
     End Sub
 
-    Friend WithEvents dvgTables As DataGridView
+    Friend WithEvents dgvTables As DataGridView
     Friend WithEvents btnAddTable As Button
     Friend WithEvents btnDeleteTable As Button
     Friend WithEvents btnSaveChanges As Button

@@ -23,10 +23,10 @@ Partial Class FrmRelationshipManager
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         PrmaryTablePanel = New Panel()
-        lblPrimaryTable = New Label()
-        lblPrimaryKey = New Label()
-        cboPrimaryTable = New ComboBox()
         cboPrimaryKey = New ComboBox()
+        cboPrimaryTable = New ComboBox()
+        lblPrimaryKey = New Label()
+        lblPrimaryTable = New Label()
         ForeignTablePanel = New Panel()
         cboForeignKey = New ComboBox()
         cboForeignTable = New ComboBox()
@@ -49,14 +49,21 @@ Partial Class FrmRelationshipManager
         PrmaryTablePanel.Size = New Size(415, 109)
         PrmaryTablePanel.TabIndex = 0
         ' 
-        ' lblPrimaryTable
+        ' cboPrimaryKey
         ' 
-        lblPrimaryTable.AutoSize = True
-        lblPrimaryTable.Location = New Point(57, 18)
-        lblPrimaryTable.Name = "lblPrimaryTable"
-        lblPrimaryTable.Size = New Size(107, 18)
-        lblPrimaryTable.TabIndex = 0
-        lblPrimaryTable.Text = "Primary Table:"
+        cboPrimaryKey.FormattingEnabled = True
+        cboPrimaryKey.Location = New Point(170, 55)
+        cboPrimaryKey.Name = "cboPrimaryKey"
+        cboPrimaryKey.Size = New Size(212, 26)
+        cboPrimaryKey.TabIndex = 3
+        ' 
+        ' cboPrimaryTable
+        ' 
+        cboPrimaryTable.FormattingEnabled = True
+        cboPrimaryTable.Location = New Point(170, 15)
+        cboPrimaryTable.Name = "cboPrimaryTable"
+        cboPrimaryTable.Size = New Size(212, 26)
+        cboPrimaryTable.TabIndex = 2
         ' 
         ' lblPrimaryKey
         ' 
@@ -67,21 +74,14 @@ Partial Class FrmRelationshipManager
         lblPrimaryKey.TabIndex = 1
         lblPrimaryKey.Text = "Primary Key:"
         ' 
-        ' cboPrimaryTable
+        ' lblPrimaryTable
         ' 
-        cboPrimaryTable.FormattingEnabled = True
-        cboPrimaryTable.Location = New Point(170, 15)
-        cboPrimaryTable.Name = "cboPrimaryTable"
-        cboPrimaryTable.Size = New Size(212, 26)
-        cboPrimaryTable.TabIndex = 2
-        ' 
-        ' cboPrimaryKey
-        ' 
-        cboPrimaryKey.FormattingEnabled = True
-        cboPrimaryKey.Location = New Point(170, 55)
-        cboPrimaryKey.Name = "cboPrimaryKey"
-        cboPrimaryKey.Size = New Size(212, 26)
-        cboPrimaryKey.TabIndex = 3
+        lblPrimaryTable.AutoSize = True
+        lblPrimaryTable.Location = New Point(57, 18)
+        lblPrimaryTable.Name = "lblPrimaryTable"
+        lblPrimaryTable.Size = New Size(107, 18)
+        lblPrimaryTable.TabIndex = 0
+        lblPrimaryTable.Text = "Primary Table:"
         ' 
         ' ForeignTablePanel
         ' 
@@ -145,7 +145,7 @@ Partial Class FrmRelationshipManager
         Controls.Add(ForeignTablePanel)
         Controls.Add(PrmaryTablePanel)
         Font = New Font("Arial", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        Margin = New Padding(4, 4, 4, 4)
+        Margin = New Padding(4)
         Name = "FrmRelationshipManager"
         StartPosition = FormStartPosition.CenterScreen
         Text = "Relationship Manager"

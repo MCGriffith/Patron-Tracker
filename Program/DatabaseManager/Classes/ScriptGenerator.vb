@@ -1,5 +1,7 @@
 ﻿Imports System.Reflection.Metadata
 Imports System.Text
+Imports System.Collections.Generic
+Imports System.Data.OleDb
 
 Public Class ScriptGenerator
     Public Function GenerateCreateTableScript(tableName As String, fields As List(Of FieldDefinition)) As String

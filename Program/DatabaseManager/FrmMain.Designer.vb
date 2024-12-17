@@ -30,6 +30,8 @@ Partial Class FrmMain
         mnuToolsTableManager = New ToolStripMenuItem()
         mnuToolsFieldManager = New ToolStripMenuItem()
         mnuToolsRelationships = New ToolStripMenuItem()
+        mnuToolsViewScripts = New ToolStripMenuItem()
+        mnuToolsBackupRestore = New ToolStripMenuItem()
         MenuStrip1.SuspendLayout()
         SuspendLayout()
         ' 
@@ -64,7 +66,7 @@ Partial Class FrmMain
         ' 
         ' mnuTools
         ' 
-        mnuTools.DropDownItems.AddRange(New ToolStripItem() {mnuToolsTableManager, mnuToolsFieldManager, mnuToolsRelationships})
+        mnuTools.DropDownItems.AddRange(New ToolStripItem() {mnuToolsTableManager, mnuToolsFieldManager, mnuToolsRelationships, mnuToolsViewScripts, mnuToolsBackupRestore})
         mnuTools.Font = New Font("Arial", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         mnuTools.Name = "mnuTools"
         mnuTools.Size = New Size(56, 22)
@@ -73,20 +75,32 @@ Partial Class FrmMain
         ' mnuToolsTableManager
         ' 
         mnuToolsTableManager.Name = "mnuToolsTableManager"
-        mnuToolsTableManager.Size = New Size(180, 22)
+        mnuToolsTableManager.Size = New Size(196, 22)
         mnuToolsTableManager.Text = "Table Manager"
         ' 
         ' mnuToolsFieldManager
         ' 
         mnuToolsFieldManager.Name = "mnuToolsFieldManager"
-        mnuToolsFieldManager.Size = New Size(180, 22)
+        mnuToolsFieldManager.Size = New Size(196, 22)
         mnuToolsFieldManager.Text = "Field Manager"
         ' 
         ' mnuToolsRelationships
         ' 
         mnuToolsRelationships.Name = "mnuToolsRelationships"
-        mnuToolsRelationships.Size = New Size(180, 22)
+        mnuToolsRelationships.Size = New Size(196, 22)
         mnuToolsRelationships.Text = "Relationships"
+        ' 
+        ' mnuToolsViewScripts
+        ' 
+        mnuToolsViewScripts.Name = "mnuToolsViewScripts"
+        mnuToolsViewScripts.Size = New Size(196, 22)
+        mnuToolsViewScripts.Text = "View Scripts"
+        ' 
+        ' mnuToolsBackupRestore
+        ' 
+        mnuToolsBackupRestore.Name = "mnuToolsBackupRestore"
+        mnuToolsBackupRestore.Size = New Size(196, 22)
+        mnuToolsBackupRestore.Text = "Backup / Restore"
         ' 
         ' FrmMain
         ' 
@@ -111,4 +125,6 @@ Partial Class FrmMain
     Friend WithEvents mnuToolsTableManager As ToolStripMenuItem
     Friend WithEvents mnuToolsFieldManager As ToolStripMenuItem
     Friend WithEvents mnuToolsRelationships As ToolStripMenuItem
+    Friend WithEvents mnuToolsViewScripts As ToolStripMenuItem
+    Friend WithEvents mnuToolsBackupRestore As ToolStripMenuItem
 End Class

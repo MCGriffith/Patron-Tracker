@@ -24,7 +24,7 @@ Partial Class FrmFieldManager
     Private Sub InitializeComponent()
         cboTables = New ComboBox()
         dgvFields = New DataGridView()
-        PropertyGrid1 = New PropertyGrid()
+        PropertyPanel = New PropertyGrid()
         CType(dgvFields, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -40,29 +40,28 @@ Partial Class FrmFieldManager
         ' dgvFields
         ' 
         dgvFields.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        dgvFields.Location = New Point(66, 185)
+        dgvFields.Location = New Point(0, 192)
         dgvFields.Name = "dgvFields"
-        dgvFields.Size = New Size(899, 191)
+        dgvFields.Size = New Size(1029, 150)
         dgvFields.TabIndex = 1
         ' 
-        ' PropertyGrid1
+        ' PropertyPanel
         ' 
-        PropertyGrid1.Location = New Point(66, 32)
-        PropertyGrid1.Name = "PropertyGrid1"
-        PropertyGrid1.PropertySort = PropertySort.Categorized
-        PropertyGrid1.Size = New Size(899, 124)
-        PropertyGrid1.TabIndex = 6
+        PropertyPanel.Location = New Point(56, 45)
+        PropertyPanel.Name = "PropertyPanel"
+        PropertyPanel.Size = New Size(928, 130)
+        PropertyPanel.TabIndex = 2
         ' 
         ' FrmFieldManager
         ' 
         AutoScaleDimensions = New SizeF(9F, 18F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1029, 540)
-        Controls.Add(PropertyGrid1)
+        Controls.Add(PropertyPanel)
         Controls.Add(dgvFields)
         Controls.Add(cboTables)
         Font = New Font("Arial", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        Margin = New Padding(4, 4, 4, 4)
+        Margin = New Padding(4)
         Name = "FrmFieldManager"
         StartPosition = FormStartPosition.CenterScreen
         Text = "Field Manager"
@@ -72,5 +71,5 @@ Partial Class FrmFieldManager
 
     Friend WithEvents cboTables As ComboBox
     Friend WithEvents dgvFields As DataGridView
-    Friend WithEvents PropertyGrid1 As PropertyGrid
+    Friend WithEvents PropertyPanel As PropertyGrid
 End Class

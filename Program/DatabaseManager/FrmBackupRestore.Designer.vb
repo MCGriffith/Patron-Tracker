@@ -23,18 +23,18 @@ Partial Class FrmBackupRestore
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         dgvBackupPanel = New Panel()
-        lblBackupLocation = New Label()
-        txtBackupPath = New TextBox()
-        btnBrowseBackup = New Button()
         btnCreateBackup = New Button()
+        btnBrowseBackup = New Button()
+        txtBackupPath = New TextBox()
+        lblBackupLocation = New Label()
         RestorePanel = New Panel()
         btnRestoreDatabase = New Button()
         btnBrowseRestore = New Button()
         txtRestorePath = New TextBox()
         lblRestoreFrom = New Label()
         ProgressPanel = New Panel()
-        lblStatus = New Label()
         ProgressBar1 = New ProgressBar()
+        lblStatus = New Label()
         dgvBackupPanel.SuspendLayout()
         RestorePanel.SuspendLayout()
         ProgressPanel.SuspendLayout()
@@ -51,21 +51,14 @@ Partial Class FrmBackupRestore
         dgvBackupPanel.Size = New Size(939, 123)
         dgvBackupPanel.TabIndex = 0
         ' 
-        ' lblBackupLocation
+        ' btnCreateBackup
         ' 
-        lblBackupLocation.AutoSize = True
-        lblBackupLocation.Location = New Point(34, 24)
-        lblBackupLocation.Name = "lblBackupLocation"
-        lblBackupLocation.Size = New Size(129, 18)
-        lblBackupLocation.TabIndex = 0
-        lblBackupLocation.Text = "Backup Location:"
-        ' 
-        ' txtBackupPath
-        ' 
-        txtBackupPath.Location = New Point(172, 19)
-        txtBackupPath.Name = "txtBackupPath"
-        txtBackupPath.Size = New Size(720, 26)
-        txtBackupPath.TabIndex = 1
+        btnCreateBackup.Location = New Point(719, 67)
+        btnCreateBackup.Name = "btnCreateBackup"
+        btnCreateBackup.Size = New Size(173, 37)
+        btnCreateBackup.TabIndex = 3
+        btnCreateBackup.Text = "Create Backup"
+        btnCreateBackup.UseVisualStyleBackColor = True
         ' 
         ' btnBrowseBackup
         ' 
@@ -76,14 +69,21 @@ Partial Class FrmBackupRestore
         btnBrowseBackup.Text = "Browse Backup"
         btnBrowseBackup.UseVisualStyleBackColor = True
         ' 
-        ' btnCreateBackup
+        ' txtBackupPath
         ' 
-        btnCreateBackup.Location = New Point(719, 67)
-        btnCreateBackup.Name = "btnCreateBackup"
-        btnCreateBackup.Size = New Size(173, 37)
-        btnCreateBackup.TabIndex = 3
-        btnCreateBackup.Text = "Create Backup"
-        btnCreateBackup.UseVisualStyleBackColor = True
+        txtBackupPath.Location = New Point(172, 19)
+        txtBackupPath.Name = "txtBackupPath"
+        txtBackupPath.Size = New Size(720, 26)
+        txtBackupPath.TabIndex = 1
+        ' 
+        ' lblBackupLocation
+        ' 
+        lblBackupLocation.AutoSize = True
+        lblBackupLocation.Location = New Point(34, 24)
+        lblBackupLocation.Name = "lblBackupLocation"
+        lblBackupLocation.Size = New Size(129, 18)
+        lblBackupLocation.TabIndex = 0
+        lblBackupLocation.Text = "Backup Location:"
         ' 
         ' RestorePanel
         ' 
@@ -139,6 +139,13 @@ Partial Class FrmBackupRestore
         ProgressPanel.Size = New Size(939, 120)
         ProgressPanel.TabIndex = 5
         ' 
+        ' ProgressBar1
+        ' 
+        ProgressBar1.Location = New Point(125, 39)
+        ProgressBar1.Name = "ProgressBar1"
+        ProgressBar1.Size = New Size(765, 39)
+        ProgressBar1.TabIndex = 1
+        ' 
         ' lblStatus
         ' 
         lblStatus.AutoSize = True
@@ -147,13 +154,6 @@ Partial Class FrmBackupRestore
         lblStatus.Size = New Size(56, 18)
         lblStatus.TabIndex = 0
         lblStatus.Text = "Status:"
-        ' 
-        ' ProgressBar1
-        ' 
-        ProgressBar1.Location = New Point(125, 39)
-        ProgressBar1.Name = "ProgressBar1"
-        ProgressBar1.Size = New Size(765, 39)
-        ProgressBar1.TabIndex = 1
         ' 
         ' FrmBackupRestore
         ' 
@@ -164,7 +164,7 @@ Partial Class FrmBackupRestore
         Controls.Add(RestorePanel)
         Controls.Add(dgvBackupPanel)
         Font = New Font("Arial", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        Margin = New Padding(4, 4, 4, 4)
+        Margin = New Padding(4)
         Name = "FrmBackupRestore"
         StartPosition = FormStartPosition.CenterScreen
         Text = "Backup/Restore"

@@ -85,7 +85,7 @@ Partial Class FrmScriptViewer
         Controls.Add(ButtonPanel)
         Controls.Add(txtScript)
         Font = New Font("Arial", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        Margin = New Padding(4, 4, 4, 4)
+        Margin = New Padding(4)
         Name = "FrmScriptViewer"
         StartPosition = FormStartPosition.CenterScreen
         Text = "Script Viewer"

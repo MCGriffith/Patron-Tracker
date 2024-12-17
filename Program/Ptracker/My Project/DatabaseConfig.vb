@@ -8,6 +8,12 @@ Public Class DatabaseConfig
         End Get
     End Property
 
+    Public Shared ReadOnly Property DatabasePath As String
+        Get
+            Return My.Settings.DatabasePath
+        End Get
+    End Property
+
     Public Shared Property ConnectionString As String
         Get
             Dim dbPath As String = My.Settings.DatabasePath

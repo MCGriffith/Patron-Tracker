@@ -1,4 +1,5 @@
-﻿Imports PTracker
+﻿Imports ADODB
+Imports PTracker
 
 Public Class UpgradeManager
     Private _conn As DatabaseConnection
@@ -9,23 +10,12 @@ Public Class UpgradeManager
         _scriptGen = New ScriptGenerator()
     End Sub
 
-    Public Function CreateBackup() As Boolean
-        Try
-            ' Backup logic here
-            Return True
-        Catch
-            Return False
-        End Try
-    End Function
-
     Public Function ExecuteScript(script As String) As Boolean
         Try
-            Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
-                conn.Open()
-                Using cmd As New OleDbCommand(script, conn)
-                    cmd.ExecuteNonQuery()
-                End Using
-            End Using
+            Dim conn As New ADODB.Connection
+            conn.Open(DatabaseConfig.ConnectionString)
+            conn.Execute(script)
+            conn.Close()
             Return True
         Catch
             Return False
