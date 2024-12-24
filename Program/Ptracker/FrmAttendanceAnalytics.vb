@@ -1,7 +1,8 @@
-﻿Imports System.IO
-Imports System.Data.OleDb
-Imports System.Windows.Forms.DataVisualization.Charting
+﻿Imports System.Data.OleDb
 Imports System.Drawing.Printing
+Imports System.IO
+Imports System.Windows.Forms.DataVisualization.Charting
+
 
 Public Class FrmAttendanceAnalytics
     Inherits Form

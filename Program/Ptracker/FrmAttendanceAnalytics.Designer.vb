@@ -22,9 +22,9 @@ Partial Class FrmAttendanceAnalytics
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.cboDateRange = New System.Windows.Forms.ComboBox()
         Me.dtpStartDate = New System.Windows.Forms.DateTimePicker()
         Me.dtpEndDate = New System.Windows.Forms.DateTimePicker()
@@ -40,12 +40,13 @@ Partial Class FrmAttendanceAnalytics
         Me.cboExport = New System.Windows.Forms.ComboBox()
         Me.btnPrint = New System.Windows.Forms.Button()
         Me.btnSave = New System.Windows.Forms.Button()
-        Me.btnClose = New System.Windows.Forms.Button()
         Me.chartAttendance = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.lblDateRange = New System.Windows.Forms.Label()
         Me.lblStartDate = New System.Windows.Forms.Label()
         Me.lblEndDate = New System.Windows.Forms.Label()
         Me.lblExport = New System.Windows.Forms.Label()
+        Me.btnClose = New System.Windows.Forms.Button()
+        Me.btnExport = New System.Windows.Forms.Button()
         Me.grpFilters.SuspendLayout()
         CType(Me.chartAttendance, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -184,7 +185,7 @@ Partial Class FrmAttendanceAnalytics
         '
         Me.cboExport.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cboExport.FormattingEnabled = True
-        Me.cboExport.Location = New System.Drawing.Point(558, 497)
+        Me.cboExport.Location = New System.Drawing.Point(519, 497)
         Me.cboExport.Name = "cboExport"
         Me.cboExport.Size = New System.Drawing.Size(121, 26)
         Me.cboExport.TabIndex = 5
@@ -192,7 +193,7 @@ Partial Class FrmAttendanceAnalytics
         'btnPrint
         '
         Me.btnPrint.BackColor = System.Drawing.SystemColors.Control
-        Me.btnPrint.Location = New System.Drawing.Point(700, 489)
+        Me.btnPrint.Location = New System.Drawing.Point(827, 489)
         Me.btnPrint.Name = "btnPrint"
         Me.btnPrint.Size = New System.Drawing.Size(108, 40)
         Me.btnPrint.TabIndex = 6
@@ -202,37 +203,26 @@ Partial Class FrmAttendanceAnalytics
         'btnSave
         '
         Me.btnSave.BackColor = System.Drawing.SystemColors.Control
-        Me.btnSave.Location = New System.Drawing.Point(879, 489)
+        Me.btnSave.Location = New System.Drawing.Point(968, 489)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(108, 40)
         Me.btnSave.TabIndex = 7
         Me.btnSave.Text = "Save"
         Me.btnSave.UseVisualStyleBackColor = False
         '
-        'btnClose
-        '
-        Me.btnClose.BackColor = System.Drawing.SystemColors.Control
-        Me.btnClose.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.btnClose.Location = New System.Drawing.Point(1038, 489)
-        Me.btnClose.Name = "btnClose"
-        Me.btnClose.Size = New System.Drawing.Size(108, 40)
-        Me.btnClose.TabIndex = 8
-        Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = False
-        '
         'chartAttendance
         '
         Me.chartAttendance.BorderlineColor = System.Drawing.Color.Black
-        ChartArea1.Name = "ChartArea1"
-        Me.chartAttendance.ChartAreas.Add(ChartArea1)
-        Legend1.Name = "Legend1"
-        Me.chartAttendance.Legends.Add(Legend1)
+        ChartArea2.Name = "ChartArea1"
+        Me.chartAttendance.ChartAreas.Add(ChartArea2)
+        Legend2.Name = "Legend1"
+        Me.chartAttendance.Legends.Add(Legend2)
         Me.chartAttendance.Location = New System.Drawing.Point(444, 40)
         Me.chartAttendance.Name = "chartAttendance"
-        Series1.ChartArea = "ChartArea1"
-        Series1.Legend = "Legend1"
-        Series1.Name = "Series1"
-        Me.chartAttendance.Series.Add(Series1)
+        Series2.ChartArea = "ChartArea1"
+        Series2.Legend = "Legend1"
+        Series2.Name = "Series1"
+        Me.chartAttendance.Series.Add(Series2)
         Me.chartAttendance.Size = New System.Drawing.Size(760, 415)
         Me.chartAttendance.TabIndex = 9
         Me.chartAttendance.Text = "Chart1"
@@ -267,17 +257,39 @@ Partial Class FrmAttendanceAnalytics
         'lblExport
         '
         Me.lblExport.AutoSize = True
-        Me.lblExport.Location = New System.Drawing.Point(480, 500)
+        Me.lblExport.Location = New System.Drawing.Point(441, 500)
         Me.lblExport.Name = "lblExport"
         Me.lblExport.Size = New System.Drawing.Size(53, 18)
         Me.lblExport.TabIndex = 13
         Me.lblExport.Text = "Export"
+        '
+        'btnClose
+        '
+        Me.btnClose.BackColor = System.Drawing.SystemColors.Control
+        Me.btnClose.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.btnClose.Location = New System.Drawing.Point(1096, 489)
+        Me.btnClose.Name = "btnClose"
+        Me.btnClose.Size = New System.Drawing.Size(108, 40)
+        Me.btnClose.TabIndex = 8
+        Me.btnClose.Text = "Close"
+        Me.btnClose.UseVisualStyleBackColor = False
+        '
+        'btnExport
+        '
+        Me.btnExport.BackColor = System.Drawing.SystemColors.Control
+        Me.btnExport.Location = New System.Drawing.Point(682, 489)
+        Me.btnExport.Name = "btnExport"
+        Me.btnExport.Size = New System.Drawing.Size(108, 40)
+        Me.btnExport.TabIndex = 14
+        Me.btnExport.Text = "Export"
+        Me.btnExport.UseVisualStyleBackColor = False
         '
         'FrmAttendanceAnalytics
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1258, 557)
+        Me.Controls.Add(Me.btnExport)
         Me.Controls.Add(Me.lblExport)
         Me.Controls.Add(Me.lblEndDate)
         Me.Controls.Add(Me.lblStartDate)
@@ -320,10 +332,11 @@ Partial Class FrmAttendanceAnalytics
     Friend WithEvents cboExport As ComboBox
     Friend WithEvents btnPrint As Button
     Friend WithEvents btnSave As Button
-    Friend WithEvents btnClose As Button
     Friend WithEvents chartAttendance As DataVisualization.Charting.Chart
     Friend WithEvents lblDateRange As Label
     Friend WithEvents lblStartDate As Label
     Friend WithEvents lblEndDate As Label
     Friend WithEvents lblExport As Label
+    Friend WithEvents btnClose As Button
+    Friend WithEvents btnExport As Button
 End Class
