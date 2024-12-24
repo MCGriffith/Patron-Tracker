@@ -239,9 +239,9 @@ Public Class FrmReports
 
             ' Query to get all attendance records for the date range
             Dim sql As String = "SELECT People, FirstVisit, PrintFOR, Indexing, " &
-                           "OnlineRsrch, SubWebsite, AttendClass, Other " &
-                           "FROM tblAttendance " &
-                           "WHERE LogDate BETWEEN @StartDate AND @EndDate"
+                    "OnlineRsrch, SubWebsite, AttendClass, Other " &
+                    "FROM tblAttendance " &
+                    "WHERE LogDate BETWEEN #" & startDate.ToString("MM/dd/yyyy") & "# AND #" & endDate.ToString("MM/dd/yyyy") & "#"
 
             Dim cmd As New OleDbCommand(sql, conn)
             cmd.Parameters.AddWithValue("@StartDate", startDate)
