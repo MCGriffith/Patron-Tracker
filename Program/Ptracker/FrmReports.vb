@@ -133,13 +133,14 @@ Public Class FrmReports
     Private Sub SetCurrentMonthDates()
         Dim currentDate As Date = DateTime.Today
         dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month, 1)
-        dtpEndDate.Value = DateSerial(currentDate.Year, currentDate.Month + 1, 0)
+        dtpEndDate.Value = dtpStartDate.Value.AddMonths(1).AddDays(-1)
     End Sub
+
 
     Private Sub SetPreviousMonthDates()
         Dim currentDate As Date = DateTime.Today
-        dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month - 1, 1)
-        dtpEndDate.Value = DateSerial(currentDate.Year, currentDate.Month, 0)
+        dtpStartDate.Value = New Date(currentDate.Year, currentDate.Month, 1).AddMonths(-1)
+        dtpEndDate.Value = New Date(currentDate.Year, currentDate.Month, 1).AddDays(-1)
     End Sub
 
     Private Sub btnSelect_Click(sender As Object, e As EventArgs) Handles btnSelect.Click

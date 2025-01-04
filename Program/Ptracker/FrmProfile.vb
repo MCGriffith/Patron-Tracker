@@ -501,15 +501,19 @@ Public Class FrmProfile
                 InsertVolunteer(conn, transaction, LoginID, ContactID, AddressID, PhoneID)
 
                 transaction.Commit()
-                MessageBox.Show("Profile created successfully!")
+                ' Set global variables for the current user
+                GlobalVariables.CurrentUserRole = GetSelectedRole()
+                GlobalVariables.CurrentUserName = CreateFullName()
+                GlobalVariables.CurrentUserID = LoginID
 
-                ' Enable the Patron menu in the main form  
+                ' Update menu access in main form
                 If TypeOf Me.MdiParent Is FrmMain Then
                     CType(Application.OpenForms("FrmMain"), FrmMain).UpdateMenuAccess()
                 End If
 
-                ' Close the form  
+                MessageBox.Show("Profile created successfully!")
                 Me.Close()
+
             Catch ex As Exception
                 transaction.Rollback()
                 MessageBox.Show("Error saving profile: " & ex.Message)

@@ -143,29 +143,33 @@ Public Class FrmAddEvent
 
         Using conn As New OleDbConnection(connectionString)
             conn.Open()
-
-            ' First update - tblEvents
-            Dim sqlEvents As String = "UPDATE tblEvents SET Inactive = True WHERE EventID = " & currentEventID
-            Dim cmdEvents As New OleDbCommand(sqlEvents, conn)
-
-            ' Second update - tblRegister
-            Dim sqlRegister As String = "UPDATE tblRegister SET Inactive = True WHERE EventID = " & currentEventID
-            Dim cmdRegister As New OleDbCommand(sqlRegister, conn)
+            Dim transaction As OleDbTransaction = conn.BeginTransaction()
 
             Try
+                ' Update tblEvents
+                Dim cmdEvents As New OleDbCommand("UPDATE tblEvents SET Inactive = True WHERE EventID = ?", conn, transaction)
+                cmdEvents.Parameters.AddWithValue("?", currentEventID)
                 Dim eventsAffected = cmdEvents.ExecuteNonQuery()
+
+                ' Update tblRegister
+                Dim cmdRegister As New OleDbCommand("UPDATE tblRegister SET Inactive = True WHERE EventID = ?", conn, transaction)
+                cmdRegister.Parameters.AddWithValue("?", currentEventID)
                 Dim registrationsAffected = cmdRegister.ExecuteNonQuery()
-                MessageBox.Show($"Updated {eventsAffected} event and {registrationsAffected} registrations.")
+
+                transaction.Commit()
+                MessageBox.Show($"Successfully marked {eventsAffected} event and {registrationsAffected} registrations as inactive.")
+
+                ' Clear and refresh the form
+                ClearDateControls()
+                cboEventName.Text = ""
+                currentEventID = -1
+                PopulateEventNames()
+
             Catch ex As Exception
-                MessageBox.Show("Database update error: " & ex.Message & vbCrLf & "SQL: " & sqlRegister)
-                Return
+                transaction.Rollback()
+                MessageBox.Show("Error updating records: " & ex.Message)
             End Try
         End Using
-
-        ClearDateControls()
-        cboEventName.Text = ""
-        currentEventID = -1
-        PopulateEventNames()
     End Sub
 
     Private Sub dtpRegStart_ValueChanged(sender As Object, e As EventArgs) Handles dtpRegStart.ValueChanged

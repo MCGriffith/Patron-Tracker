@@ -83,6 +83,7 @@ Partial Public Class FrmLoginUpdate
     Private Sub CheckCredentials()
         Dim fullName As String = cboName.Text
 
+        ' Handle Staff, Director, and Admin roles
         If currentRole = "Staff" OrElse currentRole = "Director" OrElse currentRole = "Admin" Then
             txtSPIN.Enabled = False
             lblSMatch.Text = "Not Required"
@@ -107,7 +108,7 @@ Partial Public Class FrmLoginUpdate
             Return
         End If
 
-        ' Original PIN verification code for Patron role remains the same
+        ' Handle Patron role
         Dim pin As String = txtSPIN.Text
         If String.IsNullOrEmpty(fullName) OrElse String.IsNullOrEmpty(pin) Then
             SetNoMatch()
