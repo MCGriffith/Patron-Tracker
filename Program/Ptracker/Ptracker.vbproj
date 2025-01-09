@@ -117,6 +117,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\DatabaseConfig.vb" />
     <Compile Include="EventInfo.vb" />
     <Compile Include="DocumentationConfig.vb" />
     <Compile Include="FrmAttendanceAnalytics.Designer.vb">
@@ -129,12 +130,6 @@
       <DependentUpon>FrmPatronReport.vb</DependentUpon>
     </Compile>
     <Compile Include="FrmPatronReport.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmScheduling.Designer.vb">
-      <DependentUpon>FrmScheduling.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FrmScheduling.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FrmSettings.Designer.vb">
@@ -210,7 +205,6 @@
       <DependentUpon>Application.myapp</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="My Project\DatabaseConfig.vb" />
     <Compile Include="My Project\GlobalVariables.vb" />
     <Compile Include="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -227,12 +221,6 @@
       <DependentUpon>SplashScreen.vb</DependentUpon>
     </Compile>
     <Compile Include="SplashScreen.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FrmVolunteer.Designer.vb">
-      <DependentUpon>FrmVolunteer.vb</DependentUpon>
-    </Compile>
-    <Compile Include="FrmVolunteer.vb">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
@@ -273,9 +261,6 @@
     <EmbeddedResource Include="FrmReports.resx">
       <DependentUpon>FrmReports.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmScheduling.resx">
-      <DependentUpon>FrmScheduling.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FrmSettings.resx">
       <DependentUpon>FrmSettings.vb</DependentUpon>
     </EmbeddedResource>
@@ -287,9 +272,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SplashScreen.resx">
       <DependentUpon>SplashScreen.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FrmVolunteer.resx">
-      <DependentUpon>FrmVolunteer.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -400,5 +382,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
