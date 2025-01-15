@@ -256,7 +256,6 @@ Public Class FrmPatronReport
                 conn.Close()
             End If
         Catch ex As Exception
-            Debug.WriteLine("Error during form closing: " & ex.Message)
         End Try
     End Sub
 End Class

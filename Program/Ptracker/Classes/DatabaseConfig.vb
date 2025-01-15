@@ -1,6 +1,8 @@
-﻿Imports System.IO
+﻿Imports System.Data.OleDb
+Imports System.IO
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
+Imports PTracker.ClosingManagement
 
 Public Class DatabaseConfig
     Private Shared ReadOnly Property DefaultPath As String
@@ -30,6 +32,32 @@ Public Class DatabaseConfig
         Else
             Throw New Exception("Database not found. Please select a valid database location.")
         End If
+    End Function
+
+    Public Shared Function UpdateClosing(closing As FSCClosingData) As Boolean
+        Dim sql As String = "UPDATE tblClosings SET " &
+                "StartDate = ?, " &
+                "EndDate = ?, " &
+                "ClosingType = ?, " &
+                "Description = ?, " &
+                "IsEmergency = ? " &
+                "WHERE ClosingsID = ?"
+
+        Using conn As New OleDb.OleDbConnection(ConnectionString)
+            Using cmd As New OleDb.OleDbCommand(sql, conn)
+                With cmd.Parameters
+                    .Add("StartDate", OleDbType.Date).Value = closing.StartDate
+                    .Add("EndDate", OleDbType.Date).Value = closing.EndDate
+                    .Add("ClosingType", OleDbType.VarChar).Value = closing.ClosingType
+                    .Add("Description", OleDbType.VarChar).Value = closing.Description
+                    .Add("IsEmergency", OleDbType.Boolean).Value = closing.IsEmergency
+                    .Add("ClosingsID", OleDbType.Integer).Value = closing.ClosingID
+                End With
+
+                conn.Open()
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Using
     End Function
 
     Public Shared Property ConnectionString As String

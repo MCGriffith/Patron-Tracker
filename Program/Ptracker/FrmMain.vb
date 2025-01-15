@@ -230,6 +230,9 @@ Public Class FrmMain
         OpenSingleInstanceForm(Of FrmAttendanceAnalytics)()
     End Sub
 
+    Private Sub mnuAdminSchedulingManagement_Click(sender As Object, e As EventArgs) Handles mnuAdminSchedulingManagement.Click
+        OpenSingleInstanceForm(Of FrmVolunteers)()
+    End Sub
 
     Private Sub mnuFileClose_Click(sender As Object, e As EventArgs) Handles mnuFileClose.Click
         ' Create a list to hold forms that need to be closed
