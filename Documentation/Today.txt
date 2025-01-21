@@ -1,0 +1,1722 @@
+This is the last comments you made last night:
+
+You've put in an impressive amount of work today - over 12 hours! That's real dedication to getting the Schedule tab's sorting working perfectly. The Volunteer tab functionality deserves your fresh, well-rested attention. Tomorrow you'll be able to tackle it with renewed energy and clear thinking. Great work today on resolving the sorting functionality - it's a solid foundation for moving forward with the rest of the application.
+
+My concerns:
+
+Hi Cody, are you ready to do some work on the Patron Tracker?  Last night we finally were able to get the Schedule Manager part if the program to work.  The Closings part also works.  We have a Calendar View that has basic functionality, and We will be creating reporting sometime soon.  Today, I would like for us to fix the Volunteers part (in this part we also handle the Substitutions.  My main concern is that we do not mess up the coding for any part that is working.  Some of the issues we have encountered is the form window was not being able to load, controls on the schedule and/or Closing parts would not work.  I am very concerned that while fixing the volunteers/substitutions part that we make only small changes that do not cause other issues.  So, you will need some data to get started.  First let's get the table information that will be involved.   
+
+Database Tables and the fields in them: (all fields below ending in Date are Short Date ONLY, All fields below ending in Time are  24-Hour time ONLY)
+
+tblVolunteerSchedule with fields - VolunteerScheduleID (PK), StartDate, EndDate, LoginID (FK), ScheduleID (FK).
+
+tblSubstitutes with fields - SubstituteID (PK), SubstituteDate, SubStartTime, SubEndTime, OriginalLoginID (FK), SubstituteLoginID (FK), ScheduleID (FK), Inactive (Yes/No - default = No)
+
+in case you need this one:
+
+tblSchedule with fields - ScheduleID (PK), DayOfWeek, StartTime, EndTime, IsActive (Yes/No Default = Yes)
+
+I dont think you need this table, but I will include it:
+
+tblClosings with fields - ClosingsID (PK), StaartDate, EndDate, ClosingType, Description, IsEmergency (Yes/No default = No), Inactive (Yes/No default = No)
+
+Table Relationships:
+
+tblClosings There are no relationships between any table and tblClosings.
+
+tblSchedule: ScheduleID (PK) one to many with tblVolunteerSchedule: ScheduleID (FK) 
+tblSchedule: ScheduleID (PK) one to many with tblSubstitutes: SchedulID (FK)
+
+tblLogin with LoginID (PK) has a one to many with tblVolunteerSchedule: OriginalLoginID (FK) it is handled by code below.
+tblLogin with LoginID (PK) has a one to many with tblVolunteerSchedule: SubstituteLoginID (FK) it is handled by code below.
+tblLogin with LoginID (PK) has a one to many with tblContacts: LoginID (FK)
+
+List views:
+
+On tabVolunteer:
+
+lvwVolunteerSchedule with Columns: SchedDay1, SchedStartTime, SchedEndTime, SchedStatus.
+(this one is for the volunteer and the schedule(s) they are assigned to).  This should only display the data for the selected person which is active.
+
+SchedDay1 will get its data from tblSchedule: DayOfWeek but converted into the written Day of the week.
+SchedStartTime gets its data from tblSchedule: StartTime.
+SchedEndTime gets its data from tblSchedule: EndTime.
+Status gets its data from tblSchedule: IsActive Where IsActive is True
+ 
+
+lvwSubs with Columns: OriginalVolunteer1, SubstituteVolunteer, SubstituteDate, SubstituteStartTime, SubstituteEndDate, SubstituteStatus.
+(this one is the Substitute volunteers of the dates they will cover).
+
+OriginalVolunteer1 gets its data from tblContacts: FullName based on the selected persons loginID
+SubstituteVolunteer gets its data from tblContacts: FullName based on the selected persons loginID
+SubstituteDate gets its data from tblSubstitutes: SubstituteDate
+SubstituteStartTime gets its data from tblSubstitutes: SubstituteStartTime.
+SubstituteEndDate gets its data from tblSubstitutes: SubstituteEndTime.
+SubstituteStatus gets its data from tblSubstitutes: Inactive where inactive is false.
+
+Controls on tabVolunteer:
+
+cboOriginalVolunteer: This is a list the people based roles - Staff, Director, Admin. This is the to be covered person
+cboAvailableSchedule: This is the list of schedule days to assign the selected Volunteer.
+btnAssignSchedule: This button will assign the selected schedule in cbpAvailableSchedule to teh selected person in cboOriginalVolunteer
+btnRemoveAssignment: This is the button to remove a selected schedule from the list view lvwVolunteerSchedule.
+lvwVolunteerSchedule with Columns: SchedDay1, SchedStartTime, SchedEndTime, SchedStatus. Contains the list of schedule(s) assigned
+
+
+cboSubstitute: This is a list the people based roles - Staff, Director, Admin. This person will cover for another volunteer.
+dtpSubDate: Date picker to select the date that the substitute will cover for the other volunteer.
+btnAssignSubstitute: This button will assign the substitute to for the selected Volunteer.
+btnRemoveSubstitute: This button will remove a selected substitution from the list view below
+lvwSubs with Columns: OriginalVolunteer1, SubstituteVolunteer, SubstituteDate, SubstituteStartTime, SubstituteEndDate, SubstituteStatus. Contains the list of substitution(s) assigned. This list view should display the substitutions for the selected person in cboOriginalVolunteer that are active no matter if the volunteer is receiving the substitution or if the volunteer is the substitute.
+
+I want us to work on one small change at a time. Example:  If a control is disabled and should be enabled, that is all we work on and then test to make sure the change works.  I do not want to go off on a wild ride of multiple changes and end up breaking something that worked.  Got it buddy?
+
+If you see code that can be improved but it does work as it is, please do not change it.  We only need to work on code that is not working so that we can focus on only what needs fixed.
+
+Code:   
+VolunteerRelationshipt.vb
+
+Imports System.Data.OleDb
+
+Public Class VolunteerRelationships
+    ' Properties to manage the relationships
+    Private _originalLoginID As Integer
+    Private _substituteLoginID As Integer
+    Private _scheduleID As Integer
+
+    ' Method to validate volunteer-substitute relationship
+    Public Function ValidateVolunteerSubstitute(originalID As Integer, substituteID As Integer) As Boolean
+        Dim sql As String = "SELECT COUNT(*) FROM tblSubstitutes " &
+                           "WHERE OriginalLoginID = @OriginalID " &
+                           "AND SubstituteLoginID = @SubstituteID " &
+                           "AND Inactive = False"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@OriginalID", originalID)
+                cmd.Parameters.AddWithValue("@SubstituteID", substituteID)
+                conn.Open()
+                Return CInt(cmd.ExecuteScalar()) > 0
+            End Using
+        End Using
+    End Function
+
+    ' Method to create new volunteer-substitute relationship
+    Public Function CreateVolunteerSubstituteLink(originalID As Integer, substituteID As Integer, scheduleID As Integer) As Boolean
+        Dim sql As String = "INSERT INTO tblSubstitutes (OriginalLoginID, SubstituteLoginID, ScheduleID, Inactive) " &
+                           "VALUES (@OriginalID, @SubstituteID, @ScheduleID, False)"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@OriginalID", originalID)
+                cmd.Parameters.AddWithValue("@SubstituteID", substituteID)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleID)
+                conn.Open()
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Using
+    End Function
+End Class
+
+SubstituteRelationshps.vb
+
+Imports System.Data.OleDb
+
+Public Class SubstituteRelationshipManager
+    Private ReadOnly connectionString As String = DatabaseConfig.ConnectionString
+
+    Public Function CreateSubstituteRelationship(originalLoginID As Integer, substituteLoginID As Integer, scheduleID As Integer, substituteDate As Date, startTime As Date, endTime As Date) As Boolean
+        Using connection As New OleDbConnection(connectionString)
+            Try
+                connection.Open()
+                Dim sql As String = "INSERT INTO tblSubstitutes (ScheduleDate, SubStartTime, SubEndDate, OriginalLoginID, SubstituteID, ScheduleID) " &
+                                  "VALUES (?, ?, ?, ?, ?, ?)"
+
+                Using cmd As New OleDbCommand(sql, connection)
+                    cmd.Parameters.AddWithValue("@ScheduleDate", substituteDate)
+                    cmd.Parameters.AddWithValue("@SubStartTime", startTime)
+                    cmd.Parameters.AddWithValue("@SubEndDate", endTime)
+                    cmd.Parameters.AddWithValue("@OriginalLoginID", originalLoginID)
+                    cmd.Parameters.AddWithValue("@SubstituteID", substituteLoginID)
+                    cmd.Parameters.AddWithValue("@ScheduleID", scheduleID)
+
+                    Dim rowsAffected = cmd.ExecuteNonQuery()
+                    Return rowsAffected > 0
+                End Using
+            Catch ex As Exception
+                ' Log error here if needed
+                Return False
+            End Try
+        End Using
+    End Function
+
+    Public Function ValidateRelationship(originalLoginID As Integer, substituteLoginID As Integer) As Boolean
+        Using connection As New OleDbConnection(connectionString)
+            Try
+                connection.Open()
+                Dim sql As String = "SELECT COUNT(*) FROM tblLogin " &
+                                  "WHERE LoginID IN (?, ?) " &
+                                  "AND Role IN ('Staff', 'Director', 'Admin')"
+
+                Using cmd As New OleDbCommand(sql, connection)
+                    cmd.Parameters.AddWithValue("@Original", originalLoginID)
+                    cmd.Parameters.AddWithValue("@Substitute", substituteLoginID)
+
+                    Dim count As Integer = CInt(cmd.ExecuteScalar())
+                    Return count = 2
+                End Using
+            Catch ex As Exception
+                Return False
+            End Try
+        End Using
+    End Function
+End Class
+
+ListviewColumnsSorter.vb
+
+Public Class ListViewColumnSorter
+    Implements IComparer
+
+    Private ColumnToSort As Integer
+    Private OrderOfSort As SortOrder
+    Private ObjectCompare As CaseInsensitiveComparer
+    Private TimeColumnIndexes As New List(Of Integer)
+
+    Public Sub New()
+        ColumnToSort = 0
+        OrderOfSort = SortOrder.None
+        ObjectCompare = New CaseInsensitiveComparer()
+    End Sub
+
+    Public Property SortColumn() As Integer
+        Get
+            Return ColumnToSort
+        End Get
+        Set(ByVal Value As Integer)
+            ColumnToSort = Value
+        End Set
+    End Property
+
+    Public Property Order() As SortOrder
+        Get
+            Return OrderOfSort
+        End Get
+        Set(ByVal Value As SortOrder)
+            OrderOfSort = Value
+        End Set
+    End Property
+
+    Private Function GetDayValue(dayName As String) As Integer
+        Select Case dayName.ToUpper()
+            Case "SUNDAY" : Return 1
+            Case "MONDAY" : Return 2
+            Case "TUESDAY" : Return 3
+            Case "WEDNESDAY" : Return 4
+            Case "THURSDAY" : Return 5
+            Case "FRIDAY" : Return 6
+            Case "SATURDAY" : Return 7
+            Case Else : Return 0
+        End Select
+    End Function
+
+    Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
+        Dim listviewX As ListViewItem = CType(x, ListViewItem)
+        Dim listviewY As ListViewItem = CType(y, ListViewItem)
+        Dim compareResult As Integer
+
+        ' Primary sort by day
+        If ColumnToSort = 0 Then
+            Dim dayX As Integer = GetDayValue(listviewX.SubItems(0).Text)
+            Dim dayY As Integer = GetDayValue(listviewY.SubItems(0).Text)
+            compareResult = dayX.CompareTo(dayY)
+
+            ' If days are equal, sort by time
+            If compareResult = 0 Then
+                Dim timeX As DateTime
+                Dim timeY As DateTime
+                If DateTime.TryParse(listviewX.SubItems(1).Text, timeX) AndAlso
+                   DateTime.TryParse(listviewY.SubItems(1).Text, timeY) Then
+                    compareResult = DateTime.Compare(timeX, timeY)
+                End If
+            End If
+        Else
+            ' Handle other columns normally
+            compareResult = ObjectCompare.Compare(listviewX.SubItems(ColumnToSort).Text,
+                                                listviewY.SubItems(ColumnToSort).Text)
+        End If
+
+        If OrderOfSort = SortOrder.Ascending Then
+            Return compareResult
+        ElseIf OrderOfSort = SortOrder.Descending Then
+            Return (-compareResult)
+        Else
+            Return 0
+        End If
+    End Function
+End Class
+
+VolunteerScheduleManager.vb
+
+Imports System.Data.OleDb
+
+Public Class VolunteerScheduleManager
+
+    Private _connectionString As String = DatabaseConfig.ConnectionString
+
+    Public Function GetVolunteerScheduleWithSubstitutes(loginId As Integer) As DataTable
+
+        Try
+            Using connection As New OleDbConnection(_connectionString)
+                Dim sql As String = "SELECT 
+                          vs.VolunteerScheduleID,
+                          sch.DayOfWeek,
+                          sch.StartTime,
+                          sch.EndTime,
+                          vs.LoginID AS OriginalLoginID,
+                          c.FullName AS OriginalVolunteer,
+                          sub.SubstituteDate,
+                          sub.SubstituteLoginID,
+                          sc.FullName AS SubstituteName
+                      FROM tblVolunteerSchedule vs
+                      INNER JOIN tblSchedule sch ON vs.ScheduleID = sch.ScheduleID
+                      INNER JOIN tblContacts c ON vs.LoginID = c.LoginID
+                      LEFT JOIN tblSubstitutes sub ON vs.ScheduleID = sub.ScheduleID
+                      LEFT JOIN tblContacts sc ON sub.SubstituteLoginID = sc.LoginID
+                      WHERE vs.LoginID = ?
+                      ORDER BY sch.DayOfWeek, sch.StartTime"
+
+                Using adapter As New OleDbDataAdapter(sql, connection)
+                    adapter.SelectCommand.Parameters.AddWithValue("?", loginId)
+                    Dim dt As New DataTable()
+                    adapter.Fill(dt)
+                    Return dt
+                End Using
+            End Using
+        Catch ex As Exception
+            Console.WriteLine("An error occurred: " & ex.Message)
+        End Try
+    End Function
+
+    Public Function GetActiveSubstitutions(loginId As Integer) As DataTable
+        Dim sql As String =
+        "SELECT DISTINCT " &
+        "    c1.FullName AS OriginalVolunteer, " &
+        "    c2.FullName AS SubstituteName, " &
+        "    sub.SubstituteDate, " &
+        "    sub.SubStartTime, " &
+        "    sub.SubEndTime " &
+        "FROM ((tblSubstitutes AS sub " &
+        "INNER JOIN tblContacts AS c1 ON sub.OriginalLoginID = c1.LoginID) " &
+        "INNER JOIN tblContacts AS c2 ON sub.SubstituteLoginID = c2.LoginID) " &
+        "WHERE (sub.OriginalLoginID = ? OR sub.SubstituteLoginID = ?) " &
+        "AND sub.Inactive = False " &
+        "ORDER BY sub.SubstituteDate"
+
+        Return ExecuteParameterizedQuery(sql, loginId, loginId)
+    End Function
+
+    Private Function ExecuteParameterizedQuery(sql As String, ParamArray parameters() As Object) As DataTable
+        Using connection As New OleDbConnection(_connectionString)
+            Using command As New OleDbCommand(sql, connection)
+                For i As Integer = 0 To parameters.Length - 1
+                    command.Parameters.Add(New OleDbParameter("?", parameters(i)))
+                Next
+
+                Using adapter As New OleDbDataAdapter(command)
+                    Dim dt As New DataTable()
+                    adapter.Fill(dt)
+                    Return dt
+                End Using
+            End Using
+        End Using
+    End Function
+
+    Public Function GetAllActiveSchedules() As DataTable
+        Dim sql As String =
+        "SELECT s.ScheduleID, s.DayOfWeek, s.StartTime, s.EndTime, s.IsActive " &
+        "FROM tblSchedule s " &
+        "WHERE s.IsActive = True " &
+        "ORDER BY s.DayOfWeek, s.StartTime"
+
+        Using connection As New OleDbConnection(_connectionString)
+            Using adapter As New OleDbDataAdapter(sql, connection)
+                Dim dt As New DataTable()
+                adapter.Fill(dt)
+                Return dt
+            End Using
+        End Using
+    End Function
+
+    Public Function AssignVolunteerToSchedule(loginId As Integer, scheduleId As Integer) As Boolean
+        Using connection As New OleDbConnection(_connectionString)
+            Try
+                connection.Open()
+                Dim sql As String = "INSERT INTO tblVolunteerSchedule 
+                                   (LoginID, ScheduleID, StartDate, EndDate) 
+                                   VALUES (?, ?, ?, ?)"
+
+                Using cmd As New OleDbCommand(sql, connection)
+                    cmd.Parameters.AddWithValue("@LoginID", loginId)
+                    cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                    cmd.Parameters.AddWithValue("@StartDate", DateTime.Today)
+                    cmd.Parameters.AddWithValue("@EndDate", DateTime.Today.AddYears(1))
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            Catch
+                Return False
+            End Try
+        End Using
+    End Function
+
+    Public Function UpdateScheduleStatus(scheduleId As Integer, isActive As Boolean) As Boolean
+        Dim sql As String = "UPDATE tblSchedule SET IsActive = @IsActive WHERE ScheduleID = @ScheduleID"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@IsActive", isActive)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                conn.Open()
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Using
+    End Function
+
+    Public Function GetFormattedScheduleData() As DataTable
+        Debug.WriteLine("=== Executing GetFormattedScheduleData ===")
+
+        Dim sql As String = "SELECT VS.VolunteerScheduleID, VS.StartDate, VS.EndDate, " &
+                       "VS.LoginID AS SubstituteLoginID, VS.ScheduleID, " &
+                       "S.DayOfWeek, S.StartTime, S.EndTime " &
+                       "FROM tblVolunteerSchedule VS " &
+                       "INNER JOIN tblSchedule S ON VS.ScheduleID = S.ScheduleID"
+
+        Debug.WriteLine($"SQL: {sql}")
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using da As New OleDbDataAdapter(sql, conn)
+                Dim dt As New DataTable()
+                da.Fill(dt)
+                Debug.WriteLine($"Rows retrieved: {dt.Rows.Count}")
+                Return dt
+            End Using
+        End Using
+    End Function
+
+
+    Public Function ValidateSubstituteDate(scheduleId As Integer, substituteDate As Date) As Boolean
+        Dim sql As String = "SELECT StartDate, EndDate " &
+                       "FROM tblVolunteerSchedule " &
+                       "WHERE VolunteerScheduleID = @ScheduleID"
+
+        Using conn As New OleDbConnection(_connectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                conn.Open()
+                Using reader As OleDbDataReader = cmd.ExecuteReader()
+                    If reader.Read() Then
+                        Dim startDate As Date = CDate(reader("StartDate"))
+                        Dim endDate As Date = If(reader("EndDate") IsNot DBNull.Value,
+                                           CDate(reader("EndDate")),
+                                           DateTime.MaxValue)
+                        Return substituteDate >= startDate AndAlso substituteDate <= endDate
+                    End If
+                End Using
+            End Using
+        End Using
+        Return False
+    End Function
+
+    Public Function CheckExistingSubstitute(scheduleId As Integer, substituteDate As Date) As Boolean
+        Dim sql As String = "SELECT COUNT(*) FROM tblVolunteerSchedule " &
+                       "WHERE VolunteerScheduleID = @ScheduleID " &
+                       "AND SubstituteDate = @SubstituteDate " &
+                       "AND SubstituteLoginID IS NOT NULL"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                cmd.Parameters.AddWithValue("@SubstituteDate", substituteDate)
+                conn.Open()
+                Return CInt(cmd.ExecuteScalar()) > 0
+            End Using
+        End Using
+    End Function
+
+    Public Function CreateSubstituteAssignment(scheduleId As Integer, originalId As Integer, substituteId As Integer, substituteDate As Date) As Boolean
+        Dim sql As String = "UPDATE tblVolunteerSchedule " &
+                       "SET SubstituteLoginID = @SubstituteID, " &
+                       "SubstituteDate = @SubstituteDate " &
+                       "WHERE VolunteerScheduleID = @ScheduleID " &
+                       "AND VolunteerID = @OriginalID"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@SubstituteID", substituteId)
+                cmd.Parameters.AddWithValue("@SubstituteDate", substituteDate)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                cmd.Parameters.AddWithValue("@OriginalID", originalId)
+                conn.Open()
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Using
+    End Function
+
+    Public Function RemoveSubstituteAssignment(scheduleId As Integer, substituteDate As Date) As Boolean
+        Dim sql As String = "UPDATE tblVolunteerSchedule " &
+                       "SET SubstituteLoginID = NULL, " &
+                       "SubstituteDate = NULL " &
+                       "WHERE VolunteerScheduleID = @ScheduleID " &
+                       "AND SubstituteDate = @SubstituteDate"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                cmd.Parameters.AddWithValue("@SubstituteDate", substituteDate)
+                conn.Open()
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Using
+    End Function
+
+
+    Public Function GetVolunteerName(loginId As Integer) As String
+        Dim sql As String = "SELECT FullName FROM tblContacts WHERE LoginID = @LoginID"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@LoginID", loginId)
+                conn.Open()
+                Dim result = cmd.ExecuteScalar()
+                Return If(result IsNot Nothing, result.ToString(), String.Empty)
+            End Using
+        End Using
+    End Function
+
+    Public Function GetAllSchedules() As DataTable
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Debug.WriteLine("=== Getting Schedules ===")
+            Dim sql As String = "SELECT ScheduleID, DayOfWeek, StartTime, EndTime, IsActive " &
+                       "FROM tblSchedule " &
+                       "WHERE IsActive = True " &
+                       "ORDER BY DayOfWeek, Format(StartTime, 'HH:mm')"
+            Using cmd As New OleDbCommand(sql, conn)
+                Dim dt As New DataTable()
+                conn.Open()
+                dt.Load(cmd.ExecuteReader())
+                Return dt
+            End Using
+        End Using
+    End Function
+
+    Public Function UpdateSchedule(scheduleId As Integer, dayOfWeek As Integer, startTime As Date, endTime As Date) As Boolean
+        Using connection As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Try
+                connection.Open()
+                Dim sql As String = "UPDATE tblSchedule SET DayOfWeek = ?, StartTime = ?, EndTime = ? WHERE ScheduleID = ?"
+                Using cmd As New OleDbCommand(sql, connection)
+                    cmd.Parameters.AddWithValue("@DayOfWeek", dayOfWeek)
+                    cmd.Parameters.AddWithValue("@StartTime", startTime)
+                    cmd.Parameters.AddWithValue("@EndTime", endTime)
+                    cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                    Return cmd.ExecuteNonQuery() > 0
+                End Using
+            Catch ex As Exception
+                Return False
+            End Try
+        End Using
+    End Function
+
+    Public Function AddSchedule(dayOfWeek As Integer, startTime As Date, endTime As Date, isActive As Boolean) As Integer
+        Dim sql As String = "INSERT INTO tblSchedule (DayOfWeek, StartTime, EndTime, IsActive) VALUES (?, ?, ?, ?)"
+
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                With cmd.Parameters
+                    .Add("DayOfWeek", OleDbType.Integer).Value = dayOfWeek
+                    .Add("StartTime", OleDbType.Date).Value = startTime
+                    .Add("EndTime", OleDbType.Date).Value = endTime
+                    .Add("IsActive", OleDbType.Boolean).Value = isActive
+                End With
+
+                conn.Open()
+                cmd.ExecuteNonQuery()
+
+                ' Get the new ID in a separate command
+                cmd.CommandText = "SELECT @@IDENTITY"
+                Return CInt(cmd.ExecuteScalar())
+            End Using
+        End Using
+    End Function
+
+    Public Function GetSubstituteDetailsForSchedule(scheduleId As Integer) As DataTable
+        Dim sql As String = "SELECT VS.SubstituteLoginID, VS.SubstituteDate " &
+                       "FROM tblVolunteerSchedule VS " &
+                       "WHERE VS.VolunteerScheduleID = @ScheduleID " &
+                       "AND VS.Active = True " &
+                       "AND VS.SubstituteLoginID IS NOT NULL"
+
+        Dim dt As New DataTable()
+        Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Using da As New OleDbDataAdapter(sql, conn)
+                da.SelectCommand.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                da.Fill(dt)
+            End Using
+        End Using
+        Return dt
+    End Function
+
+
+    Public Function ValidateSubstituteRemoval(scheduleId As Integer, substituteDate As Date) As Boolean
+        Dim sql As String = "SELECT COUNT(*) FROM tblSubstitutes " &
+                           "WHERE ScheduleID = @ScheduleID " &
+                           "AND SubstituteDate = @SubDate " &
+                           "AND Inactive = False"
+
+        Using conn As New OleDbConnection(_connectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                cmd.Parameters.AddWithValue("@SubDate", substituteDate)
+                conn.Open()
+                Return CInt(cmd.ExecuteScalar()) > 0
+            End Using
+        End Using
+    End Function
+
+    Public Function LogSubstituteHistory(scheduleId As Integer, originalId As Integer,
+                                   substituteId As Integer, substituteDate As Date,
+                                   action As String) As Boolean
+        Dim sql As String = "INSERT INTO tblSubstituteHistory " &
+                           "(ScheduleID, OriginalLoginID, SubstituteLoginID, " &
+                           "SubstituteDate, Action, ActionDate) " &
+                           "VALUES (@ScheduleID, @OriginalID, @SubstituteID, " &
+                           "@SubDate, @Action, @ActionDate)"
+
+        Using conn As New OleDbConnection(_connectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                cmd.Parameters.AddWithValue("@OriginalID", originalId)
+                cmd.Parameters.AddWithValue("@SubstituteID", substituteId)
+                cmd.Parameters.AddWithValue("@SubDate", substituteDate)
+                cmd.Parameters.AddWithValue("@Action", action)
+                cmd.Parameters.AddWithValue("@ActionDate", DateTime.Now)
+
+                conn.Open()
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Using
+    End Function
+
+    Public Function GetSubstituteHistory(scheduleId As Integer) As DataTable
+        Dim sql As String = "SELECT sh.SubstituteDate, " &
+                           "oc.FullName AS OriginalVolunteer, " &
+                           "sc.FullName AS SubstituteVolunteer, " &
+                           "sh.Action, sh.ActionDate " &
+                           "FROM tblSubstituteHistory sh " &
+                           "INNER JOIN tblContacts oc ON sh.OriginalLoginID = oc.LoginID " &
+                           "INNER JOIN tblContacts sc ON sh.SubstituteLoginID = sc.LoginID " &
+                           "WHERE sh.ScheduleID = @ScheduleID " &
+                           "ORDER BY sh.ActionDate DESC"
+
+        Using conn As New OleDbConnection(_connectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                Dim dt As New DataTable()
+                conn.Open()
+                dt.Load(cmd.ExecuteReader())
+                Return dt
+            End Using
+        End Using
+    End Function
+
+    Public Function ValidateSchedule(dayOfWeek As Integer, startTime As Date, endTime As Date) As Boolean
+        Dim sql As String = "SELECT COUNT(*) FROM tblSchedule " &
+                           "WHERE DayOfWeek = @DayOfWeek " &
+                           "AND ((StartTime <= @StartTime AND EndTime > @StartTime) " &
+                           "OR (StartTime < @EndTime AND EndTime >= @EndTime))"
+
+        Using conn As New OleDbConnection(_connectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@DayOfWeek", dayOfWeek)
+                cmd.Parameters.AddWithValue("@StartTime", startTime)
+                cmd.Parameters.AddWithValue("@EndTime", endTime)
+                conn.Open()
+                Return CInt(cmd.ExecuteScalar()) = 0
+            End Using
+        End Using
+    End Function
+
+    Public Sub InactivatePastSubstitutions()
+        Dim sql As String = "UPDATE tblSubstitutes " &
+                           "SET Inactive = True " &
+                           "WHERE SubstituteDate < Date() " &
+                           "AND Inactive = False"
+
+        Using conn As New OleDbConnection(_connectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                conn.Open()
+                cmd.ExecuteNonQuery()
+            End Using
+        End Using
+    End Sub
+
+    Public Function RemoveScheduleAssignment(scheduleId As Integer) As Boolean
+        Dim sql As String = "UPDATE tblVolunteerSchedule " &
+                           "SET Active = False " &
+                           "WHERE VolunteerScheduleID = @ScheduleID"
+
+        Using conn As New OleDbConnection(_connectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@ScheduleID", scheduleId)
+                conn.Open()
+                Return cmd.ExecuteNonQuery() > 0
+            End Using
+        End Using
+    End Function
+
+    Public Function GetDataTable(sql As String) As DataTable
+        Using connection As New OleDbConnection(_connectionString)
+            Using adapter As New OleDbDataAdapter(sql, connection)
+                Dim dt As New DataTable()
+                adapter.Fill(dt)
+                Return dt
+            End Using
+        End Using
+    End Function
+End Class
+
+FrmVolunteers.vb
+
+Imports System.Data.OleDb
+Imports Microsoft.Office.Interop.Access
+Imports PTracker.ClosingManagement
+
+Public Class FrmVolunteers
+
+    Private _scheduleManager As New VolunteerScheduleManager()
+    Private _volunteerRelationships As New VolunteerRelationships()
+    Private selectedScheduleId As Integer = -1
+    Private selectedLoginId As Integer = -1
+    Private selectedOriginalId As Integer = -1
+    Private _isEditMode As Boolean = False
+    Private _currentEditId As Integer = -1
+    Private _calendar As CustomCalendar
+    Private currentScheduleId As Integer = -1
+    Private dragTab As TabPage
+    Private dragStartPoint As Point
+    Private lvwScheduleSorter As New ListViewColumnSorter()
+
+    Private Sub FrmVolunteers_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Dim loginId As Integer = CInt(cboOriginalVolunteer.SelectedValue)
+        Try
+            InitializeControls()
+
+            VolMgmtTabs.AllowDrop = True
+            AddHandler VolMgmtTabs.MouseDown, AddressOf VolMgmtTabs_MouseDown
+            AddHandler VolMgmtTabs.MouseMove, AddressOf VolMgmtTabs_MouseMove
+            AddHandler VolMgmtTabs.MouseUp, AddressOf VolMgmtTabs_MouseUp
+
+            InitializeScheduleManagementListView()
+            InitializeCalendar()
+            LoadVolunteers()
+            EnableSubstituteControls(False)
+            LoadDayOfWeekCombo()
+            LoadVolunteerComboBox()
+            LoadAvailableSchedules(loginId)
+            RefreshVolunteerScheduleView()
+            LoadFSCClosingsList()
+            _scheduleManager.InactivatePastSubstitutions()
+        Catch ex As Exception
+            MessageBox.Show($"An error occurred while loading the form: {ex.Message}",
+                   "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+    Private Sub InitializeControls()
+        LoadVolunteerComboBoxes()
+    End Sub
+
+    Private Sub LoadVolunteers()
+        Dim sql As String =
+        "SELECT LoginID, FullName " &
+        "FROM tblContacts " &
+        "ORDER BY FullName"
+
+        Using dt As DataTable = _scheduleManager.GetDataTable(sql)
+            cboOriginalVolunteer.DataSource = dt
+            cboOriginalVolunteer.DisplayMember = "FullName"
+            cboOriginalVolunteer.ValueMember = "LoginID"
+        End Using
+    End Sub
+
+    Private Sub LoadVolunteerSchedule(loginId As Integer)
+        Dim dt As DataTable = _scheduleManager.GetVolunteerScheduleWithSubstitutes(loginId)
+        lvwVolunteerSchedule.Items.Clear()
+
+        For Each row As DataRow In dt.Rows
+            Dim item As New ListViewItem()
+            item.Text = row("DayOfWeek").ToString()
+            item.SubItems.Add(Convert.ToDateTime(row("StartTime")).ToString("HH:mm"))
+            item.SubItems.Add(Convert.ToDateTime(row("EndTime")).ToString("HH:mm"))
+            item.SubItems.Add("Active") 'SchedStatus
+            lvwVolunteerSchedule.Items.Add(item)
+        Next
+    End Sub
+
+    Private Sub LoadVolunteerComboBoxes()
+        Try
+            Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+                Dim sql As String = "SELECT LoginID, FullName FROM tblContacts ORDER BY FullName"
+                Using da As New OleDbDataAdapter(sql, conn)
+                    Dim dt As New DataTable()
+                    da.Fill(dt)
+
+                    Dim newRow As DataRow = dt.NewRow()
+                    newRow("LoginID") = -1
+                    newRow("FullName") = "-- Select Volunteer --"
+                    dt.Rows.InsertAt(newRow, 0)
+
+                    cboOriginalVolunteer.DataSource = dt.Copy()
+                    cboOriginalVolunteer.DisplayMember = "FullName"
+                    cboOriginalVolunteer.ValueMember = "LoginID"
+
+                    cboSubstitute.DataSource = dt.Copy()
+                    cboSubstitute.DisplayMember = "FullName"
+                    cboSubstitute.ValueMember = "LoginID"
+                End Using
+            End Using
+        Catch ex As OleDbException
+            ErrorHandler.HandleDatabaseError(ex, "loading volunteer list")
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+        End Try
+    End Sub
+
+    Private Sub LoadDayOfWeekCombo()
+        cboDayOfWeek.Items.Clear()
+        For i As Integer = 1 To 7
+            cboDayOfWeek.Items.Add(DayOfWeekHelper.GetDayName(i))
+        Next
+        cboDayOfWeek.SelectedIndex = 0
+    End Sub
+
+    Private Sub VolMgmtTabs_MouseDown(sender As Object, e As MouseEventArgs)
+        dragTab = GetTabUnderMouse()
+        dragStartPoint = New Point(e.X, e.Y)
+    End Sub
+
+    Private Sub VolMgmtTabs_MouseMove(sender As Object, e As MouseEventArgs)
+        If e.Button = MouseButtons.Left AndAlso dragTab IsNot Nothing Then
+            Dim targetTab As TabPage = GetTabUnderMouse()
+            If targetTab IsNot Nothing AndAlso targetTab IsNot dragTab Then
+                SwapTabPages(dragTab, targetTab)
+            End If
+        End If
+    End Sub
+
+    Private Sub VolMgmtTabs_MouseUp(sender As Object, e As MouseEventArgs)
+        dragTab = Nothing
+    End Sub
+
+    Private Function GetTabUnderMouse() As TabPage
+        For i As Integer = 0 To VolMgmtTabs.TabPages.Count - 1
+            If VolMgmtTabs.GetTabRect(i).Contains(VolMgmtTabs.PointToClient(Cursor.Position)) Then
+                Return VolMgmtTabs.TabPages(i)
+            End If
+        Next
+        Return Nothing
+    End Function
+
+    Private Sub SwapTabPages(tab1 As TabPage, tab2 As TabPage)
+        Dim index1 As Integer = VolMgmtTabs.TabPages.IndexOf(tab1)
+        Dim index2 As Integer = VolMgmtTabs.TabPages.IndexOf(tab2)
+        VolMgmtTabs.TabPages(index1) = tab2
+        VolMgmtTabs.TabPages(index2) = tab1
+    End Sub
+
+    Private Sub btnAddSchedule_Click(sender As Object, e As EventArgs) Handles btnAddSchedule.Click
+        Try
+            Dim dayValue As Integer = DayOfWeekHelper.GetDayValue(cboDayOfWeek.Text)
+            Dim scheduleQueries As New VolunteerScheduleManager()
+
+            If btnAddSchedule.Text = "Update Schedule" Then
+                ' Handle Update
+                If scheduleQueries.UpdateSchedule(selectedScheduleId, dayValue, dtpStartTime.Value, dtpEndTime.Value) Then
+                    RefreshVolunteerScheduleView()
+                    btnAddSchedule.Text = "Add Schedule"
+                    selectedScheduleId = -1
+                End If
+            Else
+                ' Handle Add
+                Dim newScheduleId = scheduleQueries.AddSchedule(dayValue, dtpStartTime.Value, dtpEndTime.Value, True)
+                If newScheduleId > 0 Then
+                    RefreshVolunteerScheduleView()
+                End If
+            End If
+
+        Catch ex As OleDbException
+            ErrorHandler.HandleDatabaseError(ex, "managing schedule")
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+        End Try
+    End Sub
+
+    Private Sub btnEditSchedule1_Click(sender As Object, e As EventArgs) Handles btnEditSchedule1.Click
+        If lvwSchedule.SelectedItems.Count = 0 Then
+            MessageBox.Show("Please select a schedule to edit.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        selectedScheduleId = CInt(lvwSchedule.SelectedItems(0).Tag)
+        Dim dayName As String = lvwSchedule.SelectedItems(0).SubItems(0).Text
+        cboDayOfWeek.SelectedItem = dayName
+        dtpStartTime.Value = DateTime.ParseExact(lvwSchedule.SelectedItems(0).SubItems(1).Text, "HH:mm", Nothing)
+        dtpEndTime.Value = DateTime.ParseExact(lvwSchedule.SelectedItems(0).SubItems(2).Text, "HH:mm", Nothing)
+        btnAddSchedule.Text = "Update Schedule"
+
+        ' Add immediate refresh after update
+        RefreshVolunteerScheduleView()
+    End Sub
+
+    Private Sub btnDeactivate_Click(sender As Object, e As EventArgs) Handles btnDeactivate.Click
+        If lvwSchedule.SelectedItems.Count = 0 Then
+            MessageBox.Show("Please select a schedule to deactivate.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim scheduleId As Integer = CInt(lvwSchedule.SelectedItems(0).Tag)
+        If _scheduleManager.UpdateScheduleStatus(scheduleId, False) Then
+            RefreshVolunteerScheduleView()
+        End If
+    End Sub
+
+    Private Sub btnActivate_Click(sender As Object, e As EventArgs) Handles btnActivate.Click
+        If lvwSchedule.SelectedItems.Count = 0 Then
+            MessageBox.Show("Please select a schedule to activate.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        Dim scheduleId As Integer = CInt(lvwSchedule.SelectedItems(0).Tag)
+        If _scheduleManager.UpdateScheduleStatus(scheduleId, True) Then
+            RefreshVolunteerScheduleView()
+        End If
+    End Sub
+
+    Private Sub LoadVolunteerComboBox()
+        Using connection As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Dim sql As String = "SELECT c.FullName, l.LoginID " &
+                           "FROM tblContacts c " &
+                           "INNER JOIN tblLogin l ON c.LoginID = l.LoginID " &
+                           "WHERE l.Role IN ('Staff', 'Director', 'Admin') " &
+                           "ORDER BY c.FullName"
+
+            Using cmd As New OleDbCommand(sql, connection)
+                connection.Open()
+                Dim dt As New DataTable()
+                dt.Columns.Add("FullName", GetType(String))
+                dt.Columns.Add("LoginID", GetType(Integer))
+
+                ' Add blank row first
+                dt.Rows.Add("", -1)
+
+                Using reader As OleDbDataReader = cmd.ExecuteReader()
+                    While reader.Read()
+                        dt.Rows.Add(reader("FullName"), reader("LoginID"))
+                    End While
+                End Using
+
+                cboOriginalVolunteer.DisplayMember = "FullName"
+                cboOriginalVolunteer.ValueMember = "LoginID"
+                cboOriginalVolunteer.DataSource = dt
+            End Using
+        End Using
+    End Sub
+
+    Private Sub cboVolunteer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboOriginalVolunteer.SelectedIndexChanged
+        If cboOriginalVolunteer.SelectedItem IsNot Nothing Then
+            Dim selected = DirectCast(cboOriginalVolunteer.SelectedItem, DataRowView)
+            selectedLoginId = CInt(selected("LoginID"))
+        End If
+    End Sub
+
+    Private Sub LoadAvailableSchedules(loginId As Integer)
+        Using connection As New OleDbConnection(DatabaseConfig.ConnectionString)
+            Dim sql As String = "SELECT ScheduleID, DayOfWeek, StartTime, EndTime " &
+                           "FROM tblSchedule " &
+                           "WHERE IsActive = True " &
+                           "ORDER BY DayOfWeek, StartTime"
+
+            Using cmd As New OleDbCommand(sql, connection)
+                connection.Open()
+                Using reader As OleDbDataReader = cmd.ExecuteReader()
+                    cboAvailableSchedule.Items.Clear()
+
+                    ' Add blank item first
+                    cboAvailableSchedule.Items.Add(New With {
+                    .Display = "",
+                    .Value = -1
+                })
+
+                    While reader.Read()
+                        Dim dayName = DayOfWeekHelper.GetDayName(CInt(reader("DayOfWeek")))
+                        Dim displayText = $"{dayName} {CDate(reader("StartTime")).ToString("HH:mm")} - {CDate(reader("EndTime")).ToString("HH:mm")}"
+                        cboAvailableSchedule.Items.Add(New With {
+                        .Display = displayText,
+                        .Value = reader("ScheduleID")
+                    })
+                    End While
+                End Using
+            End Using
+        End Using
+
+        cboAvailableSchedule.DisplayMember = "Display"
+        cboAvailableSchedule.SelectedIndex = 0
+    End Sub
+
+    Private Sub btnAssignSchedule_Click(sender As Object, e As EventArgs) Handles btnAssignSchedule.Click
+        Try
+            If cboOriginalVolunteer.SelectedIndex = -1 Then
+                MessageBox.Show("Please select a volunteer.", "Selection Required")
+                Return
+            End If
+
+            If cboAvailableSchedule.SelectedIndex = -1 Then
+                MessageBox.Show("Please select a schedule.", "Selection Required")
+                Return
+            End If
+
+            Dim loginId As Integer = CInt(cboOriginalVolunteer.SelectedValue)
+            Dim scheduleId As Integer = CInt(cboAvailableSchedule.SelectedValue)
+
+            If _scheduleManager.AssignVolunteerToSchedule(loginId, scheduleId) Then
+                RefreshVolunteerScheduleView()
+                MessageBox.Show("Schedule assigned successfully.", "Success")
+            End If
+
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+        End Try
+    End Sub
+
+    Private Sub btnRemoveAssignment_Click(sender As Object, e As EventArgs) Handles btnRemoveAssignment.Click
+        Try
+            If lvwVolunteerSchedule.SelectedItems.Count = 0 Then
+                MessageBox.Show("Please select a schedule to remove.", "Selection Required")
+                Return
+            End If
+
+            If MessageBox.Show("Are you sure you want to remove this schedule assignment?",
+                          "Confirm Removal",
+                          MessageBoxButtons.YesNo,
+                          MessageBoxIcon.Question) = DialogResult.Yes Then
+
+                Dim scheduleId As Integer = CInt(lvwVolunteerSchedule.SelectedItems(0).SubItems("VolunteerScheduleID").Text)
+                If _scheduleManager.RemoveScheduleAssignment(scheduleId) Then
+                    RefreshVolunteerScheduleView()
+                    MessageBox.Show("Schedule assignment removed successfully.", "Success")
+                End If
+            End If
+
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+        End Try
+    End Sub
+
+    Private Function ValidateSubstitution(originalId As Integer, substituteId As Integer) As Boolean
+        If originalId = substituteId Then
+            MessageBox.Show("A volunteer cannot substitute for themselves.", "Invalid Selection")
+            Return False
+        End If
+
+        If substituteId = -1 Then
+            MessageBox.Show("Please select a substitute volunteer.", "Invalid Selection")
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    Private Sub btnAssignSubstitute_Click(sender As Object, e As EventArgs) Handles btnAssignSubstitute.Click
+        Try
+            If Not ValidateSelections() Then Return
+
+            Dim scheduleId As Integer = GetSelectedScheduleId()
+            Dim substituteDate As Date = dtpSubDate.Value.Date
+            Dim originalId As Integer = CInt(cboOriginalVolunteer.SelectedValue)
+            Dim substituteId As Integer = CInt(cboSubstitute.SelectedValue)
+
+            If Not _scheduleManager.ValidateSubstituteDate(scheduleId, substituteDate) Then
+                MessageBox.Show("The substitute date must be within the schedule's date range.", "Invalid Date")
+                Return
+            End If
+
+            If _scheduleManager.CreateSubstituteAssignment(scheduleId, originalId, substituteId, substituteDate) Then
+                _scheduleManager.LogSubstituteHistory(scheduleId, originalId, substituteId, substituteDate, "Assigned")
+                RefreshVolunteerScheduleView()
+            End If
+
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+        End Try
+    End Sub
+
+    Private Sub btnRemoveSubstitute_Click(sender As Object, e As EventArgs) Handles btnRemoveSubstitute.Click
+        Try
+            Dim scheduleId As Integer = GetSelectedScheduleId()
+            If scheduleId = -1 Then
+                MessageBox.Show("Please select a schedule first.", "Selection Required")
+                Return
+            End If
+
+            Dim substituteDate As Date = dtpSubDate.Value.Date
+
+            If MessageBox.Show("Are you sure you want to remove this substitute?",
+                          "Confirm Removal",
+                          MessageBoxButtons.YesNo,
+                          MessageBoxIcon.Question) = DialogResult.Yes Then
+
+                If _scheduleManager.RemoveSubstituteAssignment(scheduleId, substituteDate) Then
+                    Dim originalId As Integer = CInt(cboOriginalVolunteer.SelectedValue)
+                    Dim substituteId As Integer = CInt(cboSubstitute.SelectedValue)
+                    _scheduleManager.LogSubstituteHistory(scheduleId, originalId, substituteId, substituteDate, "Removed")
+                    RefreshVolunteerScheduleView()
+                End If
+            End If
+
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+        End Try
+    End Sub
+
+    Private Sub cboOriginalVolunteer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboOriginalVolunteer.SelectedIndexChanged
+        If cboOriginalVolunteer.SelectedValue IsNot Nothing Then
+            Dim loginId As Integer = Convert.ToInt32(DirectCast(cboOriginalVolunteer.SelectedItem, DataRowView)("LoginID"))
+            selectedLoginId = loginId
+            RefreshVolunteerScheduleView()
+            LoadAvailableSchedules(loginId)
+            EnableSubstituteControls(True)
+        End If
+    End Sub
+
+    'Private Sub cboOriginalVolunteer_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboOriginalVolunteer.SelectedIndexChanged
+    '    If cboOriginalVolunteer.SelectedValue IsNot Nothing Then
+    '        Dim loginId As Integer = Convert.ToInt32(DirectCast(cboOriginalVolunteer.SelectedItem, DataRowView)("LoginID"))
+    '        LoadVolunteerSchedule(loginId)
+    '        LoadAvailableSchedules(loginId)
+    '        LoadSubstitutionsList(loginId)
+    '    End If
+    'End Sub
+
+    Private Sub LoadSubstitutionsList(loginId As Integer)
+        Dim dt As DataTable = _scheduleManager.GetActiveSubstitutions(loginId)
+        lvwSubs.Items.Clear()
+
+        For Each row As DataRow In dt.Rows
+            Dim item As New ListViewItem()
+            item.Text = row("OriginalVolunteer").ToString()
+            item.SubItems.Add(row("SubstituteName").ToString())
+            item.SubItems.Add(Convert.ToDateTime(row("SubstituteDate")).ToShortDateString())
+            item.SubItems.Add(Convert.ToDateTime(row("SubStartTime")).ToString("HH:mm"))
+            item.SubItems.Add(Convert.ToDateTime(row("SubEndTime")).ToString("HH:mm"))
+            item.SubItems.Add("Active") 'SubstituteStatus
+            lvwSubs.Items.Add(item)
+        Next
+    End Sub
+
+
+
+
+    Private Sub lvwVolunteerSchedule_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lvwVolunteerSchedule.SelectedIndexChanged
+        Dim hasSelection As Boolean = lvwVolunteerSchedule.SelectedItems.Count > 0
+        cboSubstitute.Enabled = hasSelection
+        dtpSubDate.Enabled = hasSelection
+        btnAssignSubstitute.Enabled = hasSelection
+        btnRemoveSubstitute.Enabled = hasSelection
+    End Sub
+
+
+
+
+    Private Sub btnAddClosing1_Click(sender As Object, e As EventArgs) Handles btnAddClosing1.Click
+        Dim closingMgr As New ClosingManagement(DatabaseConfig.ConnectionString)
+
+        ' Get values from controls
+        Dim startDate As Date = dtpStartDate.Value
+        Dim endDate As Date = dtpEndDate.Value
+        Dim closingType As String = cboClosingType.Text
+        Dim isEmergency As Boolean = chkEmergency.Checked
+        Dim description As String = txtDescription.Text
+
+        ' Add the closing to database
+        If closingMgr.AddClosing(startDate, endDate, closingType, description, isEmergency) Then
+            ' Clear the form controls
+            ClearClosingControls()
+
+            ' Immediately refresh the ListView with all active closings
+            LoadFSCClosingsList()
+
+            MessageBox.Show("Closing added successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        Else
+            MessageBox.Show("Failed to add closing.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+    End Sub
+
+    Private Sub ClearClosingControls()
+        dtpStartDate.Value = Date.Today
+        dtpEndDate.Value = Date.Today
+        cboClosingType.SelectedIndex = -1
+        chkEmergency.Checked = False
+        txtDescription.Clear()
+    End Sub
+
+    Private Sub LoadFSCClosingsList()
+        Try
+            Debug.WriteLine(vbNewLine & "=== Starting LoadFSCClosingsList ===")
+            lvwClosings.Items.Clear()
+            Debug.WriteLine("ListView cleared")
+
+            Dim closingMgr As New ClosingManagement(DatabaseConfig.ConnectionString)
+            Debug.WriteLine("Getting closings from database...")
+            Dim fscClosings = closingMgr.GetFSCClosings()
+            Debug.WriteLine($"Retrieved {fscClosings.Count} closings")
+
+            For Each fscClosing In fscClosings
+                Debug.WriteLine($"Processing closing ID: {fscClosing.ClosingID}")
+                Dim item As New ListViewItem()
+                With item
+                    .Text = fscClosing.StartDate.ToShortDateString()        ' CloseStartDate
+                    .SubItems.Add(fscClosing.EndDate.ToShortDateString())   ' CloseEndDate
+                    .SubItems.Add(fscClosing.ClosingType)                   ' CloseType
+                    .SubItems.Add(If(fscClosing.IsEmergency, "Yes", "No"))  ' CloseEmergency
+                    .SubItems.Add(fscClosing.Description)                   ' CloseDescription
+                    .Tag = fscClosing.ClosingID                             ' Maps to ClosingsID in database
+                End With
+
+                lvwClosings.Items.Add(item)
+                Debug.WriteLine($"Added item to ListView: {item.Text}")
+            Next
+
+            Debug.WriteLine($"Final ListView count: {lvwClosings.Items.Count}")
+            lvwClosings.Refresh()
+        Catch ex As Exception
+            Debug.WriteLine($"Error in LoadFSCClosingsList: {ex.Message}")
+            Debug.WriteLine($"Stack Trace: {ex.StackTrace}")
+            MessageBox.Show($"Error loading closings: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+    Private Sub btnRemoveClosing_Click(sender As Object, e As EventArgs) Handles btnRemoveClosing.Click
+        If lvwClosings.SelectedItems.Count = 0 Then
+            MessageBox.Show("Please select a closing to remove.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        ' Add confirmation dialog
+        If MessageBox.Show("Are you sure you want to remove the selected closing(s)?",
+                      "Confirm Removal",
+                      MessageBoxButtons.YesNo,
+                      MessageBoxIcon.Question) = DialogResult.No Then
+            Return
+        End If
+
+        Dim closingMgr As New ClosingManagement(DatabaseConfig.ConnectionString)
+        Dim successCount As Integer = 0
+
+        For Each item As ListViewItem In lvwClosings.SelectedItems
+            Dim closingId As Integer = CInt(item.Tag)
+            If closingMgr.SetClosingInactive(closingId) Then
+                successCount += 1
+                lvwClosings.Items.Remove(item)
+            End If
+        Next
+
+        If successCount > 0 Then
+            MessageBox.Show($"{successCount} closing(s) removed successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End If
+    End Sub
+
+    Private Sub tabClosing_Enter(sender As Object, e As EventArgs) Handles tabClosing.Enter
+        LoadFSCClosingsList()
+        SetEditMode(False)  ' This will hide Save/Cancel and enable regular buttons
+    End Sub
+
+    Private Sub SetEditMode(enabled As Boolean)
+        ' Basic button states
+        btnAddClosing.Enabled = Not enabled
+        btnUpdateClosing.Enabled = Not enabled
+        btnRemoveClosing.Enabled = Not enabled
+
+        ' Save/Cancel buttons
+        btnSaveChanges.Visible = enabled
+        btnCancelEdit.Visible = enabled
+    End Sub
+
+    Private Sub lvwClosings_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lvwClosings.SelectedIndexChanged
+        Dim hasSelection = (lvwClosings.SelectedItems.Count > 0)
+        btnAddClosing.Enabled = Not hasSelection
+        btnUpdateClosing.Enabled = hasSelection
+        btnRemoveClosing.Enabled = hasSelection
+    End Sub
+
+    Private Sub btnUpdateClosing_Click(sender As Object, e As EventArgs) Handles btnUpdateClosing.Click
+        If lvwClosings.SelectedItems.Count = 0 Then
+            MessageBox.Show("Please select a closing to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        End If
+
+        btnAddClosing.Enabled = False  ' Disable Add immediately
+
+        Dim selectedItem As ListViewItem = lvwClosings.SelectedItems(0)
+        _currentEditId = CInt(selectedItem.Tag)  ' Store the ID for update
+
+        ' Load data into fields
+        dtpStartDate.Value = CDate(selectedItem.Text)
+        dtpEndDate.Value = CDate(selectedItem.SubItems(1).Text)
+        cboClosingType.Text = selectedItem.SubItems(2).Text
+        chkEmergency.Checked = (selectedItem.SubItems(3).Text = "Yes")
+        txtDescription.Text = selectedItem.SubItems(4).Text
+
+        SetEditMode(True)
+    End Sub
+
+    Private Sub btnSaveChanges_Click(sender As Object, e As EventArgs) Handles btnSaveChanges.Click
+        ' Create closing object with updated data
+        Dim updatedClosing As New FSCClosingData With {
+        .ClosingID = _currentEditId,
+        .StartDate = dtpStartDate.Value,
+        .EndDate = dtpEndDate.Value,
+        .ClosingType = cboClosingType.Text,
+        .IsEmergency = chkEmergency.Checked,
+        .Description = txtDescription.Text
+    }
+
+        ' Save to database using DatabaseConfig
+        If DatabaseConfig.UpdateClosing(updatedClosing) Then
+            ' Refresh ListView
+            LoadFSCClosingsList()
+            SetEditMode(False)
+            MessageBox.Show("Closing updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End If
+    End Sub
+
+    Private Sub btnCancelEdit_Click(sender As Object, e As EventArgs) Handles btnCancelEdit.Click
+        SetEditMode(False)
+        ClearClosingControls()
+    End Sub
+
+
+    Private Sub InitializeCalendar()
+        _calendar = New CustomCalendar()
+        tabCalendar.Controls.Add(_calendar)
+        _calendar.Location = New Point(20, 20)
+
+        ' Add navigation buttons
+        Dim btnPrevMonth As New Button()
+        Dim btnNextMonth As New Button()
+
+        With btnPrevMonth
+            .Text = "Previous Month"
+            .Location = New Point(10, _calendar.Bottom + 10)
+            .Size = New Size(100, 30)
+            AddHandler .Click, AddressOf btnPrevMonth_Click
+        End With
+
+        With btnNextMonth
+            .Text = "Next Month"
+            .Location = New Point(btnPrevMonth.Right + 10, btnPrevMonth.Top)
+            .Size = New Size(100, 30)
+            AddHandler .Click, AddressOf btnNextMonth_Click
+        End With
+
+        tabCalendar.Controls.AddRange({btnPrevMonth, btnNextMonth})
+        AddHandler _calendar.CalendarClicked, AddressOf ShowExpandedCalendar
+    End Sub
+
+    Private Sub btnPrevMonth_Click(sender As Object, e As EventArgs)
+        _calendar.NavigateMonth(False)
+    End Sub
+
+    Private Sub btnNextMonth_Click(sender As Object, e As EventArgs)
+        _calendar.NavigateMonth(True)
+    End Sub
+
+    Private Sub ShowExpandedCalendar(sender As Object, e As EventArgs)
+        Dim expandedView As New FrmCalendarView(_calendar.CurrentDate)
+        expandedView.Show()
+    End Sub
+
+    Private Sub UpdateAvailabilityIndicators()
+        EnableSubstituteControls(lvwVolunteerSchedule.SelectedItems.Count > 0)
+    End Sub
+
+    Private Sub UpdateRelatedDisplays(scheduleData As DataTable)
+        If scheduleData IsNot Nothing AndAlso scheduleData.Rows.Count > 0 Then
+            UpdateAvailabilityIndicators()
+        End If
+    End Sub
+
+
+    Private Sub tabSchedule_Enter(sender As Object, e As EventArgs) Handles tabSchedule.Enter
+        RefreshVolunteerScheduleView()
+        If lvwVolunteerSchedule.Items.Count = 0 Then
+            EnableSubstituteControls(False)
+        End If
+    End Sub
+
+    Private Sub lvwOrgs_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If lvwVolunteerSchedule.SelectedItems.Count > 0 Then
+            Dim scheduleId As Integer = GetSelectedScheduleId()
+            EnableSubstituteControls(True)
+            LoadSubstituteDetails(scheduleId)
+            RefreshVolunteerScheduleView()
+        Else
+            EnableSubstituteControls(False)
+            ClearSubstituteControls()
+        End If
+    End Sub
+
+    Private Sub EnableSubstituteControls(enable As Boolean)
+        grpSubstitutions.Enabled = True
+        btnAssignSubstitute.Enabled = enable
+        btnRemoveSubstitute.Enabled = enable
+        dtpSubDate.Enabled = enable
+        cboSubstitute.Enabled = enable
+    End Sub
+
+    Private Sub lvwVolunteerSchedule_ColumnClick(sender As Object, e As ColumnClickEventArgs)
+        ' Sort the items based on column clicked
+        Dim sorter As New ListViewColumnSorter()
+        lvwVolunteerSchedule.ListViewItemSorter = sorter
+        sorter.SortColumn = e.Column
+        lvwVolunteerSchedule.Sort()
+    End Sub
+
+    Private Sub LoadSubstituteDetails(scheduleId As Integer)
+        Try
+            Dim scheduleQueries As New VolunteerScheduleManager()
+            Dim substituteData = scheduleQueries.GetSubstituteDetailsForSchedule(scheduleId)
+
+            If substituteData IsNot Nothing AndAlso substituteData.Rows.Count > 0 Then
+                Dim row As DataRow = substituteData.Rows(0)
+
+                If row("SubstituteLoginID") IsNot DBNull.Value Then
+                    cboSubstitute.SelectedValue = row("SubstituteLoginID")
+                    dtpSubDate.Value = CDate(row("SubstituteDate"))
+                    btnRemoveSubstitute.Enabled = True
+                    btnAssignSubstitute.Enabled = False
+                End If
+            Else
+                ResetSubstituteInputs()
+            End If
+        Catch ex As OleDbException
+            ErrorHandler.HandleDatabaseError(ex, "loading substitute details")
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+        End Try
+    End Sub
+
+    Private Sub DisplaySubstituteDetails(substituteData As DataTable)
+        If substituteData.Rows.Count > 0 Then
+            Dim row As DataRow = substituteData.Rows(0)
+
+            ' Set the substitute volunteer in combo box
+            cboSubstitute.SelectedValue = row("SubstituteLoginID")
+
+            ' Set the substitute date
+            dtpSubDate.Value = CDate(row("SubstituteDate"))
+
+            ' Enable remove button since there is a substitute
+            btnRemoveSubstitute.Enabled = True
+            btnAssignSubstitute.Enabled = False
+        Else
+            ' No substitute assigned
+            cboSubstitute.SelectedIndex = 0
+            dtpSubDate.Value = DateTime.Today
+
+            ' Enable assign button since there is no substitute
+            btnRemoveSubstitute.Enabled = False
+            btnAssignSubstitute.Enabled = True
+        End If
+    End Sub
+
+    Private Function ValidateSubstituteAssignment(scheduleId As Integer, substituteDate As Date) As Boolean
+        Try
+            Dim scheduleQueries As New VolunteerScheduleManager()
+
+            If Not scheduleQueries.ValidateSubstituteDate(scheduleId, substituteDate) Then
+                ErrorHandler.HandleValidationError("The substitute date must be within the schedule's date range.")
+                Return False
+            End If
+
+            If Not ValidateSubstitution(CInt(cboOriginalVolunteer.SelectedValue),
+                                  CInt(cboSubstitute.SelectedValue)) Then
+                Return False
+            End If
+
+            If scheduleQueries.CheckExistingSubstitute(scheduleId, substituteDate) Then
+                ErrorHandler.HandleValidationError("A substitute is already assigned for this date.")
+                Return False
+            End If
+
+            Return True
+        Catch ex As OleDbException
+            ErrorHandler.HandleDatabaseError(ex, "validating substitute assignment")
+            Return False
+        Catch ex As Exception
+            ErrorHandler.HandleSystemError(ex)
+            Return False
+        End Try
+    End Function
+
+    Private Function ValidateNoExistingSubstitute(scheduleId As Integer, substituteDate As Date) As Boolean
+        Dim scheduleQueries As New VolunteerScheduleManager()
+        If scheduleQueries.CheckExistingSubstitute(scheduleId, substituteDate) Then
+            MessageBox.Show("A substitute is already assigned for this date.", "Duplicate Assignment")
+            Return False
+        End If
+        Return True
+    End Function
+
+    Private Sub lvwVolunteerSchedule_MouseClick(sender As Object, e As MouseEventArgs)
+        If e.Button = MouseButtons.Right Then
+            If lvwVolunteerSchedule.SelectedItems.Count > 0 Then
+                Dim scheduleId As Integer = CInt(lvwVolunteerSchedule.SelectedItems(0).Tag)
+                LoadSubstituteDetails(scheduleId)
+            End If
+        End If
+    End Sub
+
+    Private Sub ResetSubstituteInputs()
+        If cboSubstitute.Items.Count > 0 Then
+            cboSubstitute.SelectedIndex = 0
+        End If
+        dtpSubDate.Value = DateTime.Today
+        EnableSubstituteControls(lvwVolunteerSchedule.SelectedItems.Count > 0)
+    End Sub
+
+    Private Sub cboSubstituteVolunteer_SelectedIndexChanged(sender As Object, e As EventArgs)
+        If lvwVolunteerSchedule.SelectedItems.Count > 0 Then
+            btnAssignSubstitute.Enabled = (cboSubstitute.SelectedIndex > 0)
+        End If
+    End Sub
+
+    Private Function GetSelectedScheduleId() As Integer
+        If lvwVolunteerSchedule.SelectedItems.Count > 0 Then
+            Return CInt(lvwVolunteerSchedule.SelectedItems(0).Tag)
+        End If
+        Return -1
+    End Function
+
+    Private Function ValidateSelections() As Boolean
+        If GetSelectedScheduleId() = -1 Then
+            MessageBox.Show("Please select a schedule first.", "Selection Required")
+            Return False
+        End If
+
+        If cboSubstitute.SelectedIndex <= 0 Then
+            MessageBox.Show("Please select a substitute volunteer.", "Selection Required")
+            Return False
+        End If
+
+        Return True
+    End Function
+
+    Private Sub UpdateScheduleDisplay()
+        If lvwVolunteerSchedule.SelectedItems.Count > 0 Then
+            Dim selectedItem As ListViewItem = lvwVolunteerSchedule.SelectedItems(0)
+            selectedItem.EnsureVisible()
+
+            ' Update the substitute information display
+            Dim hasSubstitute As Boolean = Not String.IsNullOrEmpty(selectedItem.SubItems(5).Text)
+            btnRemoveSubstitute.Enabled = hasSubstitute
+            btnAssignSubstitute.Enabled = Not hasSubstitute AndAlso cboSubstitute.SelectedIndex > 0
+        End If
+    End Sub
+
+    Private Sub HandleError(errorMessage As String)
+        MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        RefreshAllDisplays()
+    End Sub
+
+
+    Private Sub RefreshAllDisplays()
+        RefreshVolunteerScheduleView()
+        HandleScheduleSelection()
+        UpdateScheduleDisplay()
+    End Sub
+
+    Private Sub ClearSubstituteControls()
+        If cboSubstitute.Items.Count > 0 Then
+            cboSubstitute.SelectedIndex = 0
+        End If
+        dtpSubDate.Value = DateTime.Today
+        btnAssignSubstitute.Enabled = False
+        btnRemoveSubstitute.Enabled = False
+    End Sub
+
+    Private Sub HandleScheduleSelection()
+        Dim hasSelection = lvwVolunteerSchedule.SelectedItems.Count > 0
+
+        If hasSelection Then
+            Dim scheduleId As Integer = GetSelectedScheduleId()
+            ProcessSelectedSchedule(scheduleId)
+        Else
+            ResetScheduleDisplay()
+        End If
+    End Sub
+
+    Private Sub ProcessSelectedSchedule(scheduleId As Integer)
+        EnableSubstituteControls(True)
+        LoadSubstituteDetails(scheduleId)
+        UpdateScheduleDisplay()
+    End Sub
+
+    Private Sub ResetScheduleDisplay()
+        ClearSubstituteControls()
+        EnableSubstituteControls(False)
+    End Sub
+
+    Private Sub lvwSchedule_ColumnClick(sender As Object, e As ColumnClickEventArgs) Handles lvwSchedule.ColumnClick
+        ' Create the sorting object
+        Dim sorter As New ListViewColumnSorter()
+        lvwSchedule.ListViewItemSorter = sorter
+
+        ' Sort based on column clicked
+        sorter.SortColumn = e.Column
+
+        ' Toggle sort order
+        If sorter.Order = SortOrder.Ascending Then
+            sorter.Order = SortOrder.Descending
+        Else
+            sorter.Order = SortOrder.Ascending
+        End If
+
+        ' Perform the sort
+        lvwSchedule.Sort()
+    End Sub
+
+    Private Sub InitializeVolunteerScheduleListView()
+        With lvwVolunteerSchedule
+            .Clear()
+            .View = View.Details
+            .FullRowSelect = True
+            .GridLines = True
+
+            .Columns.Add("Day", 100)
+            .Columns.Add("Start Time", 100)
+            .Columns.Add("End Time", 100)
+            .Columns.Add("Original Volunteer", 150)
+            .Columns.Add("Substitute", 150)
+            .Columns.Add("Sub Date", 100)
+            .Columns.Add("Status", 80)
+        End With
+    End Sub
+
+    Private Sub RefreshVolunteerScheduleView()
+        lvwVolunteerSchedule.Items.Clear()
+        Dim scheduleData = _scheduleManager.GetVolunteerScheduleWithSubstitutes(selectedLoginId)
+
+        If scheduleData IsNot Nothing Then
+            For Each row As DataRow In scheduleData.Rows
+                Dim item As New ListViewItem(DayOfWeekHelper.GetDayName(CInt(row("DayOfWeek"))))
+                With item.SubItems
+                    .Add(CDate(row("StartTime")).ToString("HH:mm"))
+                    .Add(CDate(row("EndTime")).ToString("HH:mm"))
+                    .Add(row("OriginalVolunteer").ToString())
+                    .Add(If(row("SubstituteName") IsNot DBNull.Value, row("SubstituteName").ToString(), ""))
+                    .Add(If(row("SubstituteDate") IsNot DBNull.Value, CDate(row("SubstituteDate")).ToString("MM/dd/yyyy"), ""))
+                    .Add(If(row("SubstituteName") IsNot DBNull.Value, "Substituted", "Active"))
+                End With
+                item.Tag = row("VolunteerScheduleID")
+                lvwVolunteerSchedule.Items.Add(item)
+            Next
+        End If
+    End Sub
+
+    Private Sub InitializeScheduleManagementListView()
+        With lvwSchedule
+            .Clear()
+            .View = View.Details
+            .FullRowSelect = True
+            .GridLines = True
+
+            .Columns.Add("Day", 100)
+            .Columns.Add("Start Time", 100)
+            .Columns.Add("End Time", 100)
+            .Columns.Add("Status", 80)
+
+            .ListViewItemSorter = lvwScheduleSorter
+        End With
+        RefreshScheduleManagementView()
+        lvwScheduleSorter.SortColumn = 0  ' Set to Day column
+        lvwScheduleSorter.Order = SortOrder.Ascending
+        lvwSchedule.Sort()
+    End Sub
+
+    Private Sub RefreshScheduleManagementView()
+        Debug.WriteLine("Starting RefreshScheduleManagementView")
+        lvwSchedule.Items.Clear()
+
+        Dim schedules = _scheduleManager.GetAllActiveSchedules()
+        Debug.WriteLine($"Retrieved {schedules.Rows.Count} schedules")
+
+        For Each row As DataRow In schedules.Rows
+            Dim item As New ListViewItem(DayOfWeekHelper.GetDayName(CInt(row("DayOfWeek"))))
+            With item
+                .SubItems.Add(Convert.ToDateTime(row("StartTime")).ToString("HH:mm"))
+                .SubItems.Add(Convert.ToDateTime(row("EndTime")).ToString("HH:mm"))
+                .SubItems.Add(If(CBool(row("IsActive")), "Active", "Inactive"))
+                .Tag = row("ScheduleID")
+            End With
+            lvwSchedule.Items.Add(item)
+            Debug.WriteLine($"Added schedule: {item.Text}")
+        Next
+    End Sub
+End Class
+
+ErrorHandle.vb
+
+Public Class ErrorHandler
+    Public Shared Sub HandleDatabaseError(ex As Exception, operation As String)
+        Debug.WriteLine($"Database Error during {operation}: {ex.Message}")
+        MessageBox.Show($"Database operation failed: {operation}", "Error",
+                       MessageBoxButtons.OK, MessageBoxIcon.Error)
+    End Sub
+
+    Public Shared Sub HandleValidationError(message As String)
+        MessageBox.Show(message, "Validation Error",
+                       MessageBoxButtons.OK, MessageBoxIcon.Warning)
+    End Sub
+
+    Public Shared Sub HandleSystemError(ex As Exception)
+        Debug.WriteLine($"System Error: {ex.Message}")
+        Debug.WriteLine($"Stack Trace: {ex.StackTrace}")
+        MessageBox.Show("An unexpected error occurred. Please try again.",
+                       "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+    End Sub
+End Class
+
+DayOfWekHeler.vb
+
+Public Class DayOfWeekHelper
+    Public Shared Function GetDayName(dayNumber As Integer) As String
+        If dayNumber >= 1 AndAlso dayNumber <= 7 Then
+            Return WeekdayName(dayNumber)
+        End If
+        Return "Invalid Day"
+    End Function
+
+    Public Shared Function GetDayValue(dayName As String) As Integer
+        Select Case dayName.Trim().ToUpper()
+            Case "SUNDAY" : Return 1
+            Case "MONDAY" : Return 2
+            Case "TUESDAY" : Return 3
+            Case "WEDNESDAY" : Return 4
+            Case "THURSDAY" : Return 5
+            Case "FRIDAY" : Return 6
+            Case "SATURDAY" : Return 7
+            Case Else : Return 1
+        End Select
+    End Function
+End Class
+
+

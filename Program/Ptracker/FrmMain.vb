@@ -231,7 +231,7 @@ Public Class FrmMain
     End Sub
 
     Private Sub mnuAdminSchedulingManagement_Click(sender As Object, e As EventArgs) Handles mnuAdminSchedulingManagement.Click
-        OpenSingleInstanceForm(Of FrmVolunteers)()
+        OpenSingleInstanceForm(Of FrmVolunteer)()
     End Sub
 
     Private Sub mnuFileClose_Click(sender As Object, e As EventArgs) Handles mnuFileClose.Click

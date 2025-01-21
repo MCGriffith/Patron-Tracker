@@ -117,20 +117,20 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\CalendarView.vb" />
-    <Compile Include="Classes\ClosingManagement.vb" />
-    <Compile Include="Classes\CustomCalendar.vb">
+    <Compile Include="Classes\Database\DatabaseConfig.vb" />
+    <Compile Include="Classes\Database\SubstituteRelationship.vb" />
+    <Compile Include="Classes\Database\VolunteerRelationships.vb" />
+    <Compile Include="Classes\Helpers\DayOfWeekHelper.vb" />
+    <Compile Include="Classes\Helpers\ErrorHandler.vb" />
+    <Compile Include="Classes\Helpers\ListViewColumnSorter.vb" />
+    <Compile Include="Classes\Managers\CalendarView.vb" />
+    <Compile Include="Classes\Managers\ClosingManager.vb" />
+    <Compile Include="Classes\Managers\CustomCalendar.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Classes\DatabaseConfig.vb" />
-    <Compile Include="Classes\DayOfWeekHelper.vb" />
-    <Compile Include="Classes\ErrorHandler.vb" />
-    <Compile Include="Classes\ListViewColumnSorter.vb" />
-    <Compile Include="Classes\ScheduleQueries.vb" />
-    <Compile Include="Classes\SubstituteManagement.vb" />
-    <Compile Include="Classes\SubstituteRelationshipManager.vb" />
-    <Compile Include="Classes\VolunteerAssignments.vb" />
-    <Compile Include="Classes\VolunteerRelationships.vb" />
+    <Compile Include="Classes\Managers\ScheduleManager.vb" />
+    <Compile Include="Classes\Managers\VolunteerManager.vb" />
+    <Compile Include="DiagnosticLauncher.vb" />
     <Compile Include="EventInfo.vb" />
     <Compile Include="DocumentationConfig.vb" />
     <Compile Include="FrmAttendanceAnalytics.Designer.vb">
@@ -218,10 +218,10 @@
       <DependentUpon>FrmMain.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmVolunteers.Designer.vb">
-      <DependentUpon>FrmVolunteers.vb</DependentUpon>
+    <Compile Include="FrmVolunteer.Designer.vb">
+      <DependentUpon>FrmVolunteer.vb</DependentUpon>
     </Compile>
-    <Compile Include="FrmVolunteers.vb">
+    <Compile Include="FrmVolunteer.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -292,8 +292,8 @@
     <EmbeddedResource Include="FrmSettings.resx">
       <DependentUpon>FrmSettings.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrmVolunteers.resx">
-      <DependentUpon>FrmVolunteers.vb</DependentUpon>
+    <EmbeddedResource Include="FrmVolunteer.resx">
+      <DependentUpon>FrmVolunteer.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -413,6 +413,9 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Classes\Models\" />
+    <Folder Include="Modules\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
