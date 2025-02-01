@@ -498,7 +498,7 @@ Public Class FrmProfile
                 InsertLDS(conn, transaction)
                 InsertAttendance(conn, transaction)
                 RegisterForEvents(conn, transaction) ' Register only selected events
-                InsertVolunteer(conn, transaction, LoginID, ContactID, AddressID, PhoneID)
+                '  InsertVolunteer(conn, transaction, LoginID, ContactID, AddressID, PhoneID)
 
                 transaction.Commit()
                 ' Set global variables for the current user
@@ -629,34 +629,34 @@ Public Class FrmProfile
         Next
     End Sub
 
-    Private Sub InsertVolunteer(connection As OleDbConnection, transaction As OleDbTransaction, LoginID As Integer, ContactID As Integer, AddressID As Integer, PhoneID As Integer)
-        ' Only create volunteer records for Staff, Director, and Admin roles
-        Dim currentRole As String = GetSelectedRole()
+    'Private Sub InsertVolunteer(connection As OleDbConnection, transaction As OleDbTransaction, LoginID As Integer, ContactID As Integer, AddressID As Integer, PhoneID As Integer)
+    '    ' Only create volunteer records for Staff, Director, and Admin roles
+    '    Dim currentRole As String = GetSelectedRole()
 
-        If currentRole = "Staff" OrElse currentRole = "Director" OrElse currentRole = "Admin" Then
-            Dim cmd As New OleDbCommand("INSERT INTO tblVolunteer ([LoginID], [ContactID], [AddressID], [PhoneID], [FullName], [FirstName], [MiddleName], [LastName], [Email], [Phone], [PhoneType], [Address], [City], [State], [Zip], [Role], [Inactive]) VALUES (@LoginID, @ContactID, @AddressID, @PhoneID, @FullName, @FirstName, @MiddleName, @LastName, @Email, @Phone, @PhoneType, @Address, @City, @State, @Zip, @Role, @Inactive)", connection, transaction)
+    '    If currentRole = "Staff" OrElse currentRole = "Director" OrElse currentRole = "Admin" Then
+    '        Dim cmd As New OleDbCommand("INSERT INTO tblVolunteer ([LoginID], [ContactID], [AddressID], [PhoneID], [FullName], [FirstName], [MiddleName], [LastName], [Email], [Phone], [PhoneType], [Address], [City], [State], [Zip], [Role], [Inactive]) VALUES (@LoginID, @ContactID, @AddressID, @PhoneID, @FullName, @FirstName, @MiddleName, @LastName, @Email, @Phone, @PhoneType, @Address, @City, @State, @Zip, @Role, @Inactive)", connection, transaction)
 
-            cmd.Parameters.AddWithValue("@LoginID", LoginID)
-            cmd.Parameters.AddWithValue("@ContactID", ContactID)
-            cmd.Parameters.AddWithValue("@AddressID", AddressID)
-            cmd.Parameters.AddWithValue("@PhoneID", PhoneID)
-            cmd.Parameters.AddWithValue("@FullName", CreateFullName())
-            cmd.Parameters.AddWithValue("@FirstName", txtPFirst.Text)
-            cmd.Parameters.AddWithValue("@MiddleName", txtPMiddle.Text)
-            cmd.Parameters.AddWithValue("@LastName", txtPLast.Text)
-            cmd.Parameters.AddWithValue("@Email", txtPEmail.Text)
-            cmd.Parameters.AddWithValue("@Phone", txtPPhone.Text.Replace("(", "").Replace(")", "").Replace("-", ""))
-            cmd.Parameters.AddWithValue("@PhoneType", cboPType.Text)
-            cmd.Parameters.AddWithValue("@Address", txtPAddress.Text)
-            cmd.Parameters.AddWithValue("@City", txtPCity.Text)
-            cmd.Parameters.AddWithValue("@State", cboPState.Text)
-            cmd.Parameters.AddWithValue("@Zip", txtPZip.Text)
-            cmd.Parameters.AddWithValue("@Role", currentRole)
-            cmd.Parameters.AddWithValue("@Inactive", False)
+    '        cmd.Parameters.AddWithValue("@LoginID", LoginID)
+    '        cmd.Parameters.AddWithValue("@ContactID", ContactID)
+    '        cmd.Parameters.AddWithValue("@AddressID", AddressID)
+    '        cmd.Parameters.AddWithValue("@PhoneID", PhoneID)
+    '        cmd.Parameters.AddWithValue("@FullName", CreateFullName())
+    '        cmd.Parameters.AddWithValue("@FirstName", txtPFirst.Text)
+    '        cmd.Parameters.AddWithValue("@MiddleName", txtPMiddle.Text)
+    '        cmd.Parameters.AddWithValue("@LastName", txtPLast.Text)
+    '        cmd.Parameters.AddWithValue("@Email", txtPEmail.Text)
+    '        cmd.Parameters.AddWithValue("@Phone", txtPPhone.Text.Replace("(", "").Replace(")", "").Replace("-", ""))
+    '        cmd.Parameters.AddWithValue("@PhoneType", cboPType.Text)
+    '        cmd.Parameters.AddWithValue("@Address", txtPAddress.Text)
+    '        cmd.Parameters.AddWithValue("@City", txtPCity.Text)
+    '        cmd.Parameters.AddWithValue("@State", cboPState.Text)
+    '        cmd.Parameters.AddWithValue("@Zip", txtPZip.Text)
+    '        cmd.Parameters.AddWithValue("@Role", currentRole)
+    '        cmd.Parameters.AddWithValue("@Inactive", False)
 
-            cmd.ExecuteNonQuery()
-        End If
-    End Sub
+    '        cmd.ExecuteNonQuery()
+    '    End If
+    'End Sub
 
     Private Function CreateFullName() As String
         Dim firstName As String = txtPFirst.Text.Trim()

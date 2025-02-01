@@ -2,6 +2,7 @@
 
 Public Class VolunteerManager
     Private ReadOnly _connectionString As String
+    Private ReadOnly _dayHelper As New DayOfWeekHelper()
 
     Public Sub New(connectionString As String)
         _connectionString = connectionString
@@ -129,6 +130,165 @@ Public Class VolunteerManager
             End Using
         Catch ex As Exception
             Debug.WriteLine($"Error setting volunteer status: {ex.Message}")
+            Return False
+        End Try
+    End Function
+
+    Public Function GetEligibleContacts() As DataTable
+        Dim dt As New DataTable
+        Try
+            Using conn As New OleDbConnection(_connectionString)
+                Dim sql As String = "SELECT ContactID, FullName FROM tblContacts C " &
+                                   "INNER JOIN tblLogin L ON C.LoginID = L.LoginID " &
+                                   "WHERE L.Role IN ('Staff', 'Director', 'Admin') " &
+                                   "ORDER BY FullName"
+
+                Using cmd As New OleDbCommand(sql, conn)
+                    conn.Open()
+                    Using adapter As New OleDbDataAdapter(cmd)
+                        adapter.Fill(dt)
+                    End Using
+                End Using
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine($"Error getting eligible contacts: {ex.Message}")
+        End Try
+        Return dt
+    End Function
+
+    Public Function GetSchedulesForCombo() As DataTable
+        Dim dt As New DataTable
+        Try
+            Using conn As New OleDbConnection(_connectionString)
+                Dim sql As String = "SELECT s.ScheduleID, s.DayOfWeek, " &
+                               "Format(s.StartTime,'HH:mm') as StartTime, " &
+                               "Format(s.EndTime,'HH:mm') as EndTime " &
+                               "FROM tblSchedule s " &
+                               "WHERE s.IsActive = True " &
+                               "ORDER BY s.DayOfWeek, s.StartTime"
+
+                Using cmd As New OleDbCommand(sql, conn)
+                    conn.Open()
+                    Using adapter As New OleDbDataAdapter(cmd)
+                        adapter.Fill(dt)
+                    End Using
+                End Using
+
+                ' Add computed column for display
+                dt.Columns.Add("DisplayText", GetType(String))
+                For Each row As DataRow In dt.Rows
+                    Dim dayName = _dayHelper.GetDayName(CInt(row("DayOfWeek")))
+                    row("DisplayText") = $"{dayName} {row("StartTime")} - {row("EndTime")}"
+                Next
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine($"Error getting schedules for combo: {ex.Message}")
+        End Try
+        Return dt
+    End Function
+
+    Public Function GetVolunteerSchedules(contactId As Integer) As DataTable
+        Dim dt As New DataTable
+        Try
+            Using conn As New OleDbConnection(_connectionString)
+                Dim sql As String = "SELECT s.ScheduleID, s.DayOfWeek, s.StartTime, s.EndTime, s.IsActive " &
+                "FROM ((tblSchedule s " &
+                "INNER JOIN tblVolunteerSchedule vs ON s.ScheduleID = vs.ScheduleID) " &
+                "INNER JOIN tblLogin l ON l.LoginID = vs.LoginID) " &
+                "INNER JOIN tblContacts c ON c.LoginID = l.LoginID " &
+                "WHERE s.IsActive = True AND c.ContactID = ? " &
+                "ORDER BY s.DayOfWeek, s.StartTime"
+
+                Using cmd As New OleDbCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("ContactID", contactId)
+                    conn.Open()
+                    Using adapter As New OleDbDataAdapter(cmd)
+                        adapter.Fill(dt)
+                    End Using
+                End Using
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine($"Error getting volunteer schedules: {ex.Message}")
+        End Try
+        Return dt
+    End Function
+
+
+
+    Public Function GetVolunteerSubstitutions(contactId As Integer) As DataTable
+        Dim dt As New DataTable
+        Try
+            Using conn As New OleDbConnection(_connectionString)
+                Dim sql As String = "SELECT c1.FullName AS Volunteer, c2.FullName AS Substitute, " &
+                               "s.DayOfWeek, s.StartTime, s.EndTime, s.IsActive " &
+                               "FROM tblSchedule s " &
+                               "INNER JOIN tblVolunteer v ON s.ScheduleID = v.ScheduleID " &
+                               "INNER JOIN tblContacts c1 ON v.ContactID = c1.ContactID " &
+                               "INNER JOIN tblContacts c2 ON v.SubstituteID = c2.ContactID " &
+                               "WHERE (v.ContactID = ? OR v.SubstituteID = ?) AND v.IsActive = True " &
+                               "ORDER BY s.DayOfWeek, s.StartTime"
+
+                Using cmd As New OleDbCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", contactId)
+                    cmd.Parameters.AddWithValue("?", contactId)
+                    conn.Open()
+                    Using adapter As New OleDbDataAdapter(cmd)
+                        adapter.Fill(dt)
+                    End Using
+                End Using
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine($"Error getting volunteer substitutions: {ex.Message}")
+        End Try
+        Return dt
+    End Function
+
+    Public Function AssignScheduleToVolunteer(contactId As Integer, scheduleId As Integer) As Boolean
+        Try
+            Using conn As New OleDbConnection(_connectionString)
+                ' Get LoginID from ContactID
+                Dim loginIdSql As String = "SELECT LoginID FROM tblContacts WHERE ContactID = ?"
+                Dim loginId As Integer
+
+                Using cmdLogin As New OleDbCommand(loginIdSql, conn)
+                    cmdLogin.Parameters.AddWithValue("?", contactId)
+                    conn.Open()
+                    loginId = CInt(cmdLogin.ExecuteScalar())
+
+                    ' Insert new volunteer schedule assignment
+                    Dim insertSql As String = "INSERT INTO tblVolunteerSchedule (LoginID, ScheduleID) VALUES (?, ?)"
+                    Using cmdInsert As New OleDbCommand(insertSql, conn)
+                        cmdInsert.Parameters.AddWithValue("?", loginId)
+                        cmdInsert.Parameters.AddWithValue("?", scheduleId)
+                        cmdInsert.ExecuteNonQuery()
+                    End Using
+                End Using
+                Return True
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine($"Error assigning schedule: {ex.Message}")
+            Return False
+        End Try
+    End Function
+
+    Public Function DeactivateVolunteerSchedule(contactId As Integer, scheduleId As Integer) As Boolean
+        Try
+            Using conn As New OleDbConnection(_connectionString)
+                Dim sql As String = "UPDATE tblVolunteerSchedule " &
+                               "SET IsActive = False " &
+                               "WHERE ScheduleID = ? AND LoginID = " &
+                               "(SELECT LoginID FROM tblContacts WHERE ContactID = ?)"
+
+                Using cmd As New OleDbCommand(sql, conn)
+                    cmd.Parameters.AddWithValue("?", scheduleId)
+                    cmd.Parameters.AddWithValue("?", contactId)
+                    conn.Open()
+                    cmd.ExecuteNonQuery()
+                    Return True
+                End Using
+            End Using
+        Catch ex As Exception
+            Debug.WriteLine($"Error deactivating schedule: {ex.Message}")
             Return False
         End Try
     End Function

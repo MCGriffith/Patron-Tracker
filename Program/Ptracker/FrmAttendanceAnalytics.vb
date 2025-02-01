@@ -87,25 +87,52 @@ Public Class FrmAttendanceAnalytics
         {"Other", Color.Gray}
     }
 
+    'Private Sub UpdateChart()
+    '    ' Modified query to handle multiple filters correctly
+    '    Dim query As String = "SELECT LogDate, Format([LogTime],'HH') as HourOfDay, " &
+    '              "Sum(IIf([People]=True,1,0)) as PeopleCount, " &
+    '              "Sum(IIf([FirstVisit]=True,1,0)) as FirstVisitCount, " &
+    '              "Sum(IIf([PrintFOR]=True,1,0)) as PrintFORCount, " &
+    '              "Sum(IIf([Indexing]=True,1,0)) as IndexingCount, " &
+    '              "Sum(IIf([OnlineRsrch]=True,1,0)) as OnlineRsrchCount, " &
+    '              "Sum(IIf([SubWebsite]=True,1,0)) as SubWebsiteCount, " &
+    '              "Sum(IIf([AttendClass]=True,1,0)) as AttendClassCount, " &
+    '              "Sum(IIf([Other]=True,1,0)) as OtherCount " &
+    '              "FROM tblAttendance " &
+    '              "WHERE LogDate BETWEEN #" & dtpStartDate.Value.ToString("MM/dd/yyyy") & "# " &
+    '              "AND #" & dtpEndDate.Value.ToString("MM/dd/yyyy") & "#" &
+    '              " GROUP BY LogDate, Format([LogTime],'HH') " &
+    '              "ORDER BY Format([LogTime],'HH')"
+
+    '    Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
+    '        Using cmd As New OleDbCommand(query, conn)
+    '            conn.Open()
+    '            Dim dt As New DataTable()
+    '            dt.Load(cmd.ExecuteReader())
+    '            UpdateChartSeries(dt)
+    '        End Using
+    '    End Using
+    'End Sub
+
+
     Private Sub UpdateChart()
-        ' Modified query to handle multiple filters correctly
-        Dim query As String = "SELECT LogDate, Format([LogTime],'HH') as HourOfDay, " &
-                  "Sum(IIf([People]=True,1,0)) as PeopleCount, " &
-                  "Sum(IIf([FirstVisit]=True,1,0)) as FirstVisitCount, " &
-                  "Sum(IIf([PrintFOR]=True,1,0)) as PrintFORCount, " &
-                  "Sum(IIf([Indexing]=True,1,0)) as IndexingCount, " &
-                  "Sum(IIf([OnlineRsrch]=True,1,0)) as OnlineRsrchCount, " &
-                  "Sum(IIf([SubWebsite]=True,1,0)) as SubWebsiteCount, " &
-                  "Sum(IIf([AttendClass]=True,1,0)) as AttendClassCount, " &
-                  "Sum(IIf([Other]=True,1,0)) as OtherCount " &
-                  "FROM tblAttendance " &
-                  "WHERE LogDate BETWEEN #" & dtpStartDate.Value.ToString("MM/dd/yyyy") & "# " &
-                  "AND #" & dtpEndDate.Value.ToString("MM/dd/yyyy") & "#" &
-                  " GROUP BY LogDate, Format([LogTime],'HH') " &
-                  "ORDER BY Format([LogTime],'HH')"
+        Dim sql As String = "SELECT LogDate, Format([LogTime],'HH') as HourOfDay, " &
+        "COUNT(LoginID) as PeopleCount, " &
+        "SUM(IIF(FirstVisit=True, 1, 0)) as FirstVisitCount, " &
+        "SUM(IIF(PrintFOR=True, 1, 0)) as PrintFORCount, " &
+        "SUM(IIF(Indexing=True, 1, 0)) as IndexingCount, " &
+        "SUM(IIF(OnlineRsrch=True, 1, 0)) as OnlineRsrchCount, " &
+        "SUM(IIF(SubWebsite=True, 1, 0)) as SubWebsiteCount, " &
+        "SUM(IIF(AttendClass=True, 1, 0)) as AttendClassCount, " &
+        "SUM(IIF(Other=True, 1, 0)) as OtherCount " &
+        "FROM tblAttendance " &
+        "WHERE LogDate BETWEEN #" & dtpStartDate.Value.ToString("MM/dd/yyyy") & "# " &
+        "AND #" & dtpEndDate.Value.ToString("MM/dd/yyyy") & "# " &
+        "GROUP BY LogDate, Format([LogTime],'HH') " &
+        "ORDER BY LogDate, Format([LogTime],'HH')"
 
         Using conn As New OleDbConnection(DatabaseConfig.ConnectionString)
-            Using cmd As New OleDbCommand(query, conn)
+            Using cmd As New OleDbCommand(sql, conn)
                 conn.Open()
                 Dim dt As New DataTable()
                 dt.Load(cmd.ExecuteReader())
@@ -114,35 +141,120 @@ Public Class FrmAttendanceAnalytics
         End Using
     End Sub
 
+
+
+    'Private Sub UpdateChartSeries(dt As DataTable)
+    '    chartAttendance.Series.Clear()
+
+    '    ' Convert friendly name to enum value
+    '    Dim selectedChartType As ChartTypes
+    '    Select Case cboChartType.SelectedItem.ToString()
+    '        Case "Bar Chart"
+    '            selectedChartType = ChartTypes.BarChart
+    '        Case "Line Chart"
+    '            selectedChartType = ChartTypes.LineChart
+    '        Case "Pie Chart"
+    '            selectedChartType = ChartTypes.PieChart
+    '    End Select
+
+    '    Select Case selectedChartType
+    '        Case ChartTypes.BarChart
+    '            ConfigureBarChart()
+    '        Case ChartTypes.LineChart
+    '            ConfigureLineChart()
+    '        Case ChartTypes.PieChart
+    '            ConfigurePieChart()
+    '    End Select
+
+    '    ' Get active series names
+    '    Dim seriesNames() As String = {"People", "FirstVisit", "PrintFOR", "Indexing",
+    '                      "OnlineRsrch", "SubWebsite", "AttendClass", "Other"}
+    '    Dim activeSeriesNames = seriesNames.Where(Function(s) ShouldShowSeries(s)).ToArray()
+
+    '    ' Create data dictionary
+    '    Dim hourData As New Dictionary(Of Integer, Dictionary(Of String, Integer))
+    '    For hour As Integer = 0 To 23
+    '        hourData(hour) = New Dictionary(Of String, Integer)
+    '        For Each seriesName In activeSeriesNames
+    '            hourData(hour)(seriesName & "Count") = 0
+    '        Next
+    '    Next
+
+    '    ' Fill data
+    '    For Each row As DataRow In dt.Rows
+    '        Dim hour As Integer
+    '        If Integer.TryParse(row("HourOfDay").ToString(), hour) Then
+    '            For Each seriesName In activeSeriesNames
+    '                hourData(hour)(seriesName & "Count") = Convert.ToInt32(row(seriesName & "Count"))
+    '            Next
+    '        End If
+    '    Next
+
+    '    If selectedChartType = ChartTypes.PieChart Then
+    '        ' Create a single series for pie chart
+    '        Dim series As New Series("PieData")
+    '        series.ChartType = SeriesChartType.Pie
+
+    '        ' Create a dictionary to sum up totals for each category
+    '        Dim categoryTotals As New Dictionary(Of String, Integer)
+
+    '        ' Sum up all hours for each category
+    '        For hour As Integer = 0 To 23
+    '            For Each seriesName In activeSeriesNames
+    '                If Not categoryTotals.ContainsKey(seriesName) Then
+    '                    categoryTotals(seriesName) = 0
+    '                End If
+    '                categoryTotals(seriesName) += hourData(hour)(seriesName & "Count")
+    '            Next
+    '        Next
+
+    '        ' Add a single point for each category with its total
+    '        For Each category In categoryTotals
+    '            If category.Value > 0 Then
+    '                Dim point = series.Points.Add(category.Value)
+    '                point.Color = SeriesColors(category.Key)
+    '                point.LegendText = category.Key
+    '                point.Label = $"{category.Key}: {category.Value}"
+    '            End If
+    '        Next
+
+    '        series("PieLabelStyle") = "Outside"
+    '        series("PieLineColor") = "Black"
+    '        chartAttendance.Series.Add(series)
+
+    '    Else
+    '        ' Handle Bar and Line charts
+    '        For Each seriesName In activeSeriesNames
+    '            Dim series As New Series(seriesName)
+    '            series.Color = SeriesColors(seriesName)
+
+    '            Select Case selectedChartType
+    '                Case ChartTypes.BarChart
+    '                    series.ChartType = SeriesChartType.Column
+    '                Case ChartTypes.LineChart
+    '                    series.ChartType = SeriesChartType.Line
+    '                    series.BorderWidth = 2
+    '            End Select
+
+    '            series.IsVisibleInLegend = True
+    '            chartAttendance.Series.Add(series)
+
+    '            For hour As Integer = 0 To 23
+    '                series.Points.AddXY(hour.ToString("00"), hourData(hour)(seriesName & "Count"))
+    '            Next
+    '        Next
+    '    End If
+    'End Sub
+
     Private Sub UpdateChartSeries(dt As DataTable)
         chartAttendance.Series.Clear()
 
-        ' Convert friendly name to enum value
-        Dim selectedChartType As ChartTypes
-        Select Case cboChartType.SelectedItem.ToString()
-            Case "Bar Chart"
-                selectedChartType = ChartTypes.BarChart
-            Case "Line Chart"
-                selectedChartType = ChartTypes.LineChart
-            Case "Pie Chart"
-                selectedChartType = ChartTypes.PieChart
-        End Select
-
-        Select Case selectedChartType
-            Case ChartTypes.BarChart
-                ConfigureBarChart()
-            Case ChartTypes.LineChart
-                ConfigureLineChart()
-            Case ChartTypes.PieChart
-                ConfigurePieChart()
-        End Select
-
-        ' Get active series names
+        ' Get active series names based on checkbox selections
         Dim seriesNames() As String = {"People", "FirstVisit", "PrintFOR", "Indexing",
-                          "OnlineRsrch", "SubWebsite", "AttendClass", "Other"}
+                      "OnlineRsrch", "SubWebsite", "AttendClass", "Other"}
         Dim activeSeriesNames = seriesNames.Where(Function(s) ShouldShowSeries(s)).ToArray()
 
-        ' Create data dictionary
+        ' Create data dictionary for hourly counts
         Dim hourData As New Dictionary(Of Integer, Dictionary(Of String, Integer))
         For hour As Integer = 0 To 23
             hourData(hour) = New Dictionary(Of String, Integer)
@@ -151,7 +263,7 @@ Public Class FrmAttendanceAnalytics
             Next
         Next
 
-        ' Fill data
+        ' Fill data from database results
         For Each row As DataRow In dt.Rows
             Dim hour As Integer
             If Integer.TryParse(row("HourOfDay").ToString(), hour) Then
@@ -161,204 +273,243 @@ Public Class FrmAttendanceAnalytics
             End If
         Next
 
-        If selectedChartType = ChartTypes.PieChart Then
-            ' Create a single series for pie chart
-            Dim series As New Series("PieData")
-            series.ChartType = SeriesChartType.Pie
+        ' Create series based on chart type
+        Select Case cboChartType.SelectedItem.ToString()
+            Case "Pie Chart"
+                CreatePieChartSeries(hourData, activeSeriesNames)
+            Case "Bar Chart"
+                CreateBarChartSeries(hourData, activeSeriesNames)
+            Case "Line Chart"
+                CreateLineChartSeries(hourData, activeSeriesNames)
+        End Select
+    End Sub
 
-            ' Create a dictionary to sum up totals for each category
-            Dim categoryTotals As New Dictionary(Of String, Integer)
 
-            ' Sum up all hours for each category
-            For hour As Integer = 0 To 23
-                For Each seriesName In activeSeriesNames
-                    If Not categoryTotals.ContainsKey(seriesName) Then
-                        categoryTotals(seriesName) = 0
-                    End If
-                    categoryTotals(seriesName) += hourData(hour)(seriesName & "Count")
-                Next
-            Next
+    'Private Sub ConfigureBarChart()
+    '    If chartAttendance.ChartAreas.Count = 0 Then
+    '        chartAttendance.ChartAreas.Add(New ChartArea("MainArea"))
+    '    End If
 
-            ' Add a single point for each category with its total
-            For Each category In categoryTotals
-                If category.Value > 0 Then
-                    Dim point = series.Points.Add(category.Value)
-                    point.Color = SeriesColors(category.Key)
-                    point.LegendText = category.Key
-                    point.Label = $"{category.Key}: {category.Value}"
-                End If
-            Next
+    '    ' Position the chart area first
+    '    With chartAttendance.ChartAreas(0)
+    '        .Position.X = 5
+    '        .Position.Y = 15
+    '        .Position.Width = 75
+    '        .Position.Height = 75
 
-            series("PieLabelStyle") = "Outside"
-            series("PieLineColor") = "Black"
-            chartAttendance.Series.Add(series)
+    '        .AxisX.Interval = 1
+    '        .AxisX.LabelStyle.Format = "00"
+    '        .AxisY.Minimum = 0
+    '        .Area3DStyle.Enable3D = False
 
-        Else
-            ' Handle Bar and Line charts
+    '        ' Add axis titles
+    '        .AxisX.Title = "Hours of the Day"
+    '        .AxisX.TitleAlignment = StringAlignment.Center
+
+    '        .AxisY.Title = "Activities"
+    '        .AxisY.TitleAlignment = StringAlignment.Center
+    '        .AxisY.TextOrientation = TextOrientation.Rotated270
+    '    End With
+
+    '    ' Configure Legend
+    '    With chartAttendance.Legends(0)
+    '        .Title = "Legend"
+    '        .TitleAlignment = StringAlignment.Center
+    '        .TitleSeparator = LegendSeparatorStyle.Line
+    '        .Docking = Docking.Right
+    '        .Position.Auto = True  ' This will ensure the legend is visible
+    '        .IsDockedInsideChartArea = False  ' This keeps it outside the chart area
+    '    End With
+
+    '    ' Set Chart Title and Subtitle
+    '    chartAttendance.Titles.Clear()
+
+    '    ' Create and configure main title
+    '    Dim mainTitle As New Title()
+    '    mainTitle.Text = "Attendance"
+    '    mainTitle.Font = New Font("Arial", 12, FontStyle.Bold)
+    '    mainTitle.Alignment = ContentAlignment.TopCenter
+    '    mainTitle.Position.X = 5
+    '    mainTitle.Position.Y = 1
+    '    mainTitle.Position.Width = 75
+    '    chartAttendance.Titles.Add(mainTitle)
+
+    '    ' Create and configure date range subtitle
+    '    Dim dateRangeText As String
+    '    If cboDateRange.SelectedItem IsNot Nothing Then
+    '        If cboDateRange.SelectedItem.ToString() = "Daily" Then
+    '            dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
+    '        Else
+    '            dateRangeText = $"{dtpStartDate.Value.ToString("MMMM dd, yyyy")} - {dtpEndDate.Value.ToString("MMMM dd, yyyy")}"
+    '        End If
+    '    Else
+    '        dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
+    '    End If
+
+    '    Dim subTitle As New Title(dateRangeText)
+    '    subTitle.Font = New Font("Arial", 10)
+    '    subTitle.Alignment = ContentAlignment.TopCenter
+    '    subTitle.Position.X = 5
+    '    subTitle.Position.Y = 7  ' Increased Y position for better spacing from main title
+    '    subTitle.Position.Width = 75
+    '    chartAttendance.Titles.Add(subTitle)
+    'End Sub
+
+
+
+    'Private Sub ConfigureLineChart()
+    '    If chartAttendance.ChartAreas.Count = 0 Then
+    '        chartAttendance.ChartAreas.Add(New ChartArea("MainArea"))
+    '    End If
+
+    '    With chartAttendance.ChartAreas("MainArea")
+    '        .AxisX.Interval = 1
+    '        .AxisX.LabelStyle.Format = "00"
+    '        .AxisY.Minimum = 0
+    '        .Area3DStyle.Enable3D = False
+    '    End With
+    'End Sub
+
+    'Private Sub ConfigurePieChart()
+    '    If chartAttendance.ChartAreas.Count = 0 Then
+    '        chartAttendance.ChartAreas.Add(New ChartArea("MainArea"))
+    '    End If
+
+    '    With chartAttendance.ChartAreas(0)
+    '        .Position.X = 5
+    '        .Position.Y = 15
+    '        .Position.Width = 75
+    '        .Position.Height = 75
+    '        .Area3DStyle.Enable3D = True
+    '        .Area3DStyle.Inclination = 45
+    '    End With
+
+    '    ' Configure Legend
+    '    With chartAttendance.Legends(0)
+    '        .Title = "Legend"
+    '        .TitleAlignment = StringAlignment.Center
+    '        .TitleSeparator = LegendSeparatorStyle.Line
+    '        .Docking = Docking.Right
+    '        .Position.Auto = True
+    '        .IsDockedInsideChartArea = False
+    '    End With
+
+    '    ' Set Chart Title and Subtitle
+    '    chartAttendance.Titles.Clear()
+
+    '    ' Create and configure main title
+    '    Dim mainTitle As New Title()
+    '    mainTitle.Text = "Attendance"
+    '    mainTitle.Font = New Font("Arial", 12, FontStyle.Bold)
+    '    mainTitle.Alignment = ContentAlignment.TopCenter
+    '    mainTitle.Position.X = 5
+    '    mainTitle.Position.Y = 1
+    '    mainTitle.Position.Width = 75
+    '    chartAttendance.Titles.Add(mainTitle)
+
+    '    ' Create and configure date range subtitle
+    '    Dim dateRangeText As String
+    '    If cboDateRange.SelectedItem IsNot Nothing Then
+    '        If cboDateRange.SelectedItem.ToString() = "Daily" Then
+    '            dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
+    '        Else
+    '            dateRangeText = $"{dtpStartDate.Value.ToString("MMMM dd, yyyy")} - {dtpEndDate.Value.ToString("MMMM dd, yyyy")}"
+    '        End If
+    '    Else
+    '        dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
+    '    End If
+
+    '    Dim subTitle As New Title(dateRangeText)
+    '    subTitle.Font = New Font("Arial", 10)
+    '    subTitle.Alignment = ContentAlignment.TopCenter
+    '    subTitle.Position.X = 5
+    '    subTitle.Position.Y = 7
+    '    subTitle.Position.Width = 75
+    '    chartAttendance.Titles.Add(subTitle)
+    'End Sub
+
+    Private Sub CreatePieChartSeries(hourData As Dictionary(Of Integer, Dictionary(Of String, Integer)), activeSeriesNames As String())
+        Dim series As New Series("PieData")
+        series.ChartType = SeriesChartType.Pie
+
+        ' Create category totals dictionary
+        Dim categoryTotals As New Dictionary(Of String, Integer)
+
+        ' Sum up all hours for each category
+        For hour As Integer = 0 To 23
             For Each seriesName In activeSeriesNames
-                Dim series As New Series(seriesName)
-                series.Color = SeriesColors(seriesName)
-
-                Select Case selectedChartType
-                    Case ChartTypes.BarChart
-                        series.ChartType = SeriesChartType.Column
-                    Case ChartTypes.LineChart
-                        series.ChartType = SeriesChartType.Line
-                        series.BorderWidth = 2
-                End Select
-
-                series.IsVisibleInLegend = True
-                chartAttendance.Series.Add(series)
-
-                For hour As Integer = 0 To 23
-                    series.Points.AddXY(hour.ToString("00"), hourData(hour)(seriesName & "Count"))
-                Next
+                If Not categoryTotals.ContainsKey(seriesName) Then
+                    categoryTotals(seriesName) = 0
+                End If
+                categoryTotals(seriesName) += hourData(hour)(seriesName & "Count")
             Next
-        End If
+        Next
+
+        ' Add data points for each category
+        For Each category In categoryTotals
+            If category.Value > 0 Then
+                Dim point = series.Points.Add(category.Value)
+                point.Color = SeriesColors(category.Key)
+                point.LegendText = category.Key
+                point.Label = $"{category.Key}: {category.Value}"
+            End If
+        Next
+
+        series("PieLabelStyle") = "Outside"
+        series("PieLineColor") = "Black"
+        chartAttendance.Series.Add(series)
     End Sub
 
-    Private Sub ConfigureBarChart()
-        If chartAttendance.ChartAreas.Count = 0 Then
-            chartAttendance.ChartAreas.Add(New ChartArea("MainArea"))
-        End If
+    Private Sub CreateBarChartSeries(hourData As Dictionary(Of Integer, Dictionary(Of String, Integer)), activeSeriesNames As String())
+        For Each seriesName In activeSeriesNames
+            Dim series As New Series(seriesName)
+            series.ChartType = SeriesChartType.Column
+            series.Color = SeriesColors(seriesName)
+            series.IsVisibleInLegend = True
 
-        ' Position the chart area first
+            For hour As Integer = 0 To 23
+                series.Points.AddXY(hour.ToString("00"), hourData(hour)(seriesName & "Count"))
+            Next
+
+            chartAttendance.Series.Add(series)
+        Next
+
+        ' Configure axis labels
         With chartAttendance.ChartAreas(0)
-            .Position.X = 5
-            .Position.Y = 15
-            .Position.Width = 75
-            .Position.Height = 75
-
+            .AxisX.Title = "Hour of Day"
+            .AxisY.Title = "Count"
             .AxisX.Interval = 1
             .AxisX.LabelStyle.Format = "00"
-            .AxisY.Minimum = 0
-            .Area3DStyle.Enable3D = False
-
-            ' Add axis titles
-            .AxisX.Title = "Hours of the Day"
-            .AxisX.TitleAlignment = StringAlignment.Center
-
-            .AxisY.Title = "Activities"
-            .AxisY.TitleAlignment = StringAlignment.Center
-            .AxisY.TextOrientation = TextOrientation.Rotated270
         End With
-
-        ' Configure Legend
-        With chartAttendance.Legends(0)
-            .Title = "Legend"
-            .TitleAlignment = StringAlignment.Center
-            .TitleSeparator = LegendSeparatorStyle.Line
-            .Docking = Docking.Right
-            .Position.Auto = True  ' This will ensure the legend is visible
-            .IsDockedInsideChartArea = False  ' This keeps it outside the chart area
-        End With
-
-        ' Set Chart Title and Subtitle
-        chartAttendance.Titles.Clear()
-
-        ' Create and configure main title
-        Dim mainTitle As New Title()
-        mainTitle.Text = "Attendance"
-        mainTitle.Font = New Font("Arial", 12, FontStyle.Bold)
-        mainTitle.Alignment = ContentAlignment.TopCenter
-        mainTitle.Position.X = 5
-        mainTitle.Position.Y = 1
-        mainTitle.Position.Width = 75
-        chartAttendance.Titles.Add(mainTitle)
-
-        ' Create and configure date range subtitle
-        Dim dateRangeText As String
-        If cboDateRange.SelectedItem IsNot Nothing Then
-            If cboDateRange.SelectedItem.ToString() = "Daily" Then
-                dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
-            Else
-                dateRangeText = $"{dtpStartDate.Value.ToString("MMMM dd, yyyy")} - {dtpEndDate.Value.ToString("MMMM dd, yyyy")}"
-            End If
-        Else
-            dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
-        End If
-
-        Dim subTitle As New Title(dateRangeText)
-        subTitle.Font = New Font("Arial", 10)
-        subTitle.Alignment = ContentAlignment.TopCenter
-        subTitle.Position.X = 5
-        subTitle.Position.Y = 7  ' Increased Y position for better spacing from main title
-        subTitle.Position.Width = 75
-        chartAttendance.Titles.Add(subTitle)
     End Sub
 
+    Private Sub CreateLineChartSeries(hourData As Dictionary(Of Integer, Dictionary(Of String, Integer)), activeSeriesNames As String())
+        For Each seriesName In activeSeriesNames
+            Dim series As New Series(seriesName)
+            series.ChartType = SeriesChartType.Line
+            series.Color = SeriesColors(seriesName)
+            series.BorderWidth = 2
+            series.MarkerStyle = MarkerStyle.Circle
+            series.MarkerSize = 8
+            series.IsVisibleInLegend = True
 
+            For hour As Integer = 0 To 23
+                series.Points.AddXY(hour.ToString("00"), hourData(hour)(seriesName & "Count"))
+            Next
 
-    Private Sub ConfigureLineChart()
-        If chartAttendance.ChartAreas.Count = 0 Then
-            chartAttendance.ChartAreas.Add(New ChartArea("MainArea"))
-        End If
+            chartAttendance.Series.Add(series)
+        Next
 
-        With chartAttendance.ChartAreas("MainArea")
+        ' Configure axis labels
+        With chartAttendance.ChartAreas(0)
+            .AxisX.Title = "Hour of Day"
+            .AxisY.Title = "Count"
             .AxisX.Interval = 1
             .AxisX.LabelStyle.Format = "00"
-            .AxisY.Minimum = 0
-            .Area3DStyle.Enable3D = False
         End With
     End Sub
 
-    Private Sub ConfigurePieChart()
-        If chartAttendance.ChartAreas.Count = 0 Then
-            chartAttendance.ChartAreas.Add(New ChartArea("MainArea"))
-        End If
 
-        With chartAttendance.ChartAreas(0)
-            .Position.X = 5
-            .Position.Y = 15
-            .Position.Width = 75
-            .Position.Height = 75
-            .Area3DStyle.Enable3D = True
-            .Area3DStyle.Inclination = 45
-        End With
-
-        ' Configure Legend
-        With chartAttendance.Legends(0)
-            .Title = "Legend"
-            .TitleAlignment = StringAlignment.Center
-            .TitleSeparator = LegendSeparatorStyle.Line
-            .Docking = Docking.Right
-            .Position.Auto = True
-            .IsDockedInsideChartArea = False
-        End With
-
-        ' Set Chart Title and Subtitle
-        chartAttendance.Titles.Clear()
-
-        ' Create and configure main title
-        Dim mainTitle As New Title()
-        mainTitle.Text = "Attendance"
-        mainTitle.Font = New Font("Arial", 12, FontStyle.Bold)
-        mainTitle.Alignment = ContentAlignment.TopCenter
-        mainTitle.Position.X = 5
-        mainTitle.Position.Y = 1
-        mainTitle.Position.Width = 75
-        chartAttendance.Titles.Add(mainTitle)
-
-        ' Create and configure date range subtitle
-        Dim dateRangeText As String
-        If cboDateRange.SelectedItem IsNot Nothing Then
-            If cboDateRange.SelectedItem.ToString() = "Daily" Then
-                dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
-            Else
-                dateRangeText = $"{dtpStartDate.Value.ToString("MMMM dd, yyyy")} - {dtpEndDate.Value.ToString("MMMM dd, yyyy")}"
-            End If
-        Else
-            dateRangeText = dtpStartDate.Value.ToString("MMMM dd, yyyy")
-        End If
-
-        Dim subTitle As New Title(dateRangeText)
-        subTitle.Font = New Font("Arial", 10)
-        subTitle.Alignment = ContentAlignment.TopCenter
-        subTitle.Position.X = 5
-        subTitle.Position.Y = 7
-        subTitle.Position.Width = 75
-        chartAttendance.Titles.Add(subTitle)
-    End Sub
 
     Private Sub cboChartType_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboChartType.SelectedIndexChanged
         UpdateChart()

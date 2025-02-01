@@ -1,5 +1,13 @@
 ﻿Imports System.Data.OleDb
 
+Public Class Schedule
+    Public Property ScheduleID As Integer
+    Public Property DayOfWeek As Integer
+    Public Property StartTime As String
+    Public Property EndTime As String
+    Public Property IsActive As Boolean
+End Class
+
 Public Class ScheduleManager
     Private ReadOnly _connectionString As String
 
@@ -16,14 +24,17 @@ Public Class ScheduleManager
     End Structure
 
     Public Function AddSchedule(dayOfWeek As Integer, startTime As String, endTime As String) As Boolean
+        If String.IsNullOrEmpty(startTime) OrElse String.IsNullOrEmpty(endTime) Then
+            Return False
+        End If
+
         Try
             Using conn As New OleDbConnection(_connectionString)
                 Using cmd As New OleDbCommand("INSERT INTO tblSchedule (DayOfWeek, StartTime, EndTime, IsActive) VALUES (?, ?, ?, ?)", conn)
-                    cmd.Parameters.AddWithValue("?", dayOfWeek)
-                    cmd.Parameters.AddWithValue("?", startTime)
-                    cmd.Parameters.AddWithValue("?", endTime)
-                    cmd.Parameters.AddWithValue("?", True)
-
+                    cmd.Parameters.Add("DayOfWeek", OleDbType.Integer).Value = dayOfWeek
+                    cmd.Parameters.Add("StartTime", OleDbType.VarChar).Value = startTime
+                    cmd.Parameters.Add("EndTime", OleDbType.VarChar).Value = endTime
+                    cmd.Parameters.Add("IsActive", OleDbType.Boolean).Value = True
                     conn.Open()
                     cmd.ExecuteNonQuery()
                     Return True
@@ -35,31 +46,38 @@ Public Class ScheduleManager
         End Try
     End Function
 
-    Public Function GetActiveSchedules() As List(Of ScheduleData)
-        Dim schedules As New List(Of ScheduleData)
+    Public Function GetActiveSchedules() As List(Of Schedule)
+        Dim schedules As New List(Of Schedule)
+        Using conn As New OleDbConnection(_connectionString)
+            Dim sql As String = "SELECT ScheduleID, DayOfWeek, Format(StartTime,'HH:mm') as StartTime, " &
+                       "Format(EndTime,'HH:mm') as EndTime, IsActive " &
+                       "FROM tblSchedule WHERE IsActive = True " &
+                       "AND StartTime IS NOT NULL AND EndTime IS NOT NULL " &
+                       "ORDER BY DayOfWeek, StartTime"
 
-        Try
-            Using conn As New OleDbConnection(_connectionString)
-                Using cmd As New OleDbCommand("SELECT * FROM tblSchedule WHERE IsActive = True ORDER BY DayOfWeek, StartTime", conn)
-                    conn.Open()
-                    Dim reader As OleDbDataReader = cmd.ExecuteReader()
-
+            Using cmd As New OleDbCommand(sql, conn)
+                conn.Open()
+                Using reader As OleDbDataReader = cmd.ExecuteReader()
                     While reader.Read()
-                        Dim schedule As New ScheduleData With {
-                            .ScheduleID = Convert.ToInt32(reader("ScheduleID")),
-                            .DayOfWeek = Convert.ToInt32(reader("DayOfWeek")),
-                            .StartTime = reader("StartTime").ToString(),
-                            .EndTime = reader("EndTime").ToString(),
-                            .IsActive = Convert.ToBoolean(reader("IsActive"))
-                        }
-                        schedules.Add(schedule)
+                        Try
+                            If Not reader.IsDBNull(reader.GetOrdinal("StartTime")) AndAlso
+                           Not reader.IsDBNull(reader.GetOrdinal("EndTime")) Then
+                                schedules.Add(New Schedule With {
+                                .ScheduleID = reader("ScheduleID"),
+                                .DayOfWeek = reader("DayOfWeek"),
+                                .StartTime = Convert.ToDateTime(reader("StartTime")).ToString("HH:mm"),
+                                .EndTime = Convert.ToDateTime(reader("EndTime")).ToString("HH:mm"),
+                                .IsActive = reader("IsActive")
+                            })
+                            End If
+                        Catch ex As Exception
+                            Debug.WriteLine($"Error processing schedule record: {ex.Message}")
+                            Continue While
+                        End Try
                     End While
                 End Using
             End Using
-        Catch ex As Exception
-            Debug.WriteLine($"Error getting schedules: {ex.Message}")
-        End Try
-
+        End Using
         Return schedules
     End Function
 
@@ -67,11 +85,10 @@ Public Class ScheduleManager
         Try
             Using conn As New OleDbConnection(_connectionString)
                 Using cmd As New OleDbCommand("UPDATE tblSchedule SET DayOfWeek = ?, StartTime = ?, EndTime = ? WHERE ScheduleID = ?", conn)
-                    cmd.Parameters.AddWithValue("?", dayOfWeek)
-                    cmd.Parameters.AddWithValue("?", startTime)
-                    cmd.Parameters.AddWithValue("?", endTime)
-                    cmd.Parameters.AddWithValue("?", scheduleId)
-
+                    cmd.Parameters.Add("DayOfWeek", OleDbType.Integer).Value = dayOfWeek
+                    cmd.Parameters.Add("StartTime", OleDbType.VarChar).Value = startTime
+                    cmd.Parameters.Add("EndTime", OleDbType.VarChar).Value = endTime
+                    cmd.Parameters.Add("ScheduleID", OleDbType.Integer).Value = scheduleId
                     conn.Open()
                     cmd.ExecuteNonQuery()
                     Return True
@@ -87,8 +104,8 @@ Public Class ScheduleManager
         Try
             Using conn As New OleDbConnection(_connectionString)
                 Using cmd As New OleDbCommand("UPDATE tblSchedule SET IsActive = ? WHERE ScheduleID = ?", conn)
-                    cmd.Parameters.AddWithValue("?", isActive)
-                    cmd.Parameters.AddWithValue("?", scheduleId)
+                    cmd.Parameters.Add("IsActive", OleDbType.Boolean).Value = isActive
+                    cmd.Parameters.Add("ScheduleID", OleDbType.Integer).Value = scheduleId
 
                     conn.Open()
                     cmd.ExecuteNonQuery()

@@ -1,4 +1,4 @@
-﻿Imports System.Data.OleDb
+Imports System.Data.OleDb
 Imports System.IO
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
@@ -53,7 +53,6 @@ Public Class DatabaseConfig
                     .Add("IsEmergency", OleDbType.Boolean).Value = closing.IsEmergency
                     .Add("ClosingsID", OleDbType.Integer).Value = closing.ClosingID
                 End With
-
                 conn.Open()
                 Return cmd.ExecuteNonQuery() > 0
             End Using
@@ -65,7 +64,6 @@ Public Class DatabaseConfig
             Return $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={DatabasePath}"
         End Get
         Set(value As String)
-            ' Extract the Data Source path from the connection string  
             Dim dataSourcePattern As String = "Data Source=([^;]+)"
             Dim match As Match = Regex.Match(value, dataSourcePattern)
             If match.Success Then
@@ -74,4 +72,42 @@ Public Class DatabaseConfig
             End If
         End Set
     End Property
+
+    Public Shared Function GetTableSchema() As DataTable
+        Using conn As New OleDbConnection(ConnectionString)
+            conn.Open()
+            Return conn.GetSchema("Tables", New String() {Nothing, Nothing, Nothing, "TABLE"})
+        End Using
+    End Function
+
+    Public Shared Function GetColumnSchema(tableName As String) As DataTable
+        Using conn As New OleDbConnection(ConnectionString)
+            conn.Open()
+            Return conn.GetSchema("Columns", New String() {Nothing, Nothing, tableName})
+        End Using
+    End Function
+
+    Public Shared Function GetRelationshipSchema() As DataTable
+        Using conn As New OleDbConnection(ConnectionString)
+            conn.Open()
+            Return conn.GetSchema("Tables", New String() {Nothing, Nothing, Nothing, "TABLE"})
+        End Using
+    End Function
+
+    Public Shared Function GetForeignKeySchema() As DataTable
+        Using conn As New OleDbConnection(ConnectionString)
+            conn.Open()
+            Return conn.GetSchema("Indexes")
+        End Using
+    End Function
+
+    Public Shared Function ExecuteSchemaChange(sql As String) As Boolean
+        Using conn As New OleDbConnection(ConnectionString)
+            Using cmd As New OleDbCommand(sql, conn)
+                conn.Open()
+                cmd.ExecuteNonQuery()
+                Return True
+            End Using
+        End Using
+    End Function
 End Class

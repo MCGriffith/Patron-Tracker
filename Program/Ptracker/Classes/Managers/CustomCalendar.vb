@@ -13,6 +13,7 @@
     Public Sub New()
         DoubleBuffered = True
         Size = New Size(780, 500)  ' Reduced from 770 to 750
+        BackColor = Color.White  ' Add this line
     End Sub
 
     Protected Overrides Sub OnPaint(e As PaintEventArgs)
@@ -60,12 +61,17 @@
         Next
     End Sub
 
-    Public Sub NavigateMonth(forward As Boolean)
+    Public Sub NavigateToMonth(forward As Boolean)
         If forward Then
             _currentDate = _currentDate.AddMonths(1)
         Else
             _currentDate = _currentDate.AddMonths(-1)
         End If
+        Invalidate()
+    End Sub
+
+    Public Sub NavigateToCurrentMonth()
+        _currentDate = DateTime.Today
         Invalidate()
     End Sub
 

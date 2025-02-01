@@ -27,10 +27,12 @@ Partial Class FrmCalendarView
         '
         'FrmCalendarView
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(825, 450)
+        Me.ClientSize = New System.Drawing.Size(1238, 623)
+        Me.Font = New System.Drawing.Font("Arial", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
         Me.Name = "FrmCalendarView"
         Me.Text = "Calendar View"
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized

@@ -238,11 +238,29 @@ Public Class FrmReports
         Using conn As New OleDbConnection(connectionString)
             conn.Open()
 
-            ' Query to get all attendance records for the date range
-            Dim sql As String = "SELECT People, FirstVisit, PrintFOR, Indexing, " &
-                    "OnlineRsrch, SubWebsite, AttendClass, Other " &
-                    "FROM tblAttendance " &
-                    "WHERE LogDate BETWEEN #" & startDate.ToString("MM/dd/yyyy") & "# AND #" & endDate.ToString("MM/dd/yyyy") & "#"
+            ' Query to get unique daily attendance records for the date range
+            Dim sql As String = "SELECT SUM(DailyVisitors) as People, " &
+               "SUM(IIF(IsNull(FirstVisit), 0, FirstVisit)) as FirstVisit, " &
+               "SUM(IIF(IsNull(PrintFOR), 0, PrintFOR)) as PrintFOR, " &
+               "SUM(IIF(IsNull(Indexing), 0, Indexing)) as Indexing, " &
+               "SUM(IIF(IsNull(OnlineRsrch), 0, OnlineRsrch)) as OnlineRsrch, " &
+               "SUM(IIF(IsNull(SubWebsite), 0, SubWebsite)) as SubWebsite, " &
+               "SUM(IIF(IsNull(AttendClass), 0, AttendClass)) as AttendClass, " &
+               "SUM(IIF(IsNull(Other), 0, Other)) as Other " &
+               "FROM (SELECT LogDate, " &
+               "COUNT(LoginID) as DailyVisitors, " &
+               "SUM(IIF(IsNull(FirstVisit), 0, IIF(FirstVisit=True, 1, 0))) as FirstVisit, " &
+               "SUM(IIF(IsNull(PrintFOR), 0, IIF(PrintFOR=True, 1, 0))) as PrintFOR, " &
+               "SUM(IIF(IsNull(Indexing), 0, IIF(Indexing=True, 1, 0))) as Indexing, " &
+               "SUM(IIF(IsNull(OnlineRsrch), 0, IIF(OnlineRsrch=True, 1, 0))) as OnlineRsrch, " &
+               "SUM(IIF(IsNull(SubWebsite), 0, IIF(SubWebsite=True, 1, 0))) as SubWebsite, " &
+               "SUM(IIF(IsNull(AttendClass), 0, IIF(AttendClass=True, 1, 0))) as AttendClass, " &
+               "SUM(IIF(IsNull(Other), 0, IIF(Other=True, 1, 0))) as Other " &
+               "FROM (SELECT DISTINCT LogDate, LoginID, " &
+               "FirstVisit, PrintFOR, Indexing, OnlineRsrch, SubWebsite, AttendClass, Other " &
+               "FROM tblAttendance " &
+               "WHERE LogDate BETWEEN #" & startDate.ToString("MM/dd/yyyy") & "# AND #" & endDate.ToString("MM/dd/yyyy") & "#) " &
+               "GROUP BY LogDate)"
 
             Dim cmd As New OleDbCommand(sql, conn)
             cmd.Parameters.AddWithValue("@StartDate", startDate)
@@ -260,19 +278,17 @@ Public Class FrmReports
 
             ' Read and count all records
             Using reader As OleDbDataReader = cmd.ExecuteReader()
-                While reader.Read()
-                    ' Count total people visits
-                    If CBool(reader("People")) Then peopleCount += 1
-
-                    ' Count other fields
-                    If CBool(reader("FirstVisit")) Then firstVisitCount += 1
-                    If CBool(reader("PrintFOR")) Then printFORCount += 1
-                    If CBool(reader("Indexing")) Then indexingCount += 1
-                    If CBool(reader("OnlineRsrch")) Then onlineRsrchCount += 1
-                    If CBool(reader("SubWebsite")) Then subWebsiteCount += 1
-                    If CBool(reader("AttendClass")) Then attendClassCount += 1
-                    If CBool(reader("Other")) Then otherCount += 1
-                End While
+                If reader.Read() Then
+                    ' Read the summed values directly
+                    peopleCount = Convert.ToInt32(reader("People"))
+                    firstVisitCount = Convert.ToInt32(reader("FirstVisit"))
+                    printFORCount = Convert.ToInt32(reader("PrintFOR"))
+                    indexingCount = Convert.ToInt32(reader("Indexing"))
+                    onlineRsrchCount = Convert.ToInt32(reader("OnlineRsrch"))
+                    subWebsiteCount = Convert.ToInt32(reader("SubWebsite"))
+                    attendClassCount = Convert.ToInt32(reader("AttendClass"))
+                    otherCount = Convert.ToInt32(reader("Other"))
+                End If
             End Using
 
             ' Generate HTML report

@@ -4,6 +4,7 @@
     Private ColumnToSort As Integer
     Private OrderOfSort As SortOrder
     Private ObjectCompare As CaseInsensitiveComparer
+    Private ReadOnly _dayHelper As New DayOfWeekHelper()
 
     Public Sub New()
         ColumnToSort = 0
@@ -30,22 +31,15 @@
     End Property
 
     Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
-        Dim compareResult As Integer
-        Dim listviewX As ListViewItem
-        Dim listviewY As ListViewItem
+        Dim itemX As ListViewItem = DirectCast(x, ListViewItem)
+        Dim itemY As ListViewItem = DirectCast(y, ListViewItem)
 
-        listviewX = CType(x, ListViewItem)
-        listviewY = CType(y, ListViewItem)
+        Dim dayX = DayOfWeekHelper.GetDayValue(itemX.Text)
+        Dim dayY = DayOfWeekHelper.GetDayValue(itemY.Text)
 
-        compareResult = ObjectCompare.Compare(listviewX.SubItems(ColumnToSort).Text, listviewY.SubItems(ColumnToSort).Text)
+        If dayX <> dayY Then Return dayX - dayY
 
-        If OrderOfSort = SortOrder.Ascending Then
-            Return compareResult
-        ElseIf OrderOfSort = SortOrder.Descending Then
-            Return (-compareResult)
-        Else
-            Return 0
-        End If
+        Return DateTime.Parse(itemX.SubItems(1).Text).TimeOfDay.CompareTo(DateTime.Parse(itemY.SubItems(1).Text).TimeOfDay)
     End Function
 End Class
 

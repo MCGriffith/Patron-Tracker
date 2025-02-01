@@ -7,7 +7,7 @@ Module DiagnosticLauncher
         Console.WriteLine($"Time: {DateTime.Now}")
 
         Try
-            Using splash As New SplashScreen
+            Using splash As New FrmSplashScreen
                 Console.WriteLine("1. Splash screen initialized")
                 Application.DoEvents()
 

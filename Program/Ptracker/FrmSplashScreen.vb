@@ -1,6 +1,6 @@
 ﻿Imports System.Data.OleDb
 
-Public Class SplashScreen
+Public Class FrmSplashScreen
     Dim connectionString As String = DatabaseConfig.ConnectionString
 
     Private Sub SplashScreen_Load(sender As Object, e As EventArgs) Handles MyBase.Load
