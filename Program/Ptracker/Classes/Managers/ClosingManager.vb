@@ -55,21 +55,13 @@ Public Class ClosingManager
             Using conn As New OleDbConnection(_connectionString)
                 Using cmd As New OleDbCommand("SELECT * FROM tblClosings WHERE Inactive = False ORDER BY StartDate", conn)
                     conn.Open()
-                    Debug.WriteLine("Database connection opened successfully")
 
                     Dim reader As OleDbDataReader = cmd.ExecuteReader()
-                    Debug.WriteLine("=== Column Names in tblClosings ===")
                     Dim schemaTable As DataTable = reader.GetSchemaTable()
                     For Each row As DataRow In schemaTable.Rows
-                        Debug.WriteLine($"Column name: {row("ColumnName")}")
                     Next
-                    Debug.WriteLine("================================")
 
                     While reader.Read()
-                        Debug.WriteLine($"Reading row with values:")
-                        For i As Integer = 0 To reader.FieldCount - 1
-                            Debug.WriteLine($"Column {i}: {reader.GetName(i)} = {reader(i)}")
-                        Next
 
                         Dim fscClosing As New FSCClosingData With {
                         .ClosingID = Convert.ToInt32(reader("ClosingsID")),
@@ -81,15 +73,10 @@ Public Class ClosingManager
                         .Inactive = Convert.ToBoolean(reader("Inactive"))
                     }
                         fscClosings.Add(fscClosing)
-                        Debug.WriteLine($"Successfully added closing ID {fscClosing.ClosingID} to list")
                     End While
                 End Using
             End Using
-
-            Debug.WriteLine($"Total closings retrieved: {fscClosings.Count}")
         Catch ex As Exception
-            Debug.WriteLine($"Error in GetFSCClosings: {ex.Message}")
-            Debug.WriteLine($"Stack Trace: {ex.StackTrace}")
         End Try
 
         Return fscClosings
@@ -133,7 +120,6 @@ Public Class ClosingManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error setting closing inactive: {ex.Message}")
             Return False
         End Try
     End Function
@@ -158,7 +144,6 @@ Public Class ClosingManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error updating closing: {ex.Message}")
             Return False
         End Try
     End Function

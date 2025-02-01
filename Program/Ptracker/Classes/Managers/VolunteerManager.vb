@@ -33,7 +33,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error adding volunteer: {ex.Message}")
             Return False
         End Try
     End Function
@@ -61,7 +60,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error getting volunteers: {ex.Message}")
         End Try
 
         Return volunteers
@@ -91,7 +89,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error getting volunteers by schedule: {ex.Message}")
         End Try
 
         Return volunteers
@@ -111,7 +108,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error updating volunteer: {ex.Message}")
             Return False
         End Try
     End Function
@@ -129,7 +125,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error setting volunteer status: {ex.Message}")
             Return False
         End Try
     End Function
@@ -151,7 +146,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error getting eligible contacts: {ex.Message}")
         End Try
         Return dt
     End Function
@@ -182,7 +176,6 @@ Public Class VolunteerManager
                 Next
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error getting schedules for combo: {ex.Message}")
         End Try
         Return dt
     End Function
@@ -208,7 +201,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error getting volunteer schedules: {ex.Message}")
         End Try
         Return dt
     End Function
@@ -238,7 +230,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error getting volunteer substitutions: {ex.Message}")
         End Try
         Return dt
     End Function
@@ -266,7 +257,6 @@ Public Class VolunteerManager
                 Return True
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error assigning schedule: {ex.Message}")
             Return False
         End Try
     End Function
@@ -288,7 +278,6 @@ Public Class VolunteerManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error deactivating schedule: {ex.Message}")
             Return False
         End Try
     End Function

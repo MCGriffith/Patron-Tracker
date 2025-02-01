@@ -41,7 +41,6 @@ Public Class ScheduleManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error adding schedule: {ex.Message}")
             Return False
         End Try
     End Function
@@ -71,7 +70,6 @@ Public Class ScheduleManager
                             })
                             End If
                         Catch ex As Exception
-                            Debug.WriteLine($"Error processing schedule record: {ex.Message}")
                             Continue While
                         End Try
                     End While
@@ -95,7 +93,6 @@ Public Class ScheduleManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error updating schedule: {ex.Message}")
             Return False
         End Try
     End Function
@@ -113,7 +110,6 @@ Public Class ScheduleManager
                 End Using
             End Using
         Catch ex As Exception
-            Debug.WriteLine($"Error setting schedule status: {ex.Message}")
             Return False
         End Try
     End Function

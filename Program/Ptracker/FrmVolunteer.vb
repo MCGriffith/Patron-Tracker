@@ -167,9 +167,7 @@ Public Class FrmVolunteer
 
     Private Sub cboVol_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cboVol.SelectedIndexChanged
         If cboVol.SelectedIndex >= 0 Then
-            Debug.WriteLine("Volunteer selected")
             Dim contactId As Integer = DirectCast(DirectCast(cboVol.SelectedItem, DataRowView).Row("ContactID"), Integer)
-            Debug.WriteLine($"ContactID: {contactId}")
             LoadVolunteerScheduleList(contactId)
             cboSched.SelectedIndex = -1
         End If
@@ -183,7 +181,6 @@ Public Class FrmVolunteer
         End If
 
         Dim dt = _volunteerManager.GetVolunteerSchedules(contactId)
-        Debug.WriteLine($"Rows returned from database: {dt.Rows.Count}")
 
         For Each row As DataRow In dt.Rows
             Dim item As New ListViewItem(_dayHelper.GetDayName(CInt(row("DayOfWeek"))))
